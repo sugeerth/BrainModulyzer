@@ -13,6 +13,8 @@ parcelation_filename provides the parcellation of the brain regions
 
 e.g. path
 matrix_filename = '/PATH_TO_YOUR_DATA/27nodeMatrix.csv'
+
+Make sure the parcellation files are in the nibabel format
 """
 matrix_filename = '/Users/sugeerthmurugesan/LBLProjects/ELectrode/SummerProject/JesseDataset/27nodeMatrix.csv'
 centre_filename = '/Users/sugeerthmurugesan/LBLProjects/ELectrode/SummerProject/JesseDataset/27nodeCentres.csv'
