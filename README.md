@@ -1,60 +1,45 @@
 # README #
 
-This README would normally document whatever steps are necessary to get your application up and running.
-Our new version of the prototype requires: 
 
 ### Required dependencies ###
-
-    PySide
-      \-QtCore (BrainViewer)
-      \-QtGui (BrainViewer)
-    networkx (BrainViewer)
-    nibabel (BrainViewer)
-    numpy (BrainViewer)
-    pygraphviz (BrainViewer)
-    communtiy (BrainViewer)
-    Visit (BrainViewer)
-################################
-Install the "python louvain Community" package by downloading the following package : https://bitbucket.org/taynaud/python-louvain/overview  
-then installing it using the system python/visit python. 
-
-python setup.py install (For system python)
  
-You can also check if the installation was successful by : 
+    Visit (Based on your distribution build visit from this build scirpt--- )
+        \- build script from here-- http://portal.nersc.gov/project/visit/releases/2.10.2/build_visit2_10_2
+        \- and then run these commands---./build_visit2_10_2 --no-visit --silo —console
+                                         ./build_visit2_10_2  --silo --console
+    PySide--goto source and download-- https://pypi.python.org/pypi/PySide/1.2.4
+        \- ~/<path to visit python directory>/python setup.py build
+        \- ~/<path to visit python directory>/python setup.py install 
+    or install using pip 
+        \- pip install pyside --user --upgrade 
+    networkx 
+        \- pip install networkx --user --upgrade   
+    nibabel -- pip install nibabel --user --upgrade 
+    numpy -- pip install numpy --user --upgrade 
+    pygraphviz  pip install pygraphviz --user --upgrade 
+    communtiy -- pip install community --user --upgrade 
+    
+################################
+
 
 ################
-import community
-
-in the interactive python that visit uses. 
+ 
 
 ### Installation Procedure ###
+    Install the "python louvain Community" package by downloading the following package : https://bitbucket.org/taynaud/python-louvain/overview  
+    then installing it using the system python/visit python. 
+    
+    python setup.py install (For system python)
+
  Install all the packages using pip install <package-name> --user --upgrade (So that all packages bind with the visit python) 
  
- For Mac, you can install the packages through source or pip . 
+ For Mac, you can install the packages through source or pip REFERENCING your visit python. 
  
- Also, for running the application in your local desktop,you need to specify the PYTHONPATH to the directory where this application is downloaded, the below given script takes care of this. 
- You can run the script in without worrying about changing pythonpath everytime: 
- 
-Type "python" in the terminal to launch interactive python and copy paste(after editing) the below given commands   
- 
-import os,sys
-
-os.environ["PYTHONPATH"] = "/<edit your path directory here>/brain-vis"
-
-os.system("~/<edit the path to visit binary>/visit2.7.3/src/bin/visit -cli -uifile /<edit your path directory here>/brain-vis/BrainViewer.py")
-
-You can also copy the above commands to another python file and launch the application by running "python <script_name>.py" 
-
-For letting the application know about the datafiles, create a file called BrainViewerDataPaths.py, editing the path of your data files to 
-the following variables
-
+ Also, for running the application in your local desktop,you need to specify the 
+ PYTHONPATH to the directory where this application is downloaded, the below 
+  script RunMainProject.py takes care of this. You can run the script in without 
+ worrying about changing pythonpath everytime: 
 
 #### Major Files ####
-Major files BrainViewerDataPaths.py 
-***********************************************************************
-matrix_filename = /<edit your path to these files>/27nodeMatrix.csv \n
-
-template_filename = /<edit your path to these files>/ch2better.nii.gz \n 
-
-parcelation_filename = /<edit your path to these files>/allROIs.nii.gz \n 
-************************************************************************
+BrainViewerDataPaths.py -- locations of your data is stored
+RunMainProject.py -- a way to run the application with visit python backend
