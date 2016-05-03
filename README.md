@@ -27,9 +27,9 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
     communtiy -- pip install community --user --upgrade 
     
 ################################
-![ScreenShot](http://s32.postimg.org/f3a3uyms5/Teaser_CGraph_View_Page_1.jpg)
 
-################
+
+################################
  
 
 ### Installation Procedure ###
@@ -44,6 +44,8 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
  worrying about changing pythonpath everytime: 
 
 #### Major Files ####
-BrainViewerDataPaths.py -- path of the dataset
+BrainViewerDataPaths.py -- path for the dataset
 
 RunMainProject.py -- path for running the applications with visit python backend
+################################
+![ScreenShot](http://s32.postimg.org/f3a3uyms5/Teaser_CGraph_View_Page_1.jpg)
