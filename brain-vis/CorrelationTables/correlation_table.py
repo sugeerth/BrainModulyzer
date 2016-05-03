@@ -8,8 +8,6 @@ import math
 from PySide import QtCore, QtGui
 
 
-#import traceback
-
 """Class responsible for transferring data from files to self.data"""
 class CorrelationTable(object):
     def __init__(self, filename,centres_abbreviation,dataProcess=None):

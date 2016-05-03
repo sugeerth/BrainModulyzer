@@ -13,6 +13,7 @@ except:
     raise
 from visit_interface import GetColor
 
+"""Models the links between the nodes in the dendrogram diagram"""
 class dendogramLine(QtGui.QGraphicsItem):
 
 	Pi = math.pi
@@ -35,8 +36,6 @@ class dendogramLine(QtGui.QGraphicsItem):
         self.edgeThickness = 1
         self.thickHighlightedEdges = 3 
         self.ColorOnlySelectedNodesFlag =False
-
-
 
     def type(self):
         return Edge.Type

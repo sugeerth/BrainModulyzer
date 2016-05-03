@@ -8,6 +8,9 @@ def ColorToInt(color):
     r, g, b, a = map(np.uint32, color)
     return a << 24 | r << 16 | g << 8 | b
 
+"""
+Class that Implements the slice view in the anatomical view
+"""
 class SliceViewer(QtGui.QWidget):
     sliceChanged = QtCore.Signal(int)
     regionSelected = QtCore.Signal(int)

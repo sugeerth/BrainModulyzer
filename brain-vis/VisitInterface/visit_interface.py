@@ -25,15 +25,12 @@ def GetColor(colortable, value):
         t = (value - cp0.position) / (cp1.position - cp0.position)
         return tuple([(1-t)*a + t*b for a, b in zip(cp0.colors, cp1.colors)])
 
-
 # Save a numpy array as BOV for input in VisIt
 def SaveAsBOV(data, varname):
     dataFile = tempfile.NamedTemporaryFile(suffix='.raw', delete=False)
     data.astype(np.uint8).transpose().tofile(dataFile.file)
-    #pprint.pprint(data)
     dataFile.close()
     headerFile = tempfile.NamedTemporaryFile(suffix='.bov', delete=False)
-    # headerFile = open('Header.bov','a+')
     headerFile.write("DATA_FILE: %s\n" % dataFile.name)
     headerFile.write("DATA_SIZE: %d %d %d\n" % data.shape)
     headerFile.write("BRICK_SIZE: %d %d %d\n" % data.shape)
@@ -114,6 +111,11 @@ class BrainTemplatePlot(object):
         visit.SetOperatorOptions(tsatts)
         visit.DrawPlots()
 
+
+"""
+Class that Implements the parcelation plot in the anatomical view
+Talks to python interface of the Visit to run easy visualizations 
+"""
 class ParcelationPlot(QtCore.QObject):
     regionSelected = QtCore.Signal(int)
 
@@ -285,8 +287,6 @@ ratts.displayListMode = ratts.Always
 ratts.scalableActivationMode = ratts.Never
 visit.SetRenderingAttributes(ratts)
 
-
-
 # Disable output for picking
 pickAtts = visit.GetPickAttributes()
 pickAtts.variables = ("default")
@@ -316,17 +316,3 @@ view3D.viewNormal = (0, 1, 0)
 view3D.viewUp = (0, 0, 1)
 
 visit.SetView3D(view3D)
-
-### HACK to keep Pick and Information windows from popping up
-# pickWin = visit.pyside_support.GetOtherWindow("Pick")
-
-# if pickWin != None:
-#     dummy1 = QtGui.QMainWindow()
-#     dummy1.setCentralWidget(pickWin)
-#     dummy1.hide()
-
-# infoWin = visit.pyside_support.GetOtherWindow("Information")
-# if infoWin != None:
-#     dummy2 = QtGui.QMainWindow()
-#     dummy2.setCentralWidget(infoWin)
-#     dummy2.hide()

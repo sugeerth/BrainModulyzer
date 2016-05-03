@@ -12,6 +12,7 @@ except:
     print "Couldn't import all required packages. See README.md for a list of required packages and installation instructions."
     raise
 
+"""Provides the main data structure for the network data"""
 class GraphVisualization(QtGui.QWidget):
     """This class is responsible for GraphVisualization from the data given"""
     filename = ""
@@ -26,11 +27,11 @@ class GraphVisualization(QtGui.QWidget):
         self.ThresholdData = np.copy(self.data)
         low_values_indices = self.ThresholdData < weight  # Where values are low
         self.ThresholdData[low_values_indices] = 0
-        # graterindices = [ (i,j) for i,j in np.ndenumerate(self.ThresholdData) if any(i > j) ] 
-        # self.ThresholdData[graterindices[:1]] = 0
-        # self.ThresholdData = np.tril(self.ThresholdData)
         self.g = nx.from_numpy_matrix(self.ThresholdData)  
 
+    """
+
+    """
     def DrawHighlightedGraph(self,weight=None):
         if not(weight):
             weight = self.data.min()

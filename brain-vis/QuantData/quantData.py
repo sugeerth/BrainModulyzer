@@ -8,6 +8,16 @@ import weakref
 import cProfile
 import os
 
+"""
+Class that Implements the Network Measure table 
+There are four network measures that are displayed 
+you can extend this if you want 
+
+['Regions', 'Centrality','Participation','Betweenness']
+
+Just add the measure you would like and implement the function 
+in the Graph_interface.py file 
+"""
 class QuantData(QtCore.QObject):
 	DataChange = QtCore.Signal(bool)
 	def __init__(self,widget):

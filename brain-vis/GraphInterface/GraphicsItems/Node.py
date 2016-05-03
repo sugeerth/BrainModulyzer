@@ -12,6 +12,16 @@ class Translate(QtCore.QObject):
     def set(self,string):
         return  str(self.tr(string))
 
+
+
+"""
+Serves as an node in the graph view
+
+Dont mind some of the hacks where the interaction
+methods refer to the objects in the dedrogram, 
+community graph and the parcelation view
+
+"""
 class Node(QtGui.QGraphicsItem):
     Type = QtGui.QGraphicsItem.UserType + 1
 
@@ -106,7 +116,6 @@ class Node(QtGui.QGraphicsItem):
 
     def setNodeSize(self,value,nodeSizeFactor,Rank,Zscore):
         self.degreeCentrality = float(value)
-        # self.setToolTip(str(self.Abbr[self.counter -1][0]"Left SupraMarginal Gyrus" + "\n"+nodeSizeFactor+":" + "{0:.2f}".format(self.degreeCentrality) + "\nRank:" + str(Rank) + "\nZ-score:" + "{0:.2f}".format(Zscore)))
         self.setToolTip(str("Left SupraMarginal Gyrus" + "\n"+nodeSizeFactor+":" + "{0:.2f}".format(self.degreeCentrality) + "\nRank:" + str(Rank) + "\nZ-score:" + "{0:.2f}".format(Zscore)))
         self.nodesize = 7 + 15 * value
 
@@ -131,7 +140,6 @@ class Node(QtGui.QGraphicsItem):
             painter.setFont(self.font)
             dx = -rect.width()/2 + rect.width()/5
             dy = rect.height()/2 - 0.5
-            # self.nodesize = 16
             rect.translate(dx,dy)
 	else: 
             mess = self.Translate.set(str(self.counter))
@@ -143,7 +151,6 @@ class Node(QtGui.QGraphicsItem):
             self.nodesize = 14
             rect.translate(dx,dy)
 
-        # from BrainViewer import DataColor
         if self.NodeCommunityColor:
             if option.state & QtGui.QStyle.State_Selected:
                 painter.save()
@@ -255,12 +262,8 @@ class Node(QtGui.QGraphicsItem):
 
     def communitySelected(self,value,FromWidget, count = 1):
         self.Flush()
-        # self.graph().Graph_Color(value+1)
         selectedCommunity = self.getCommunity(value)
         nodesInCommunity = self.getNodes(selectedCommunity)
-
-        # print "nods in community:",nodesInCommunity,"\n selected community:", selectedCommunity
-        # edges = [item for item in self.scene().items() if isinstance(item, Edge)]
 
         edges = self.graph().edges
         """
@@ -294,7 +297,6 @@ class Node(QtGui.QGraphicsItem):
             self.graph().Refresh()
 
     def allnodesupdate(self):
-        # Nodes = [item for item in self.scene().items() if isinstance(item, Node)]
         Nodes = self.graph().nodes
         for node in Nodes:
             node().setSelected(False)
@@ -339,11 +341,7 @@ class Node(QtGui.QGraphicsItem):
             self.update()
             return
 
-        # Hack to  update the edges of the nodes 
-        # if not(self.NodeCommunityColor):
         self.SelectedNode(self.counter-1,False, 1)
-        # else: 
-        #     self.communitySelected(self.counter-1,False,1)
 
         # If the brain regions are in community mode then quit 
         QtGui.QGraphicsItem.mousePressEvent(self, event)

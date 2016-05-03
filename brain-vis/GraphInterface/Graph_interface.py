@@ -226,6 +226,12 @@ class GraphWidget(QtGui.QGraphicsView):
             
         return D
 
+    """
+    ModularityBehaviour
+    A function that makes it possible to analysis the various graphs such 
+    number of connected components vs modularity of the louvain algorithm 
+    This is a good method to see how the usability of the louvain method. 
+    """
     def ModularityBehaviour(self):
 
         Number_of_Connected_Components = dict()

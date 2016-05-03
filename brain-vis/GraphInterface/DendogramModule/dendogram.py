@@ -28,6 +28,7 @@ except:
 
 """Class responsible for generating the Dendogram"""
 
+"""Edges in the dendrogram"""
 class Edge(QtGui.QGraphicsItem):
 	Pi = math.pi
 	TwoPi = 2.0 * Pi
@@ -116,7 +117,7 @@ class Edge(QtGui.QGraphicsItem):
 
 		painter.setBrush(QtCore.Qt.black)
 
-
+"""Nodes in the dendrogram"""
 class DendoNode(QtGui.QGraphicsItem):
 	Type = QtGui.QGraphicsItem.UserType + 1
 
@@ -180,9 +181,6 @@ class DendoNode(QtGui.QGraphicsItem):
 	def PutColor(self,colorvalue,alphaValue = -1):
 		self.colorvalue = colorvalue
 		self.CommunityColor = QtGui.QColor(colorvalue)
-		# if not(alphaValue==-1): 
-		# 	self.CommunityColor.setAlpha(alphaValue)
-		# 	print alphaValue
 		self.NodeCommunityColor = True
 		self.update()
 
@@ -233,17 +231,6 @@ class DendoNode(QtGui.QGraphicsItem):
 					edge().ColorEdges() 
 					edge().update()
 				edge().update()
-
-	# def SelectCommunityNodes(self, communityNode, allNodesInSelectedDendogram):
-	# 	NodesToBeHighlightedInCommunityGraph = []
-
-	# 	for i in allNodesInSelectedDendogram: 
-	# 		number = self.graph().widget.partition[i]
-	# 		NodesToBeHighlightedInCommunityGraph.append(number)
-
-	# 	print set(NodesToBeHighlightedInCommunityGraph)
-	# 	return set(NodesToBeHighlightedInCommunityGraph)
-
 
 	def setSubNodesAttached(self,SubNodesOfCommunityNodes):
 		self.SubNodesOfCommunityNodes = SubNodesOfCommunityNodes
@@ -343,6 +330,15 @@ class DendoNode(QtGui.QGraphicsItem):
 		self.graph().widget.NodeIds[self.Nodeidss].setSelected(True)
 		QtGui.QGraphicsItem.mousePressEvent(self, event)
 
+
+"""
+Logic for visualization of the dendrogram view
+The nodes and edges are highly dynamic 
+
+You can interact with the nodes and the edges 
+to get an overview of the visualization
+and the modularity of the louvain algorithm  
+"""
 class dendogram(QtGui.QGraphicsView):
 	def __init__(self,widget, graphData):
 		QtGui.QGraphicsView.__init__(self)
@@ -547,6 +543,9 @@ class dendogram(QtGui.QGraphicsView):
 
 		del self.NodeIds,self.LeafNodeIds,self._2NodeIds
 
+
+
+	
 	def initUI(self):
 		scene = QtGui.QGraphicsScene(self)
 

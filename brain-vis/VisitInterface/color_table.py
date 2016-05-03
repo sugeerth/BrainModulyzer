@@ -1,6 +1,10 @@
 import visit
 import bisect
 
+
+"""
+Provides colors for all the visualization views
+"""
 class VisItColorTable(object):
     def __init__(self, color_table_name):
         ct = visit.GetColorTable(color_table_name)
@@ -30,6 +34,9 @@ class VisItColorTable(object):
             t = (value - t0) / (t1 - t0)
             return tuple([(1-t)*a + t*b for a, b in zip(c0, c1)])
 
+"""
+Provides colors for all the visualization views
+"""
 class LinearColorTable(object):
     # FIXME: Hardcoding color table names is a bit of a hack
     def __init__(self, color_table_name):
@@ -51,6 +58,9 @@ class LinearColorTable(object):
         t = (t - self.value_range[0]) / (self.value_range[1] - self.value_range[0])
         return tuple([(1-t)*a + t*b for a, b in zip(self.color0, self.color1)])
 
+"""
+Provides colors for all the visualization views
+"""
 class PosNegColorTable(object):
     # FIXME: Hardcoding color table names is a bit of a hack
     def __init__(self):

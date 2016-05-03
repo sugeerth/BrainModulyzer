@@ -8,6 +8,8 @@ import weakref
 import cProfile
 import os
 
+"""A central interface that links all the UIs in the widgets to their respective
+functionalities in the classes """
 class LayoutInit(QtGui.QWidget):
     def __init__(self,widget,quantTable,Ui,dataSetLoader,screenshot,matrix_filename,centre_filename,centres_abbreviation,template_filename,parcelation_filename, Brain_image_filename=None,Electrode_Ids_filename=None,SelectedElectrodes_filename=None,Electrode_data_filename=None,Electrode_mat_filename=None):
         super(LayoutInit,self).__init__()

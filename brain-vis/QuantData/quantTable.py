@@ -4,6 +4,11 @@ from PySide.QtGui import *
 # Coding style idea taken from https://www.daniweb.com/software-development/python/code/447834/applying-pysides-qabstracttablemodel
 
 
+"""
+Class that Implements the UI for the Network Measure table 
+You can sort things based on the alphabhetical order 
+and make the classes more eaily available 
+"""
 class quantTable(QWidget):
     def __init__(self, quantData,widget, *args):
         QWidget.__init__(self, *args)
@@ -11,14 +16,11 @@ class quantTable(QWidget):
         self.table_view = None
         self.table_model = None
 
-        # setGeometry(x_pos, y_pos, width, height)
         self.setGeometry(0, 0, 279, 289)
         self.font = QFont("Courier New", 14)
 
         self.layout = QVBoxLayout(self)
         self.setWindowTitle("Click on column title to sort")
-        # self.table_model = MyTableModel(self, self.quantData.data_list,self.quantData.header)
-        # self.table_view = QTableView()
         self.setTableModel(True)
 
     def setTableModel(self,state):
@@ -42,8 +44,6 @@ class quantTable(QWidget):
         
         for i in range(len(self.table_model.mylist)):
             self.table_view.setRowHeight(i,18) 
-        # table_view.resizeColumnsToContents();
-
 
         self.layout.addWidget(self.table_view)
         self.layout.setContentsMargins(0,0,0,0)
@@ -58,7 +58,6 @@ class MyTableModel(QAbstractTableModel):
         QAbstractTableModel.__init__(self, parent, *args)
         self.mylist = mylist
         self.header = header
-        # self.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
 
     def rowCount(self, parent):
         return len(self.mylist)

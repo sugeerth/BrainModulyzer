@@ -16,6 +16,10 @@ def ColorToInt(color):
     r, g, b, a = map(np.uint32, color)
     return a << 24 | r << 16 | g << 8 | b
 
+
+"""
+Serves as an edge in the graph view 
+"""
 class Edge(QtGui.QGraphicsItem):
 
     Pi = math.pi
