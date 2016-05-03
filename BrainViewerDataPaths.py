@@ -16,11 +16,11 @@ matrix_filename = '/PATH_TO_YOUR_DATA/27nodeMatrix.csv'
 
 Make sure the parcellation files are in the nibabel format
 """
-matrix_filename = '/Users/sugeerthmurugesan/LBLProjects/ELectrode/SummerProject/JesseDataset/27nodeMatrix.csv'
-centre_filename = '/Users/sugeerthmurugesan/LBLProjects/ELectrode/SummerProject/JesseDataset/27nodeCentres.csv'
-centres_abbreviation = '/Users/sugeerthmurugesan/LBLProjects/ELectrode/SummerProject/JesseDataset/regions_199.txt'
-template_filename = '/Users/sugeerthmurugesan/LBLProjects/ELectrode/SummerProject/JesseDataset/ch2better.nii.gz'
-parcelation_filename = '/Users/sugeerthmurugesan/LBLProjects/ELectrode/SummerProject/JesseDataset/allROIs.nii.gz'
+matrix_filename = '/PATH_TO_YOUR_MATRIX_FILE/27nodeMatrix.csv'
+centre_filename = '/PATH_TO_YOUR_CENTRE_COORDINATE_FILE/27nodeCentres.csv'
+centres_abbreviation = '/PATH_TO_THE_ABBREVIATION_OF_THE_DATASET/regions_199.txt'
+template_filename = '/PATH_TO_YOUR_TEMPLATE_FILE/ch2better.nii.gz'
+parcelation_filename = '/PATH_TO_YOUR_PARCELATION_FILE/allROIs.nii.gz'
 
 #set the flag data around here for convenience, if you want to switch on or off 
 # the other windows
