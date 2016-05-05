@@ -16,8 +16,7 @@ centroid depiction via a sphere Fig. C.
  
     Visit (Based on your distribution build visit from this build scirpt--- )
         \- build script from [here](http://portal.nersc.gov/project/visit/releases/2.10.2/build_visit2_10_2)
-        \- and then run these commands---./build_visit2_10_2 --no-visit --silo —console
-                                         ./build_visit2_10_2  --silo --console
+        \- and then run these commands---./build_visit2_10_2 —console
     PySide--goto source and download-- https://pypi.python.org/pypi/PySide/1.2.4
         \- ~/<path to visit python directory>/python setup.py build
         \- ~/<path to visit python directory>/python setup.py install 
