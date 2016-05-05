@@ -259,9 +259,9 @@ class GraphWidget(QtGui.QGraphicsView):
         self.Scene_to_be_updated.update()
 
     def resizeTheWholeGraphWidget(self,state):
-
         if state: 
-            # Entering the correlation mode initiate the window to resize to normal (Workaround not adrdressing the root problem)
+            # Entering the correlation mode initiate the window to \
+            #resize to normal (Workaround not adrdressing the root problem)
             self.BoxGraphWidget.resize(550,550)
             self.BoxTableWidget.resize(self.width,self.width) 
         else: 
@@ -285,52 +285,52 @@ class GraphWidget(QtGui.QGraphicsView):
 
     """
     def setLayout(self,Layout='sfdp'):
-            Layout = (Layout.encode('ascii','ignore')).replace(' ','')
-            self.g =  self.Graph_data().DrawHighlightedGraph(self.EdgeSliderValue)
+        Layout = (Layout.encode('ascii','ignore')).replace(' ','')
+        self.g =  self.Graph_data().DrawHighlightedGraph(self.EdgeSliderValue)
 
-            # asking community detection Engine to compute the Layout
-            self.pos = self.communityDetectionEngine.communityLayoutCalculation(Layout,self.g)
+        # asking community detection Engine to compute the Layout
+        self.pos = self.communityDetectionEngine.communityLayoutCalculation(Layout,self.g)
 
-            # Degree Centrality for the the nodes involved
-            self.Centrality=nx.degree_centrality(self.g)
-            self.Betweeness=nx.betweenness_centrality(self.g)  
-            self.LoadCentrality = nx.load_centrality(self.g)
-            self.ParticipationCoefficient = self..communityDetectionEngine.participation_coefficient(self.g,True)
-            self.ClosenessCentrality = nx.closeness_centrality(self.g)
+        # Degree Centrality for the the nodes involved
+        self.Centrality=nx.degree_centrality(self.g)
+        self.Betweeness=nx.betweenness_centrality(self.g)  
+        self.LoadCentrality = nx.load_centrality(self.g)
+        self.ParticipationCoefficient = self..communityDetectionEngine.participation_coefficient(self.g,True)
+        self.ClosenessCentrality = nx.closeness_centrality(self.g)
 
-            for i in range(len(self.ParticipationCoefficient)):
-                if (str(float(self.ParticipationCoefficient[i])).lower() == 'nan'):
-                       self.ParticipationCoefficient[i] = 0
-            i = 0 
-            
-            """ Calculate rank and Zscore """
-            MetrixDataStructure=eval('self.'+self.nodeSizeFactor)
-            from collections import OrderedDict
-            
-            self.sortedValues = OrderedDict(sorted(MetrixDataStructure.items(), key=lambda x:x[1]))
-            self.average = np.average(self.sortedValues.values())
-            self.std = np.std(self.sortedValues.values())
+        for i in range(len(self.ParticipationCoefficient)):
+            if (str(float(self.ParticipationCoefficient[i])).lower() == 'nan'):
+                   self.ParticipationCoefficient[i] = 0
+        i = 0 
+        
+        """ Calculate rank and Zscore """
+        MetrixDataStructure=eval('self.'+self.nodeSizeFactor)
+        from collections import OrderedDict
+        
+        self.sortedValues = OrderedDict(sorted(MetrixDataStructure.items(), key=lambda x:x[1]))
+        self.average = np.average(self.sortedValues.values())
+        self.std = np.std(self.sortedValues.values())
 
-            for item in self.scene().items():
-                if isinstance(item, Node):
-                    x,y=pos[i]
-                    item.setPos(QtCore.QPointF(x,y)*Factor)
-                    Size = eval('self.'+self.nodeSizeFactor+'[i]')
-                    rank, Zscore = self.calculateRankAndZscore(i)
-                    item.setNodeSize(Size,self.nodeSizeFactor,rank,Zscore)
-                    i = i + 1
+        for item in self.scene().items():
+            if isinstance(item, Node):
+                x,y=pos[i]
+                item.setPos(QtCore.QPointF(x,y)*Factor)
+                Size = eval('self.'+self.nodeSizeFactor+'[i]')
+                rank, Zscore = self.calculateRankAndZscore(i)
+                item.setNodeSize(Size,self.nodeSizeFactor,rank,Zscore)
+                i = i + 1
 
-            for edge in self.edges:
-                edge().adjust()
+        for edge in self.edges:
+            edge().adjust()
 
-            self.Refresh()
+        self.Refresh()
 
-            if not(self.PositionPreserve):
-                self.Scene_to_be_updated.setSceneRect(self.Scene_to_be_updated.itemsBoundingRect())
-                self.setScene(self.Scene_to_be_updated)
+        if not(self.PositionPreserve):
+            self.Scene_to_be_updated.setSceneRect(self.Scene_to_be_updated.itemsBoundingRect())
+            self.setScene(self.Scene_to_be_updated)
 
-            self.fitInView(self.Scene_to_be_updated.itemsBoundingRect(),QtCore.Qt.KeepAspectRatio)
-            self.Scene_to_be_updated.update()
+        self.fitInView(self.Scene_to_be_updated.itemsBoundingRect(),QtCore.Qt.KeepAspectRatio)
+        self.Scene_to_be_updated.update()
 
     """
     Controls computing new data for display on the data
@@ -486,7 +486,6 @@ class GraphWidget(QtGui.QGraphicsView):
     """
     def ChangePropertiesOfGraph(self,value):
         """Changing the value of the communities"""
-
         value_for_slider = float(value) / 1000 
         self.EdgeSliderValue = value_for_slider
         self.EdgeSliderForGraph.setValue = self.EdgeSliderValue
@@ -511,14 +510,6 @@ class GraphWidget(QtGui.QGraphicsView):
         
         self.UpdateThresholdDegree()
         self.Scene_to_be_updated.update()
-    """
-    Controls for visualization of general purpose controls
-    """
-    def LineEditChanged(self):
-        """Handling Line Edit changes"""
-        text = (self.Lineditor.text().encode('ascii','ignore')).replace(' ','')
-        value = float(text)*1000
-        self.EdgeWeight.emit(int(value))
 
     """
     slider for changing the threshold values 
@@ -542,7 +533,14 @@ class GraphWidget(QtGui.QGraphicsView):
         edges = [item for item in self.scene().items() if isinstance(item, Edge)]
         for edge in edges:
             edge.setEdgeThickness(edgeThickness)
-
+    """
+    Controls for visualization of general purpose controls
+    """
+    def LineEditChanged(self):
+        """Handling Line Edit changes"""
+        text = (self.Lineditor.text().encode('ascii','ignore')).replace(' ','')
+        value = float(text)*1000
+        self.EdgeWeight.emit(int(value))
     """
     Lineedit for the threshold values
     """

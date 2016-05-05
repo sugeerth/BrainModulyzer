@@ -116,6 +116,8 @@ class LayoutInit(QtGui.QWidget):
             self.centres_abbreviation = path
         else: 
             exec("%s='%s'" % (('self.'+Flag+'_filename'), path))
+
+        print path, "Dataset that is already there"
         self.setPathForData()
 
     def dialogueConnect(self):
@@ -129,20 +131,9 @@ class LayoutInit(QtGui.QWidget):
         self.Ui.communityLevel.setMaximum(MaxDendoGramDepth+1)
 
     def setPathForData(self):
-
         self.dataSetLoader.matrixPath.setText(self.matrix_filename)
         self.dataSetLoader.centerPath.setText(self.centre_filename)
         self.dataSetLoader.abbrevPath.setText(self.centres_abbreviation)
         self.dataSetLoader.parcelPath.setText(self.parcelation_filename)
         self.dataSetLoader.templatePath.setText(self.template_filename)
         """Logic to send the new files to the start of the applicaiton """
-
-
-
-
-
-
-
-
- 
-

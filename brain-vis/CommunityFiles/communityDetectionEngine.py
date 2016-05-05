@@ -99,6 +99,9 @@ class communityDetectionEngine(QtCore.QObject):
         self.clut= np.zeros(self.counter)
         self.ColorVisit = []
 
+    """
+    Colors to send to communities
+    """
     def ColorForCommunities(self,counter):
         k=self.updateCommunityColors(counter)
         self.ColorVisit = []
@@ -113,11 +116,17 @@ class communityDetectionEngine(QtCore.QObject):
                 self.clut[i] = (255 << 24 | int(255*r) << 16 | int(255*g) << 8 | int(255*b))
                 self.ColorVisit.append((r*255,g*255,b*255,255))
 
+    """
+    Send the comuted communtiy Colors to Visit 
+    """
     def ColorForVisit(self,partition):
         self.ColorToBeSentToVisit = []
         for key,value in partition.items():
             self.ColorToBeSentToVisit.append(self.ColorVisit[value])
 
+    """
+    Class called to calculate the graph Layout during community detection
+    """
     def updateCommunityColors(self,counter):
         self.communityMultiple.clear()
         for key,value in self.partition.items():
@@ -268,7 +277,10 @@ class communityDetectionEngine(QtCore.QObject):
         newwindow()
         self.CommunityColorAndDict.emit(self.ColorToBeSentToVisit,self.partition)
 
-
+    """
+    Start with initial positions for the community overview 
+    graph 
+    """
     def Find_Initial_Positions(self):
         self.communityPos.clear()
 
@@ -384,7 +396,7 @@ class communityDetectionEngine(QtCore.QObject):
         f.close()	
 
     """
-    Metric for visualization 
+    Custom Made--Metric for visualization 
     """
     def participation_coefficient(self,G, weighted_edges=False):
         """"Compute participation coefficient for nodes.
