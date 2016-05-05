@@ -30,7 +30,7 @@ class GraphVisualization(QtGui.QWidget):
         self.g = nx.from_numpy_matrix(self.ThresholdData)  
 
     """
-
+    Identifies the minimum value of the entire matrix
     """
     def DrawHighlightedGraph(self,weight=None):
         if not(weight):
