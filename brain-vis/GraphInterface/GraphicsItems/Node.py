@@ -114,6 +114,11 @@ class Node(QtGui.QGraphicsItem):
         self.nodesize = 10 + value
         # self.update()
 
+
+    """
+    Basically sizes the nodes based on a external slider 
+    We have currently hidden the slider for now 
+    """
     def setNodeSize(self,value,nodeSizeFactor,Rank,Zscore):
         self.degreeCentrality = float(value)
         self.setToolTip(str("Left SupraMarginal Gyrus" + "\n"+nodeSizeFactor+":" + "{0:.2f}".format(self.degreeCentrality) + "\nRank:" + str(Rank) + "\nZ-score:" + "{0:.2f}".format(Zscore)))
@@ -124,8 +129,11 @@ class Node(QtGui.QGraphicsItem):
         path.addEllipse(-10, -10, 20, 20)
         return path
 
+    """
+    Painting the electrodes based on the input that we get 
+    Input is usually visualizatons 
+    """
     def paint(self, painter, option, widget):
-
         painter.setPen(QtCore.Qt.NoPen)
         self.font =  painter.font()
         self.font.setBold(False)
@@ -260,6 +268,10 @@ class Node(QtGui.QGraphicsItem):
     def getNodes(self,community):
         return self.graph().communityMultiple[community]
 
+    """
+    A tricky function where hover and mouse click events talk to other 
+    views of visualizations 
+    """
     def communitySelected(self,value,FromWidget, count = 1):
         self.Flush()
         selectedCommunity = self.getCommunity(value)

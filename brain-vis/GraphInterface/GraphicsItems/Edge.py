@@ -19,6 +19,13 @@ def ColorToInt(color):
 
 """
 Serves as an edge in the graph view 
+A future proposal to implement a hierarchical edge bundling on top of the graph 
+view 
+this should be fairly easy 
+You can look at existing algorithms by Danny Holten at TVCG 
+
+The tooltips may not be perfect as the enclosing bounding rectangle overlaps for each line 
+You can reduce this by changing the bounding rectangle dynamically
 """
 class Edge(QtGui.QGraphicsItem):
 

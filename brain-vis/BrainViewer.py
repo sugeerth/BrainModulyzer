@@ -36,6 +36,11 @@ from GraphInterface.GraphDataStructure import GraphVisualization
 from General_Interface.Layout_interface import LayoutInit
 from UIFiles.ProcessUi import ProcessQuantTable
 
+"""
+This is the main classless interface that talks to all other modules
+I found this implementation to be easier to follow for others
+"""
+
 #Loading UI Files
 loader = QUiLoader()
 
