@@ -110,9 +110,10 @@ class SliceViewer(QtGui.QWidget):
             self.colorRelativeToRegion(0)
 
     def setRegionColors(self, colors):
-        # assert(len(colors) == self.clut.shape[0])
+        assert(len(colors) == self.clut.shape[0])
         # self.CommunityMode = True
         # print "I am getting called"
+
         for i in range(self.clut.shape[0]):
             self.clut[i] = ColorToInt(colors[i])
         self.updateSliceLabel()

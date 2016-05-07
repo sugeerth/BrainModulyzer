@@ -263,10 +263,10 @@ class Node(QtGui.QGraphicsItem):
             self.graph().Refresh()
 
     def getCommunity(self,value):
-        return self.graph().partition[value]
+        return self.graph().communityDetectionEngine.partition[value]
 
     def getNodes(self,community):
-        return self.graph().communityMultiple[community]
+        return self.graph().communityDetectionEngine.communityMultiple[community]
 
     """
     A tricky function where hover and mouse click events talk to other 
@@ -289,7 +289,7 @@ class Node(QtGui.QGraphicsItem):
             self.alledgesupdate()
         # Updating the communities 
         #Inefficient
-        for k,v in self.graph().partition.iteritems():
+        for k,v in self.graph().communityDetectionEngine.partition.iteritems():
                 if v == selectedCommunity:
                     self.graph().NodeIds[k].setOpaqueNodes()
 

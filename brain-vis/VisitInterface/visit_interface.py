@@ -218,6 +218,8 @@ class ParcelationPlot(QtCore.QObject):
 
     def setRegionColors(self,region_colors):
         assert len(region_colors) == self.nRegions
+
+
         # Always use 256 colors since otherwise VisIt's color mapping does
         # not always match expected results
         # Colors: Background: black, region colors as passed by caller,

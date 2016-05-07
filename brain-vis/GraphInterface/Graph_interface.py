@@ -31,7 +31,10 @@ except:
 from VisitInterface.visit_interface import GetColor
 
 from GraphDataStructure import GraphVisualization
+
+
 from DendogramModule.dendogram import dendogram, DendoNode
+from CommunityFiles.communityDetectionEngine import communityDetectionEngine 
 
 
 #from pycallgraph import PyCallGraph
@@ -87,12 +90,11 @@ class GraphWidget(QtGui.QGraphicsView):
         self.grayOutNodes = True
         self.PositionPreserve = True
 
-        self.communityObject = None
+        self.communityobject = None
         self.correlationTable = weakref.ref(correlationTable)
         self.correlationTableObject = self.correlationTable()
         self.partition =[]
         self.sortedValues = None
-        self.communityDetectionEngine = communityDetectionEngine()
         self.communityPos = dict()
         self.Matrix = []
         self.oneLengthCommunities=[]
@@ -110,6 +112,10 @@ class GraphWidget(QtGui.QGraphicsView):
         self.Max=correlationTable.data.max()
         self.DataColor = np.zeros(self.counter)
         self.EdgeColor = np.zeros(self.counter * self.counter)
+
+        self.communityDetectionEngine = communityDetectionEngine(self, self.counter)
+
+
         self.ColorToBeSentToVisit = list() 
         self.EdgeSliderValue = self.Max - 0.01
         self.nodesize = 7
@@ -207,13 +213,13 @@ class GraphWidget(QtGui.QGraphicsView):
     def changeGrayOutNodes(self,state):
         self.grayOutNodes = not(self.grayOutNodes)
         if not(self.level == -1):
-            self.ChangeCommunityColor(self.level-1)
+            self.communityDetectionEngine.ChangeCommunityColor(self.level-1)
         else: 
-            self.ChangeCommunityColor()
+            self.communityDetectionEngine.ChangeCommunityColor()
 
     def changeDendoGramLevel(self,level):
         self.level = level
-        self.ChangeCommunityColor(self.level)
+        self.communityDetectionEngine.ChangeCommunityColor(self.level)
     """
     Function that actually assigns to the nodes based on the 
     mode of the application
@@ -241,11 +247,11 @@ class GraphWidget(QtGui.QGraphicsView):
             self.wid.show()
             self.ColorNodesBasedOnCorrelation = False 
             if not(self.level == -1):
-                self.ChangeCommunityColor(self.level-1)
+                self.communityDetectionEngine.ChangeCommunityColor(self.level-1)
             else: 
-                self.ChangeCommunityColor()
+                self.communityDetectionEngine.ChangeCommunityColor()
             self.CommunityMode.emit(True)
-            self.CommunityColor.emit(self.ColorToBeSentToVisit)
+            self.CommunityColor.emit(self.communityDetectionEngine.ColorToBeSentToVisit)
             self.resizeTheWholeGraphWidget(False) 
         self.Scene_to_be_updated.update()
 
@@ -289,13 +295,13 @@ class GraphWidget(QtGui.QGraphicsView):
         self.g =  self.Graph_data().DrawHighlightedGraph(self.EdgeSliderValue)
 
         # asking community detection Engine to compute the Layout
-        self.pos = self.communityDetectionEngine.communityLayoutCalculation(Layout,self.g)
+        self.pos,Factor = self.communityDetectionEngine.communityLayoutCalculation(Layout,self.g)
 
         # Degree Centrality for the the nodes involved
         self.Centrality=nx.degree_centrality(self.g)
         self.Betweeness=nx.betweenness_centrality(self.g)  
         self.LoadCentrality = nx.load_centrality(self.g)
-        self.ParticipationCoefficient = self..communityDetectionEngine.participation_coefficient(self.g,True)
+        self.ParticipationCoefficient = self.communityDetectionEngine.participation_coefficient(self.g,True)
         self.ClosenessCentrality = nx.closeness_centrality(self.g)
 
         for i in range(len(self.ParticipationCoefficient)):
@@ -313,7 +319,7 @@ class GraphWidget(QtGui.QGraphicsView):
 
         for item in self.scene().items():
             if isinstance(item, Node):
-                x,y=pos[i]
+                x,y=self.pos[i]
                 item.setPos(QtCore.QPointF(x,y)*Factor)
                 Size = eval('self.'+self.nodeSizeFactor+'[i]')
                 rank, Zscore = self.calculateRankAndZscore(i)
@@ -341,7 +347,7 @@ class GraphWidget(QtGui.QGraphicsView):
         # Degree Centrality for the the nodes involved
         self.Centrality=nx.degree_centrality(self.g)
         self.Betweeness=nx.betweenness_centrality(self.g)  
-        self.ParticipationCoefficient = self..communityDetectionEngine.participation_coefficient(self.g,True)
+        self.ParticipationCoefficient = self.communityDetectionEngine.participation_coefficient(self.g,True)
         self.LoadCentrality = nx.load_centrality(self.g)
         self.ClosenessCentrality = nx.closeness_centrality(self.g)
 
@@ -428,13 +434,13 @@ class GraphWidget(QtGui.QGraphicsView):
         self.Scene_to_be_updated.update()
 
     def communityGraphUpdate(self):
-        for edge in self.communityObject.edges:
+        for edge in self.communityDetectionEngine.communityObject.edges:
             edge.update()
 
-        for node in self.communityObject.nodes:
+        for node in self.communityDetectionEngine.communityObject.nodes:
             node.update()
 
-        self.communityObject.Scene_to_be_updated.update()
+        self.communityDetectionEngine.communityObject.Scene_to_be_updated.update()
 
     """
     Controls for hovering over the mouse
@@ -447,13 +453,13 @@ class GraphWidget(QtGui.QGraphicsView):
             node.setAcceptHoverEvents(self.hoverRender)
             node.update()
 
-        if self.communityObject:
-            nodes = [item for item in self.communityObject.scene().items() if isinstance(item, Node)]
+        if self.communityDetectionEngine.communityObject:
+            nodes = [item for item in self.communityDetectionEngine.communityObject.scene().items() if isinstance(item, Node)]
             for node in nodes:
                 node.setAcceptHoverEvents(self.hoverRender)
                 node.update()
 
-            edges = [item for item in self.communityObject.scene().items() if isinstance(item, Edge)]
+            edges = [item for item in self.communityDetectionEngine.communityObject.scene().items() if isinstance(item, Edge)]
             for edge in edges:
                 edge.setAcceptHoverEvents(self.hoverRender)
                 edge.update()
@@ -503,10 +509,10 @@ class GraphWidget(QtGui.QGraphicsView):
                 pass
             else:
                 if not(self.level == -1):
-                    self.ChangeCommunityColor(self.level-1)
+                    self.communityDetectionEngine.ChangeCommunityColor(self.level-1)
                 else: 
-                    self.ChangeCommunityColor()
-            self.CommunityColor.emit(self.ColorToBeSentToVisit)
+                    self.communityDetectionEngine.ChangeCommunityColor()
+            self.CommunityColor.emit(self.communityDetectionEngine.ColorToBeSentToVisit)
         
         self.UpdateThresholdDegree()
         self.Scene_to_be_updated.update()

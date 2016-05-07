@@ -7,7 +7,6 @@ from sys import platform as _platform
 import weakref
 import cProfile
 import pprint
-import const
 
 import community as cm
 try:

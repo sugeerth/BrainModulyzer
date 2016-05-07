@@ -73,7 +73,7 @@ class Edge(QtGui.QGraphicsItem):
         return self.source()
 
     def getNodes(self,community):
-        return self.graph().communityMultiple[community]
+        return self.graph().communityDetectionEngine.communityMultiple[community]
 
     def hoverEnterEvent(self, event):
         if self.ForCommunities:
@@ -236,7 +236,7 @@ class Edge(QtGui.QGraphicsItem):
                 if self.EdgeThreshold < self.weight:
                     if not(self.ColorEdgesFlag):
                         self.setZValue(1)
-                        painter.setPen(QtGui.QPen(QtCore.Qt.black ,self.edgeThickness , QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
+                        painter.setPen(QtGui.QPen(self.EdgeColor ,self.edgeThickness , QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
                         painter.drawLine(line)
                     else: 
                         self.setZValue(2)

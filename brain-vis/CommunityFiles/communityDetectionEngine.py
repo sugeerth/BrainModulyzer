@@ -17,29 +17,35 @@ import community as cm
 import numpy as np
 import networkx as nx
 
-from Dendogram.dendogram import dendogram, DendoNode
-from GraphView.Edge import Edge 
-from GraphView.Node import Node
+# from Dendogram.dendogram import dendogram, DendoNode
+
+from GraphInterface.DendogramModule.dendogram import dendogram, DendoNode
+
+from GraphInterface.GraphicsItems.Edge import Edge
+from GraphInterface.GraphicsItems.Node import Node
+
+# from GraphView.Edge import Edge 
+# from GraphView.Node import Node
 """
 Generates a summary graph for analysis 
 """
 class CommunityWidget(QtGui.QGraphicsView):
-    def __init__(self,induced_graph,correlationTable,clut\
-                    Max, Matrix, ma, Min1, Max1, Pos):
+    def __init__(self,Graph,induced_graph,correlationTable,clut,Max, Matrix, ma, Min1, Max1, Pos):
         QtGui.QGraphicsView.__init__(self)
         self.induced_graph = induced_graph
         self.correlationTable = weakref.ref(correlationTable)
         self.correlationTableObject = self.correlationTable()
         self.setMinimumSize(200, 150)
-        self.initUI()
-
+      
         self.Max = Max
         self.Min1 = Min1
         self.Max1 = Max1
         self.Pos = Pos
         self.ma = ma
+        self.Graph = Graph
         self.Matrix = Matrix
         self.clut = clut
+        self.initUI()
 
     def initUI(self):
         scene = QtGui.QGraphicsScene(self)
@@ -55,19 +61,18 @@ class CommunityWidget(QtGui.QGraphicsView):
         self.setResizeAnchor(QtGui.QGraphicsView.AnchorViewCenter)
 
         i = 0
-        self.CommunityPos = nx.spring_layout(self.induced_graph,pos= self.Pos,weight='weight',scale=450)
+        self.communityPos = nx.spring_layout(self.induced_graph,pos=self.Pos,weight='weight',scale=450)
         for node in self.induced_graph.nodes():
             i = i + 1
-            node_value=Node(Graph,i,self.correlationTableObject,True)
+            node_value=Node(self.Graph,i,self.correlationTableObject,True)
             self.NodeIds.append(node_value)
             scene.addItem(node_value)
-            x,y=self.CommunityPos[node]
+            x,y=self.communityPos[node]
             node_value.setPos(x,y)
             node_value.PutColor(self.clut[i-1])
         k =0 
         for i,j in self.induced_graph.edges():
-                scene.addItem(Edge(Graph,self.NodeIds[i],self.NodeIds[j],k, i,j,self.Max,\
-                    ((self.Matrix[j,i]-self.Min1)/(self.Max1 - self.Min1))*10,True))
+                scene.addItem(Edge(self.Graph,self.NodeIds[i],self.NodeIds[j],k, i,j,self.Max,((self.Matrix[j,i]-self.Min1)/(self.Max1 - self.Min1))*10,True))
                 k = k + 1 
 
         self.setSceneRect(self.Scene_to_be_updated.itemsBoundingRect())
@@ -92,11 +97,13 @@ class communityDetectionEngine(QtCore.QObject):
     CalculateColors = QtCore.Signal(int)
     CalculateFormulae = QtCore.Signal(bool)
 
-    def __init__(self,Graphwidget,distinguishableColors,FontBgColor):
+    def __init__(self,Graphwidget, counter):
         super(communityDetectionEngine, self).__init__()
         self.Graphwidget= Graphwidget
         self.communityMultiple = defaultdict(list)
-        self.clut= np.zeros(self.counter)
+        self.clut= np.zeros(counter)
+        self.communityPos = dict()
+        self.pos = None
         self.ColorVisit = []
 
     """
@@ -153,7 +160,7 @@ class communityDetectionEngine(QtCore.QObject):
             size = float(len(set(partition.values())))
             induced_graph = cm.induced_graph(partition,self.g)
             if not(self.Graphwidget.level == -1): 
-                dendo=cm.generate_dendogram(self.g)
+                dendo=cm.generate_dendrogram(self.g)
                 g = cm.partition_at_level(dendo,self.level)
                 partition = g
             self.ColorForCommunities(len(set(partition.values())))
@@ -201,30 +208,36 @@ class communityDetectionEngine(QtCore.QObject):
                     self.ChangeCommunityColor(self.Graphwidget.level-1)
                 else: 
                     self.ChangeCommunityColor()
-        return pos
+        self.pos = pos
+        return pos,Factor
 
     """
     Threshold changes events are called to this function  
     """
     def ChangeCommunityColor(self, level = -1):
-        self.g =  self.Graph_data().DrawHighlightedGraph(self.EdgeSliderValue)
+        self.g =  self.Graphwidget.Graph_data().DrawHighlightedGraph(self.Graphwidget.EdgeSliderValue)
         self.ColorNodesBasedOnCorrelation = False 
         self.partition=cm.best_partition(self.g)
         self.induced_graph = cm.induced_graph(self.partition,self.g)
 
         if not(level == -1): 
-                dendo=cm.generate_dendogram(self.g)
+                dendo=cm.generate_dendrogram(self.g)
                 g = cm.partition_at_level(dendo,level)
                 self.induced_graph1 = cm.induced_graph(g,self.g)
                 self.partition = g
                 self.induced_graph = self.induced_graph1
+
+        # Induced graph is the data structure responsible for the adjacency matrix of the community
+        # Matrix Before calculating the correlation strength
+        # finding out the lower half values of the matrix, can discard other values as computationally intensive
 
         self.Find_InterModular_Edge_correlativity()
         # Triggering a new window with the same color
         # If the Gray out option is clicked then gray out the nodes without the colors 
         self.ColorForCommunities(len(set(self.partition.values())))
         self.ColorForVisit(self.partition)
-        nodes1 = [item for item in self.scene().items() if isinstance(item, Node)]
+
+        nodes1 = [item for item in self.Graphwidget.scene().items() if isinstance(item, Node)]
         count = 0
         for community in set(self.partition.values()):
             #Ensuring the right color to the right community is delivered
@@ -239,8 +252,8 @@ class communityDetectionEngine(QtCore.QObject):
             break
 
         clut=self.clut
-        Max= self.Max
-        Graph = self
+        Max= self.Graphwidget.Max
+        Graph = self.Graphwidget
         Matrix = self.Matrix
         ma = np.ma.masked_equal(Matrix, 0.0)
         Min1 = ma.min()
@@ -252,30 +265,30 @@ class communityDetectionEngine(QtCore.QObject):
         analysis
         """
         def newwindow():
-            for i in reversed(range(self.hbox.count())): 
-                    self.hbox.itemAt(i).widget().close()
+            for i in reversed(range(self.Graphwidget.hbox.count())): 
+                    self.Graphwidget.hbox.itemAt(i).widget().close()
 
-            community = CommunityWidget(self.induced_graph,self.correlationTableObject, clut \
-                Max, Matrix, ma, Min1, Max1, Pos)
-            Dendogram = dendogram(self,self.g)
+            community = CommunityWidget(self.Graphwidget,self.induced_graph,self.Graphwidget.correlationTableObject, clut,Max, Matrix, ma, Min1, Max1, Pos)
+            Dendogram = dendogram(self.Graphwidget,self.g,clut)
 
-            self.hbox.setContentsMargins(0, 0, 0, 0)
+            self.Graphwidget.hbox.setContentsMargins(0, 0, 0, 0)
 
-            self.hbox.addWidget(community)
-            self.hbox.setContentsMargins(0, 0, 0, 0)
+            self.Graphwidget.hbox.addWidget(community)
+            self.Graphwidget.hbox.setContentsMargins(0, 0, 0, 0)
 
-            self.hbox.addWidget(Dendogram)
-            self.hbox.setContentsMargins(0, 0, 0, 0)
+            self.Graphwidget.hbox.addWidget(Dendogram)
+            self.Graphwidget.hbox.setContentsMargins(0, 0, 0, 0)
 
             self.communityObject = community
             self.dendogramObject = Dendogram
-            self.hbox.setContentsMargins(0, 0, 0, 0)
-            self.wid.setContentsMargins(0, 0, 0, 0)
+            self.Graphwidget.hbox.setContentsMargins(0, 0, 0, 0)
+            self.Graphwidget.wid.setContentsMargins(0, 0, 0, 0)
 
-            self.wid.setLayout(self.hbox)
+            self.Graphwidget.wid.setLayout(self.Graphwidget.hbox)
 
         newwindow()
-        self.CommunityColorAndDict.emit(self.ColorToBeSentToVisit,self.partition)
+        print self.ColorToBeSentToVisit, "Thats all folks"
+        self.Graphwidget.CommunityColorAndDict.emit(self.ColorToBeSentToVisit,self.partition)
 
     """
     Start with initial positions for the community overview 
@@ -285,7 +298,7 @@ class communityDetectionEngine(QtCore.QObject):
         self.communityPos.clear()
 
         count = 0
-        nodes1 = [item for item in self.scene().items() if isinstance(item, Node)]
+        nodes1 = [item for item in self.Graphwidget.scene().items() if isinstance(item, Node)]
 
         for community in set(self.partition.values()):
             Sumx = 0
@@ -316,7 +329,7 @@ class communityDetectionEngine(QtCore.QObject):
         j=0 
         SumTemp = 0
         Edges = 0 
-        nodes1 = [item for item in self.scene().items() if isinstance(item, Node)]
+        nodes1 = [item for item in self.Graphwidget.scene().items() if isinstance(item, Node)]
         # ite1rateing over the indices
         for community in set(self.partition.values()):
             i= i + 1
@@ -341,7 +354,7 @@ class communityDetectionEngine(QtCore.QObject):
                             if node2.counter-1 in list_nodes2:
                                 if node1.counter-1 == node2.counter-1:
                                         continue
-                                if self.Graph_data().ThresholdData[node1.counter-1][node2.counter-1] > 0:
+                                if self.Graphwidget.Graph_data().ThresholdData[node1.counter-1][node2.counter-1] > 0:
                                     Edges = Edges + 1
                 if Edges != 0: 
                     Sum=self.Matrix[i-1,j-1]/Edges
@@ -361,14 +374,14 @@ class communityDetectionEngine(QtCore.QObject):
         modularity = dict()
         start= int(self.correlationTable().data.min()*1000)
         end = int(self.correlationTable().data.max()*1000)
-        g1 = self.Graph_data().DrawHighlightedGraph(self.EdgeSliderValue)
+        g1 = self.Graphwidget.Graph_data().DrawHighlightedGraph(self.Graphwidget.EdgeSliderValue)
         # counter = 0.225
         partition=cm.best_partition(g1)
         Number_of_Communitie = len(set(partition.values()))
 
         for i in range(0,end):
             counter = float(i)/1000
-            g1 =  self.Graph_data().DrawHighlightedGraph(counter)
+            g1 =  self.Graphwidget.Graph_data().DrawHighlightedGraph(counter)
             try: 
                 partition=cm.best_partition(g1)
                 modularity[i] = cm.modularity(partition, g1)

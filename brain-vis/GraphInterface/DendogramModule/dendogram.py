@@ -241,7 +241,7 @@ class DendoNode(QtGui.QGraphicsItem):
 			node1.setSelected(False)
 			node1.update()
 		
-		edges1 = self.graph().widget.communityObject.edges
+		edges1 = self.graph().widget.communityDetectionEngine.communityObject.edges
 
 		for edge in edges1:
 			edge.communityAlpha(True)
@@ -254,7 +254,7 @@ class DendoNode(QtGui.QGraphicsItem):
 			node1.setSelected(False)
 			node1.update()
 
-		edges1 = self.graph().widget.communityObject.edges
+		edges1 = self.graph().widget.communityDetectionEngine.communityObject.edges
 
 		for edge in edges1:
 			edge.communityAlpha(False)
@@ -267,7 +267,7 @@ class DendoNode(QtGui.QGraphicsItem):
 			node = node + i
 
 		# Hack for the paper  
-		communityNode = self.graph().widget.communityObject.nodes
+		communityNode = self.graph().widget.communityDetectionEngine.communityObject.nodes
 		NodesToBeHighlightedInCommunityGraph = self.SubNodesOfCommunityNodes 
 
 		self.makeTransparentCommunityNodes(communityNode)
@@ -275,9 +275,9 @@ class DendoNode(QtGui.QGraphicsItem):
 		for node1 in communityNode:
 			for i in NodesToBeHighlightedInCommunityGraph:
 				if (i.Nodeidss==node1.counter-1): 
-					self.graph().widget.communityObject.NodeIds[node1.counter-1].setSelected(True)
+					self.graph().widget.communityDetectionEngine.communityObject.NodeIds[node1.counter-1].setSelected(True)
 
-		edges1 = self.graph().widget.communityObject.edges
+		edges1 = self.graph().widget.communityDetectionEngine.communityObject.edges
 
 		for edge in edges1:
 			for i in NodesToBeHighlightedInCommunityGraph:
@@ -303,7 +303,7 @@ class DendoNode(QtGui.QGraphicsItem):
 
 	def hoverEnterEvent(self, event):
 		self.graph().widget.NodeIds[self.Nodeidss].allnodesupdate()
-		self.makeOpaqueCommunityNodes(self.graph().widget.communityObject.nodes)
+		self.makeOpaqueCommunityNodes(self.graph().widget.communityDetectionEngine.communityObject.nodes)
 		# self.setTransparent()
 
 		if self.subNodes: 
@@ -324,7 +324,7 @@ class DendoNode(QtGui.QGraphicsItem):
 		return
 		QtGui.QGraphicsItem.hoverEnterEvent(self, event)
 	def mousePressEvent(self, event):
-		self.makeOpaqueCommunityNodes(self.graph().widget.communityObject.nodes)
+		self.makeOpaqueCommunityNodes(self.graph().widget.communityDetectionEngine.communityObject.nodes)
 		self.graph().widget.NodeIds[self.Nodeidss].unsetOpaqueNodes()
 		self.graph().widget.NodeIds[self.Nodeidss].SelectedNode(self.Nodeidss,False, 1)
 		self.graph().widget.NodeIds[self.Nodeidss].setSelected(True)
@@ -340,10 +340,11 @@ to get an overview of the visualization
 and the modularity of the louvain algorithm  
 """
 class dendogram(QtGui.QGraphicsView):
-	def __init__(self,widget, graphData):
+	def __init__(self,widget, graphData,clut):
 		QtGui.QGraphicsView.__init__(self)
 
 		self.g = graphData
+		self.clut = clut
 		self.Order =[]
 		self.height = 250 
 		self.widget = widget
@@ -416,9 +417,9 @@ class dendogram(QtGui.QGraphicsView):
 					temp = Community
 
 			if self.widget.level == 1: 
-				node_value.PutColor(self.widget.clut[temp])
+				node_value.PutColor(self.clut[temp])
 			else:
-				node_value.PutColor(self.widget.clut[Community])
+				node_value.PutColor(self.clut[Community])
 
 			# nodc
 			# node_value.PutColor(self.widget.clut[temp])
@@ -448,9 +449,9 @@ class dendogram(QtGui.QGraphicsView):
 							temp = i
 					#level specific colors
 					if self.widget.level == 1: 
-						node_value.PutColor(self.widget.clut[temp])
+						node_value.PutColor(self.clut[temp])
 					else:
-						node_value.PutColor(self.widget.clut[i])
+						node_value.PutColor(self.clut[i])
 
 					self.scene.addItem(node_value)
 					CorressIds = []
@@ -469,9 +470,9 @@ class dendogram(QtGui.QGraphicsView):
 						temp = i
 				print self.widget.level 
 				if self.widget.level == 1: 
-					node_value.PutColor(self.widget.clut[temp])
+					node_value.PutColor(self.clut[temp])
 				else:
-					node_value.PutColor(self.widget.clut[i])	
+					node_value.PutColor(self.clut[i])	
 				self.NodeIds.append(node_value)
 				self.scene.addItem(node_value)
 				CorressIds = []
@@ -498,7 +499,7 @@ class dendogram(QtGui.QGraphicsView):
 							node_value =DendoNode(self)
 							node_value.setPos(a,height)
 							if self.widget.level == 1: 
-								node_value.PutColor(self.widget.clut[i])
+								node_value.PutColor(self.clut[i])
 							else:
 								node_value.PutColor((128 << 24 | int(128) << 16 | int(128) << 8 | int(128)))
 							# node_value.PutColor(self.widget.clut[i])
@@ -518,7 +519,7 @@ class dendogram(QtGui.QGraphicsView):
 						node_value =DendoNode(self)
 						node_value.setPos(a,height)
 						if self.widget.level == 1: 
-							node_value.PutColor(self.widget.clut[i])
+							node_value.PutColor(self.clut[i])
 						else:
 							node_value.PutColor((128 << 24 | int(128) << 16 | int(128) << 8 | int(128)))
 						# node_value.PutColor(self.widget.clut[i])
@@ -583,6 +584,8 @@ class dendogram(QtGui.QGraphicsView):
 
 	def generateDendogram(self):
 		self.Order = []
-		self.dendogram = cm.generate_dendogram(self.g)
+		
+		self.dendogram = cm.generate_dendrogram(self.g)
+
 		for level in range(len(self.dendogram)):
 			self.Order.append(OrderedDict(sorted(self.dendogram[level].items(), key=lambda t: t[1])))
