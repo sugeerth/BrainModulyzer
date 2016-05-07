@@ -81,6 +81,7 @@ print "Creating main GUI."
 Counter = len(correlationTable.data)
 DataColor = np.zeros(Counter+1)
 
+# Hack for 2 datasets
 if Counter < 50:
         Offset= Counter/2 - Counter/28
 else: 
@@ -165,6 +166,7 @@ widget = GraphWidget(Tab_2_AdjacencyMatrix,Tab_2_CorrelationTable,correlationTab
 
 Tab_1_CorrelationTable.selectedRegionChanged.connect(widget.NodeSelected)
 Tab_1_CorrelationTable.selectedRegionChanged.connect(Tab_2_CorrelationTable.selectRegion)
+
 Tab_2_CorrelationTable.selectedRegionChanged.connect(Tab_1_CorrelationTable.selectedRegionChanged)
 
 """ Controlling Quant Table """
@@ -175,6 +177,8 @@ widget.ThresholdChange.connect(quantData.ThresholdChange)
 
 quantTableObject = quantTable(quantData,widget)
 quantData.DataChange.connect(quantTableObject.setTableModel)
+Tab_1_CorrelationTable.selectedRegionChanged.connect(quantTableObject.setRegions)
+
 
 print "Setting Graph interface"
 
@@ -185,6 +189,7 @@ widget.regionSelected.connect(parcelationPlot.colorRelativeToRegion)
 widget.regionSelected.connect(Tab_1_CorrelationTable.selectRegion)
 widget.CommunityColor.connect(parcelationPlot.setRegionColors)
 widget.regionSelected.connect(Tab_2_CorrelationTable.selectRegion)
+widget.regionSelected.connect(quantTableObject.setRegions)
 
 widget.show()
 
@@ -278,6 +283,7 @@ for sv in slice_views:
     sv.regionSelected.connect(Tab_1_CorrelationTable.selectRegion)
     sv.regionSelected.connect(Tab_2_CorrelationTable.selectRegion)
     sv.regionSelected.connect(widget.NodeSelected)
+    sv.regionSelected.connect(quantTableObject.setRegions)
 
     for sv_other in slice_views:
         if sv == sv_other:
@@ -316,6 +322,7 @@ pickButton.clicked.connect(parcelationPlot.startPick3D)
 parcelationPlot.regionSelected.connect(Tab_1_CorrelationTable.selectRegion)
 parcelationPlot.regionSelected.connect(widget.NodeSelected)
 parcelationPlot.regionSelected.connect(Tab_2_CorrelationTable.selectRegion)
+parcelationPlot.regionSelected.connect(quantTableObject.setRegions)
 
 if MainWindowShowFlag:
     main.show()

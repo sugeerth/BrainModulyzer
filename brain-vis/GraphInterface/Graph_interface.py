@@ -121,6 +121,7 @@ class GraphWidget(QtGui.QGraphicsView):
         self.nodesize = 7
 
         self.Graph_Color(-1)
+        self.Edge_Color()
         # initializing with an arbitrary layout option 
         self.Layout = 'fdp'
 
@@ -137,6 +138,7 @@ class GraphWidget(QtGui.QGraphicsView):
         self.setInteractive(True)
         self.setTransformationAnchor(QtGui.QGraphicsView.AnchorUnderMouse)
         self.setResizeAnchor(QtGui.QGraphicsView.NoAnchor)
+        self.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
         self.scaleView(2.0)
 
         self.NodeIds = []
@@ -218,8 +220,20 @@ class GraphWidget(QtGui.QGraphicsView):
             self.communityDetectionEngine.ChangeCommunityColor()
 
     def changeDendoGramLevel(self,level):
-        self.level = level
+        self.level = level-1
+        self.Ui.communityLevelLineEdit.setText(str(self.level))
         self.communityDetectionEngine.ChangeCommunityColor(self.level)
+
+    """
+    Changes in Line Edit for Community Level Slider
+    """
+    def LevelLineEditChanged(self):
+        """Handling Line Edit changes"""
+        text = (self.Lineditor.text().encode('ascii','ignore')).replace(' ','')
+        value = int(text)
+        self.Ui.communityLevel.setTickPosition(value)
+        self.DendoGramDepth.emit(value)
+
     """
     Function that actually assigns to the nodes based on the 
     mode of the application
@@ -374,6 +388,7 @@ class GraphWidget(QtGui.QGraphicsView):
 
         self.ThresholdChange.emit(True)
         if not(self.ColorNodesBasedOnCorrelation): 
+            self.Ui.communityLevelLineEdit.setText(str(self.level))
             self.DendoGramDepth.emit(self.level)
         
         self.Refresh()
@@ -556,6 +571,9 @@ class GraphWidget(QtGui.QGraphicsView):
         self.Lineditor.setText(str(self.EdgeSliderValue))
         self.Lineditor.returnPressed.connect(self.LineEditChanged)
         self.EdgeWeight.connect(self.EdgeSliderForGraph.setValue)
+
+
+
 
     """
     Colors for the Graph and Edges 

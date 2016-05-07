@@ -42,6 +42,9 @@ class LayoutInit(QtGui.QWidget):
         Ui.snapshot.clicked.connect(self.captureSnapshot)
         Ui.quantTable.addWidget(quantTable)
 
+        Ui.communityLevelLineEdit.returnPressed.connect(widget.LevelLineEditChanged)
+        Ui.communityLevelLineEdit.setText('1')
+        
         self.horizontalLayout = QtGui.QGridLayout()
         self.horizontalLayout.setSpacing(1)
         self.horizontalLayout.addWidget(Node_Label,0,0)

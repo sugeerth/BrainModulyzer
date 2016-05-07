@@ -282,10 +282,13 @@ class DendoNode(QtGui.QGraphicsItem):
 		for edge in edges1:
 			for i in NodesToBeHighlightedInCommunityGraph:
 				for j in NodesToBeHighlightedInCommunityGraph:
-					bool1 = (self.graph().widget.partition[i.subNodes[0]]) == edge.sourceId and self.graph().widget.partition[j.subNodes[0]] == edge.destId 
-					bool2 = (self.graph().widget.partition[i.subNodes[0]]) == edge.destId and self.graph().widget.partition[j.subNodes[0]] == edge.sourceId
-					if bool1 or bool2: 
-						edge.communityAlpha(True)
+					pass
+					# Highlighting edges Functionalites turned off for awhile
+					# bool1 = (self.graph().widget.partition[i.subNodes[0]]) == edge.sourceId and self.graph().widget.partition[j.subNodes[0]] == edge.destId 
+					# bool2 = (self.graph().widget.partition[i.subNodes[0]]) == edge.destId and self.graph().widget.partition[j.subNodes[0]] == edge.sourceId
+					# print bool1
+					# if bool1 or bool2: 
+						# edge.communityAlpha(True)
 					
 		self.graph().widget.communityGraphUpdate()
 
@@ -544,9 +547,6 @@ class dendogram(QtGui.QGraphicsView):
 
 		del self.NodeIds,self.LeafNodeIds,self._2NodeIds
 
-
-
-	
 	def initUI(self):
 		scene = QtGui.QGraphicsScene(self)
 
@@ -559,6 +559,7 @@ class dendogram(QtGui.QGraphicsView):
 		self.setRenderHint(QtGui.QPainter.Antialiasing)
 		self.setTransformationAnchor(QtGui.QGraphicsView.AnchorUnderMouse)
 		self.setResizeAnchor(QtGui.QGraphicsView.AnchorViewCenter)
+		self.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
 		self.setInteractive(True)
 		
 		self.NodeIds = []

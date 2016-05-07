@@ -15,6 +15,8 @@ class quantTable(QWidget):
         self.quantData=quantData
         self.table_view = None
         self.table_model = None
+        self.Brain_Regions = widget.correlationTable().RegionName[0]
+
 
         self.setGeometry(0, 0, 279, 289)
         self.font = QFont("Courier New", 14)
@@ -33,6 +35,7 @@ class quantTable(QWidget):
 
         self.table_model = MyTableModel(self, self.quantData.data_list,self.quantData.header)
         self.table_view = QTableView()
+        # self.model =  QtGui.QStandardItemModel(rows, columns, self.table_view)
         self.table_view.setModel(self.table_model)
         self.table_view.setFont(self.font)
 
@@ -49,6 +52,16 @@ class quantTable(QWidget):
         self.layout.setContentsMargins(0,0,0,0)
         self.setLayout(self.layout)
         self.setContentsMargins(0, 0, 0, 0)
+
+    def setRegions(self, id): 
+        pass
+        # print "This has to be selected",id
+        # name = Brain_Regions[id]
+        # self.table_view.selectRow(id)
+
+    def setCommunityRegions(self, community): 
+        pass
+        # print "This community has to be selected",community
 
     def setData(self,list2):
         self.table_model.setData(list2)

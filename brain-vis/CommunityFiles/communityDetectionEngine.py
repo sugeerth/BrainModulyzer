@@ -59,6 +59,7 @@ class CommunityWidget(QtGui.QGraphicsView):
         self.setInteractive(True)
         self.setTransformationAnchor(QtGui.QGraphicsView.AnchorUnderMouse)
         self.setResizeAnchor(QtGui.QGraphicsView.AnchorViewCenter)
+        self.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
 
         i = 0
         self.communityPos = nx.spring_layout(self.induced_graph,pos=self.Pos,weight='weight',scale=450)
@@ -72,7 +73,7 @@ class CommunityWidget(QtGui.QGraphicsView):
             node_value.PutColor(self.clut[i-1])
         k =0 
         for i,j in self.induced_graph.edges():
-                scene.addItem(Edge(self.Graph,self.NodeIds[i],self.NodeIds[j],k, i,j,self.Max,((self.Matrix[j,i]-self.Min1)/(self.Max1 - self.Min1))*10,True))
+                scene.addItem(Edge(self.Graph,self.NodeIds[i],self.NodeIds[j],k, i,j,self.Max,((self.Matrix[j,i]-self.Min1)/(self.Max1 - self.Min1))*5,True))
                 k = k + 1 
 
         self.setSceneRect(self.Scene_to_be_updated.itemsBoundingRect())
@@ -287,7 +288,6 @@ class communityDetectionEngine(QtCore.QObject):
             self.Graphwidget.wid.setLayout(self.Graphwidget.hbox)
 
         newwindow()
-        print self.ColorToBeSentToVisit, "Thats all folks"
         self.Graphwidget.CommunityColorAndDict.emit(self.ColorToBeSentToVisit,self.partition)
 
     """
