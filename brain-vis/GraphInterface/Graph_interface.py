@@ -597,7 +597,7 @@ class GraphWidget(QtGui.QGraphicsView):
         self.Refresh()
     
     """
-    wheel Events    
+    wheel Events Changes   
     """    
     def wheelEvent(self, event):
         self.scaleView(math.pow(2.0, -event.delta() / 1040.0))
