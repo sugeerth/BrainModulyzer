@@ -85,7 +85,7 @@ DataColor = np.zeros(Counter+1)
 if Counter < 50:
         Offset= Counter/2 - Counter/28
 else: 
-        Offset = 4
+        Offset = 5
 
 main = QtGui.QWidget()
 main.setSizePolicy(QtGui.QSizePolicy.Policy.Expanding, QtGui.QSizePolicy.Policy.Expanding)
