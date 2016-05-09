@@ -25,7 +25,7 @@ As soon as you have that
 
 3) 	Now find your visit python executable 
 	If you are using mac it will be in <PATH_TO_VISIT_BUILD>/visitBuild/visit/python/2.7.11/i386-apple-darwin15_clang/bin/python
-	if it is linux then  <PATH_TO_VISIT_BUILD>/visitBuild/visit/python/2.7.11/<THIS_MIGHT_VARY>/bin/python
+	if it is linux then  <PATH_TO_VISIT_BUILD>/visitBuild/visit/python/2.7.11/<THIS_MIGHT_VARY_BASED_ON_DISTRIBUTION>/bin/python
 
 4)	Now goto each downloaded source folder 
 	numpy==1.11.0
@@ -34,11 +34,11 @@ As soon as you have that
 	nibabel==2.0.2
 	python-louvain==0.4
 	pygraphviz==1.3.1
-		and type <PATH_TO_VISIT_BUILD>/visitBuild/visit/python/2.7.11/<THIS_MIGHT_VARY>/bin/python setup.py build
-				<PATH_TO_VISIT_BUILD>/visitBuild/visit/python/2.7.11/<THIS_MIGHT_VARY>/bin/python setupe.py install
+		and type <PATH_TO_VISIT_BUILD>/visitBuild/visit/python/2.7.11/<THIS_MIGHT_VARY_BASED_ON_DISTRIBUTION>/bin/python setup.py build
+				<PATH_TO_VISIT_BUILD>/visitBuild/visit/python/2.7.11/<THIS_MIGHT_VARY_BASED_ON_DISTRIBUTION>/bin/python setupe.py install
 
 5)	To ensure you have all the packages 
-	type <PATH_TO_VISIT_BUILD>/visitBuild/visit/python/2.7.11/<THIS_MIGHT_VARY>/bin/python
+	type <PATH_TO_VISIT_BUILD>/visitBuild/visit/python/2.7.11/<THIS_MIGHT_VARY_BASED_ON_DISTRIBUTION>/bin/python
 		and then 
 		import numpy
 		import networkx

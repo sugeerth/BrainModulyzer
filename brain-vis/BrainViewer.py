@@ -83,7 +83,7 @@ DataColor = np.zeros(Counter+1)
 
 # Hack for 2 datasets
 if Counter < 50:
-        Offset= Counter/2 - Counter/2``8
+        Offset= Counter/2 - Counter/2
 else: 
         Offset = 5
 
