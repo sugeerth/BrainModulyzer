@@ -17,19 +17,12 @@ centroid depiction via a sphere Fig. C.
 ### Required dependencies ###
  
     Visit (Based on your distribution build visit from this build scirpt--- )
-        \- build script from [here](http://portal.nersc.gov/project/visit/releases/2.10.2/build_visit2_10_2)
-        \- and then run these commands---./build_visit2_10_2 —console
-    PySide--goto source and download-- https://pypi.python.org/pypi/PySide/1.2.4
-        \- ~/<path to visit python directory>/python setup.py build
-        \- ~/<path to visit python directory>/python setup.py install 
-    or install using pip 
-        \- pip install pyside --user --upgrade 
+    PySide 
     networkx 
-        \- pip install networkx --user --upgrade   
-    nibabel -- pip install nibabel --user --upgrade 
-    numpy -- pip install numpy --user --upgrade 
-    pygraphviz  pip install pygraphviz --user --upgrade 
-    communtiy -- pip install community --user --upgrade 
+    nibabel  
+    numpy 
+    pygraphviz   
+    communtiy
     
 ################################
 
@@ -38,15 +31,7 @@ centroid depiction via a sphere Fig. C.
  
 
 ### Installation Procedure ###
- Install all the packages using pip install <package-name> --user --upgrade 
- (So that all packages bind with the visit python) 
- 
- You can install the packages through source or pip REFERENCING your visit python. 
- 
- Also, for running the application in your local desktop,you need to specify the 
- PYTHONPATH to the directory where this application is downloaded, the 
-  script RunMainProject.py takes care of this. You can run the script in without 
- worrying about changing pythonpath everytime: 
+look at the INSTALL_SCRIPT_NOTES
 
 #### Major Files ####
 BrainViewerDataPaths.py -- path for the dataset
