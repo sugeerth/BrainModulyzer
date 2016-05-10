@@ -50,7 +50,7 @@ class Node(QtGui.QGraphicsItem):
         for i in range (self.counter-1):
             self.Brain_Regions[i] = self.Brain_Regions[i].replace(' ','')
         if not(self.ForCommunities): 
-            self.setToolTip(str(self.Abbr[self.counter -1][0]+ " , " + str(self.counter)))
+            self.setToolTip(str(self.Abbr[self.counter-1][0]+ " , " + str(self.counter)))
         else: 
             self.setToolTip(str(counter))
         self.colorvalue = []
@@ -113,15 +113,14 @@ class Node(QtGui.QGraphicsItem):
     def ChangeNodeSize(self,value):
         self.nodesize = 10 + value
         # self.update()
-
-
     """
     Basically sizes the nodes based on a external slider 
     We have currently hidden the slider for now 
     """
     def setNodeSize(self,value,nodeSizeFactor,Rank,Zscore):
         self.degreeCentrality = float(value)
-        self.setToolTip(str("Left SupraMarginal Gyrus" + "\n"+nodeSizeFactor+":" + "{0:.2f}".format(self.degreeCentrality) + "\nRank:" + str(Rank) + "\nZ-score:" + "{0:.2f}".format(Zscore)))
+        self.setToolTip(str(self.Abbr[self.counter-1][0]+"\n"+nodeSizeFactor+":" + "{0:.2f}".format(self.degreeCentrality)\
+         + "\nRank:" + str(Rank) + "\nZ-score:" + "{0:.2f}".format(Zscore)))
         self.nodesize = 7 + 15 * value
 
     def shape(self):

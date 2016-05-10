@@ -7,6 +7,7 @@ from sys import platform as _platform
 import weakref
 import cProfile
 import pprint
+from PySide import QtCore, QtGui , QtUiTools
 
 import community as cm
 try:
@@ -21,6 +22,7 @@ except:
     print "Couldn't import all required packages. See README.md for a list of required packages and installation instructions."
     raise
 
+
 ### BrainViewer packages
 from CorrelationTables.correlation_table import CorrelationTable, \
 CorrelationTableDisplay, CommunityCorrelationTableDisplay
@@ -34,6 +36,7 @@ from GraphInterface.Graph_interface import GraphWidget
 from GraphInterface.GraphDataStructure import GraphVisualization
 from General_Interface.Layout_interface import LayoutInit
 from UIFiles.ProcessUi import ProcessQuantTable
+from PathFiles import *
 
 """
 This is the main classless interface that talks to all other modules
@@ -41,13 +44,6 @@ I found this implementation to be easier to follow for others
 """
 
 #Loading UI Files
-loader = QUiLoader()
-
-CURR = os.environ['PYTHONPATH']
-ui = loader.load(os.path.join(CURR, "UIFiles/interface.ui"))
-dataSetLoader = loader.load(os.path.join(CURR, "UIFiles/datasetviewer.ui"))
-screenshot = loader.load(os.path.join(CURR, "UIFiles/screeshot.ui"))
-
 ### MAIN
 
 # PARAMETERS
@@ -82,10 +78,7 @@ Counter = len(correlationTable.data)
 DataColor = np.zeros(Counter+1)
 
 # Hack for 2 datasets
-if Counter < 50:
-        Offset= Counter/2 - Counter/2
-else: 
-        Offset = 5
+Offset = 5
 
 main = QtGui.QWidget()
 main.setSizePolicy(QtGui.QSizePolicy.Policy.Expanding, QtGui.QSizePolicy.Policy.Expanding)
@@ -170,7 +163,6 @@ Tab_1_CorrelationTable.selectedRegionChanged.connect(Tab_2_CorrelationTable.sele
 Tab_2_CorrelationTable.selectedRegionChanged.connect(Tab_1_CorrelationTable.selectedRegionChanged)
 
 """ Controlling Quant Table """
-
 # the solvent data ...
 quantData=QuantData(widget)
 widget.ThresholdChange.connect(quantData.ThresholdChange)
@@ -236,14 +228,11 @@ if GraphWindowShowFlag:
     BoxGraphWidget.show()
 
 """Window for correlation Table"""
-
 print "Setting Visit Plot" 
 
 widget.CommunityColorAndDict.connect(Tab_1_CorrelationTable.setRegionColors)
 widget.CommunityColorAndDict.connect(Tab_2_CorrelationTable.setRegionColors)
 widget.CommunityMode.connect(parcelationPlot.Community)
-
-# sys.exit(app.exec_())
 
 # Code clicking the group button in the slide
 def buttonGroupClicked(number):
