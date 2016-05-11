@@ -1,4 +1,31 @@
-To install Visit goto the visitBuild folder and run 
+To install Visit from source goto the visitBuild folder and run 
+
+1) ./build_visit.sh --console --system-python --system-qt --makeflags '-j 4'
+As soon as you have that
+
+2) Install all the source files from the requirements folder in the same order
+	pip install numpy==1.11.0
+	pip install decorator>=3.4.0
+	pip install networkx==1.11
+	pip install nibabel==2.0.2
+	pip install python-louvain==0.4
+	pip install pygraphviz==1.3.1
+
+	and then, type python and paste these commands
+		import numpy
+		import networkx
+		import nibabel
+		import python-louvain 
+		import pygraphviz
+	If none of them returns an error then you are set
+
+6)	Configure the data paths in BrainViewerDataPaths.py 
+	and configure paths to run BrainViewer.py   
+
+---------------------------------------------------------------
+IF THAT DOES NOT WORK THEN
+---------------------------------------------------------------
+To install Visit from source goto the visitBuild folder and run 
 
 1) ./build_visit.sh --console --makeflags '-j 4'
 As soon as you have that 
