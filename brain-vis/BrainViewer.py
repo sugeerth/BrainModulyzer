@@ -15,7 +15,7 @@ try:
     import nibabel as nib
     import numpy as np
     # import h5py
-    # ... graph drawin
+    # ... graph drawing
     import networkx as nx
 
 except:
