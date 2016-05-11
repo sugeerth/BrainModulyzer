@@ -31,7 +31,7 @@ centroid depiction via a sphere Fig. C.
  
 
 ### Installation Procedure ###
-look at the INSTALL_SCRIPT_NOTES
+look at the INSTALL_NOTES
 
 #### Major Files ####
 BrainViewerDataPaths.py -- path for the dataset
