@@ -358,7 +358,7 @@ class communityDetectionEngine(QtCore.QObject):
                                     Edges = Edges + 1
                 if Edges != 0: 
                     Sum=self.Matrix[i-1,j-1]/Edges
-                    self.Matrix[i-1,j-1] = Sum
+                self.Matrix[i-1,j-1] = Sum
 
         self.induced_graph = nx.from_numpy_matrix(self.Matrix)
 

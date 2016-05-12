@@ -16,17 +16,12 @@ class CorrelationTable(object):
         self.data = []
         self.RegionName = []
         
-        if dataProcess:
-            self.dataProcess = dataProcess
-            self.data1 = self.dataProcess.ElectodeData['mat_ncv'][dataProcess.syllableUnit][dataProcess.timestep]
-
         with open(filename, 'rb') as csvfile:
             reader = csv.reader(csvfile, delimiter=' ', quotechar='\'')
             self.header = reader.next()
             self.RegionName.append((self.header))
             self.data=np.array([map(float, line) for line in reader])
         i = 0
-
 
         try: 
             with open(centres_abbreviation, 'rb') as csvfile:

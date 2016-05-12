@@ -7,6 +7,7 @@ from sys import platform as _platform
 import weakref
 import cProfile
 import os
+import pickle
 
 """A central interface that links all the UIs in the widgets to their respective
 functionalities in the classes """
@@ -89,7 +90,8 @@ class LayoutInit(QtGui.QWidget):
 
     def captureSnapshot(self):
         """ Logic to capture all the parameters for the data visualization """
-        
+            
+        print "Capturing the timepoints"        
         # Code graciously taken from the Qt website 
         msgBox = QtGui.QMessageBox()
         msgBox.setText("Capturing the snapshot.")
@@ -99,11 +101,50 @@ class LayoutInit(QtGui.QWidget):
         ret = msgBox.exec_()
 
         if ret == QtGui.QMessageBox.Save:
-            pass
+            Sanpshots = dict()
+            print "Logic for capturing the paprameters of the visualizations"
+            Sanpshots["correlationMode"] = self.widget.ColorNodesBasedOnCorrelation
+            Sanpshots["nodeMapping"] = self.widget.nodeSizeFactor
+            Sanpshots["edgeThickness"] = self.widget.nodeSizeFactor
+            Sanpshots["onlyEdges:"] = self.widget.DisplayOnlyEdges
+            Sanpshots["transparentNodes"] = self.widget.setTransp
+            Sanpshots["highlightEdges"] = self.widget.HighlightedId
+            Sanpshots["communityGraphLevel"] = self.widget.level
+            Sanpshots["datasetLoaded"] = (self.matrix_filename,self.template_filename,self.parcelation_filename)
+
+            print "Correlation Mode:",self.widget.ColorNodesBasedOnCorrelation,"Node Mapping:",self.widget.nodeSizeFactor,\
+            "Edge Thickness:",self.widget.nodeSizeFactor, "Only Edges:",self.widget.DisplayOnlyEdges,\
+             "Transparent Nodes:",self.widget.setTransp,"highlight edges:",self.widget.HighlightedId,\
+              "Comunity Graph Level:",self.widget.level,\
+             "Dataset Loaded:",self.matrix_filename,":",self.template_filename,":"\
+             ,self.parcelation_filename
+            
+            directory_path =os.environ['PYTHONPATH'].split(os.pathsep)
+            print directory_path
+            directory_path[0] += str('/Snapshots')
+            # Make a Directory 
+            try:
+                os.makedirs(directory_path[0])
+            except OSError as exception:
+                pass
+
+            from time import gmtime, strftime
+            fileName = strftime("%Y-%m-%d %H:%M:%S", gmtime())
+            '2009-01-05 22:14:39'
+
+            with open(directory_path[0]+"/"+fileName, 'w') as outfile:
+                pickle.dump(Sanpshots, outfile)
+
 
     def getSnapshots(self):
         """ Logic to retrieve the snapshots from the output file """
+        print type(self.screenshot)
+        print self.screenshot 
+
         self.screenshot.show()
+
+
+
 
     """ Dataset specific functions """
     def openFileDialog(self):
