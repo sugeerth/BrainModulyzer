@@ -15,6 +15,9 @@ class LayoutInit(QtGui.QWidget):
     def __init__(self,widget,quantTable,Ui,dataSetLoader,screenshot,matrix_filename,centre_filename,centres_abbreviation,template_filename,parcelation_filename, Brain_image_filename=None,Electrode_Ids_filename=None,SelectedElectrodes_filename=None,Electrode_data_filename=None,Electrode_mat_filename=None):
         super(LayoutInit,self).__init__()
 
+        self.directory_path =os.environ['PYTHONPATH'].split(os.pathsep)
+        self.directory_path[0] += str('/Snapshots')
+
         self.matrix_filename=matrix_filename
         self.centre_filename=centre_filename
         self.centres_abbreviation =centres_abbreviation
@@ -42,6 +45,11 @@ class LayoutInit(QtGui.QWidget):
         Ui.getSnapshots.clicked.connect(self.getSnapshots)
         Ui.snapshot.clicked.connect(self.captureSnapshot)
         Ui.quantTable.addWidget(quantTable)
+
+        # self.screenshot.OkCancel.accepted.connect(self.changeParameters)
+        # self.screenshot.OkCancel.accepted.connect(self.exitDialogueBox)
+
+        self.screenshot.listFiles.itemDoubleClicked.connect(self.changeParameters)
 
         Ui.communityLevelLineEdit.returnPressed.connect(widget.LevelLineEditChanged)
         Ui.communityLevelLineEdit.setText('1')
@@ -81,6 +89,13 @@ class LayoutInit(QtGui.QWidget):
         self.dataSetLoader = dataSetLoader
         self.screenshot= screenshot
 
+    def changeParameters(self, item=None):
+        print "Changes that can be made"
+
+
+    def exitDialogueBox(self):
+        print "cancel"
+
     def widgetChanges(self):
         self.widget.setMinimumSize(400, 400)
         self.widget.slider_imple()
@@ -112,19 +127,16 @@ class LayoutInit(QtGui.QWidget):
             Sanpshots["communityGraphLevel"] = self.widget.level
             Sanpshots["datasetLoaded"] = (self.matrix_filename,self.template_filename,self.parcelation_filename)
 
-            print "Correlation Mode:",self.widget.ColorNodesBasedOnCorrelation,"Node Mapping:",self.widget.nodeSizeFactor,\
-            "Edge Thickness:",self.widget.nodeSizeFactor, "Only Edges:",self.widget.DisplayOnlyEdges,\
-             "Transparent Nodes:",self.widget.setTransp,"highlight edges:",self.widget.HighlightedId,\
-              "Comunity Graph Level:",self.widget.level,\
-             "Dataset Loaded:",self.matrix_filename,":",self.template_filename,":"\
-             ,self.parcelation_filename
-            
-            directory_path =os.environ['PYTHONPATH'].split(os.pathsep)
-            print directory_path
-            directory_path[0] += str('/Snapshots')
+            # print "Correlation Mode:",self.widget.ColorNodesBasedOnCorrelation,"Node Mapping:",self.widget.nodeSizeFactor,\
+            # "Edge Thickness:",self.widget.nodeSizeFactor, "Only Edges:",self.widget.DisplayOnlyEdges,\
+            #  "Transparent Nodes:",self.widget.setTransp,"highlight edges:",self.widget.HighlightedId,\
+            #   "Comunity Graph Level:",self.widget.level,\
+            #  "Dataset Loaded:",self.matrix_filename,":",self.template_filename,":"\
+            #  ,self.parcelation_filename
+
             # Make a Directory 
             try:
-                os.makedirs(directory_path[0])
+                os.makedirs(self.directory_path[0])
             except OSError as exception:
                 pass
 
@@ -132,19 +144,18 @@ class LayoutInit(QtGui.QWidget):
             fileName = strftime("%Y-%m-%d %H:%M:%S", gmtime())
             '2009-01-05 22:14:39'
 
-            with open(directory_path[0]+"/"+fileName, 'w') as outfile:
+            with open(self.directory_path[0]+"/"+fileName, 'w') as outfile:
                 pickle.dump(Sanpshots, outfile)
-
 
     def getSnapshots(self):
         """ Logic to retrieve the snapshots from the output file """
-        print type(self.screenshot)
-        print self.screenshot 
-
+        files = None
+        files = [ f for f in os.listdir(self.directory_path[0]) if os.path.isfile(os.path.join(self.directory_path[0],f)) ]
+        self.screenshot.listFiles.clear() 
+        for i,fileName in enumerate(files):
+            item = None
+            item = QtGui.QListWidgetItem(unicode(fileName),self.screenshot.listFiles)       
         self.screenshot.show()
-
-
-
 
     """ Dataset specific functions """
     def openFileDialog(self):

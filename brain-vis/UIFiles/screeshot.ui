@@ -7,31 +7,21 @@
     <x>0</x>
     <y>0</y>
     <width>321</width>
-    <height>359</height>
+    <height>331</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QListWidget" name="listWidget">
+  <widget class="QListWidget" name="listFiles">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
      <width>321</width>
-     <height>361</height>
+     <height>331</height>
     </rect>
    </property>
-   <item>
-    <property name="text">
-     <string>2015-09-12 12:01 AM </string>
-    </property>
-   </item>
-   <item>
-    <property name="text">
-     <string>New Item</string>
-    </property>
-   </item>
   </widget>
  </widget>
  <resources/>
