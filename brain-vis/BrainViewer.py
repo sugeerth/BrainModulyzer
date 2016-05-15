@@ -6,7 +6,7 @@ import time
 from sys import platform as _platform
 import weakref
 import cProfile
-import pprint
+import pprint-
 from PySide import QtCore, QtGui , QtUiTools
 
 import community as cm
@@ -15,7 +15,7 @@ try:
     import nibabel as nib
     import numpy as np
     # import h5py
-    # ... graph drawing
+    # ... graph drawi
     import networkx as nx
 
 except:
