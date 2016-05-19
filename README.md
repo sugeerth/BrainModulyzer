@@ -45,7 +45,7 @@ lists important graph properties of the graph shown in Fig. C.
 [![ScreenShot](http://s32.postimg.org/7zro1qnrp/Visual_Tool_Page_1.jpg)]()
 
 
-### Citation ###
+### Citation Infomration###
 @ARTICLE{7466855, 
 author={S. Murugesan and K. Bouchard and J. A. Brown and B. Hamann and W. W. Seeley and A. Trujillo and G. H. Weber}, 
 journal={IEEE/ACM Transactions on Computational Biology and Bioinformatics}, 
