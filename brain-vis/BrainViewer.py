@@ -6,7 +6,7 @@ import time
 from sys import platform as _platform
 import weakref
 import cProfile
-import pprint-
+import pprint
 from PySide import QtCore, QtGui , QtUiTools
 
 import community as cm
@@ -174,8 +174,7 @@ Tab_1_CorrelationTable.selectedRegionChanged.connect(quantTableObject.setRegions
 
 print "Setting Graph interface"
 
-Graph_Layout=LayoutInit(widget,quantTableObject,ui,dataSetLoader,screenshot,matrix_filename,centre_filename,centres_abbreviation,template_filename,parcelation_filename,\
-    Brain_image_filename,Electrode_Ids_filename,SelectedElectrodes_filename,Electrode_data_filename,Electrode_mat_filename)
+Graph_Layout=LayoutInit(widget,quantTableObject,ui,dataSetLoader,screenshot,matrix_filename,centre_filename,centres_abbreviation,template_filename,parcelation_filename)
 
 widget.regionSelected.connect(parcelationPlot.colorRelativeToRegion)
 widget.regionSelected.connect(Tab_1_CorrelationTable.selectRegion)

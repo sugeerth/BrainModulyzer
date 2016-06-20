@@ -62,7 +62,10 @@ class CommunityWidget(QtGui.QGraphicsView):
         self.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
 
         i = 0
-        self.communityPos = nx.spring_layout(self.induced_graph,pos=self.Pos,weight='weight',scale=450)
+
+        self.communityPos = nx.nx_pydot.graphviz_layout(self.induced_graph,prog='fdp',args='-Gsep=.25,-GK=20-Eweight=2')
+        # self.communityPos = nx.spring_layout(self.induced_graph,pos=self.Pos,weight='weight',scale=450)
+
         for node in self.induced_graph.nodes():
             i = i + 1
             node_value=Node(self.Graph,i,self.correlationTableObject,True)
@@ -106,6 +109,7 @@ class communityDetectionEngine(QtCore.QObject):
         self.communityPos = dict()
         self.pos = None
         self.ColorVisit = []
+        self.counter = counter
 
     """
     Colors to send to communities
@@ -162,7 +166,7 @@ class communityDetectionEngine(QtCore.QObject):
             induced_graph = cm.induced_graph(partition,self.g)
             if not(self.Graphwidget.level == -1): 
                 dendo=cm.generate_dendrogram(self.g)
-                g = cm.partition_at_level(dendo,self.level)
+                g = cm.partition_at_level(dendo,self.Graphwidget.level)
                 partition = g
             self.ColorForCommunities(len(set(partition.values())))
         if (Layout == "circular") or (Layout == "shell") or (Layout == "random") \
@@ -193,13 +197,13 @@ class communityDetectionEngine(QtCore.QObject):
                         self.ChangeCommunityColor()
         else:
             if Layout != "circo":
-                pos=nx.graphviz_layout(self.g,prog=Layout,args='-Gsep=.25,-GK=20-Eweight=2')
+                pos=nx.nx_pydot.graphviz_layout(self.g,prog=Layout,args='-Gsep=.25,-GK=20-Eweight=2')
                 Factor = 0.7 + self.counter/100
                 if Layout == 'sfdp':
                     Factor = 10
             else:
                 print "Before Circo" 
-                pos=nx.graphviz_layout(self.g,prog=Layout)
+                pos=nx.nx_pydot.graphviz_layout(self.g,prog=Layout)
                 print "After Circo" 
 
                 Factor = 0.8
@@ -325,7 +329,8 @@ class communityDetectionEngine(QtCore.QObject):
         # Matrix Before calculating the correlation strength
         # finding out the lower half values of the matrix, can discard other values as computationally intensive
         self.Matrix = np.tril(self.Matrix,-1)
-        i=0 
+        i=0
+        Sum = 0 
         j=0 
         SumTemp = 0
         Edges = 0 

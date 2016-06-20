@@ -180,7 +180,7 @@ class GraphWidget(QtGui.QGraphicsView):
         self.nodes = [weakref.ref(item) for item in self.scene().items() if isinstance(item, Node)]
         
         # setting a sample layout to show 
-        self.setLayout('spring')
+        self.setLayout('fdp')
 
     """
     Highlight edges for visualization
@@ -196,7 +196,7 @@ class GraphWidget(QtGui.QGraphicsView):
         self.Scene_to_be_updated.update()
 
     def LayoutCalculation(self):
-        self.setLayout('spring')
+        self.setLayout('fdp')
 
     def NewNodeSelected(self,idx):
         self.HighlightedId = idx 
