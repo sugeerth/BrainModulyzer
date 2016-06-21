@@ -86,7 +86,6 @@ class SliceViewer(QtGui.QWidget):
         self.sliceChanged.emit(self.displayedSlice)
 
     def colorRelativeToRegion(self, regionId):
-    # print "SElected"
         # print "receiving in slice views",self.sender() 
 
         if not(self.CommunityMode): 
@@ -119,6 +118,7 @@ class SliceViewer(QtGui.QWidget):
         self.updateSliceLabel()
 
     def mousePressEvent(self, event):
+
         pos = self.label.mapFromParent(event.pos())
         x, y = pos.x(), pos.y()
         if self.scaleFactor > 1:
@@ -127,12 +127,12 @@ class SliceViewer(QtGui.QWidget):
         parcelation_slice = self.extractSlice(self.parcelation)[:, ::-1]
         if x < parcelation_slice.shape[0] and y < parcelation_slice.shape[1]:
             newId = parcelation_slice[x, y]
+
             if newId != 0:
                 newId -= 1
                 if self.CommunityMode:
                     self.regionId = newId
                     # self.colorRelativeToRegionCommunity(newId)
-                    pass
                 else: 
                     self.colorRelativeToRegion(newId)
                 # print "getting invoked"

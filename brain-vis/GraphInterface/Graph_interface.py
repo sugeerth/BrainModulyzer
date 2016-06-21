@@ -479,8 +479,8 @@ class GraphWidget(QtGui.QGraphicsView):
                 edge.setAcceptHoverEvents(self.hoverRender)
                 edge.update()
 
-            DendoNodes = [item for item in self.dendogramObject.scene.items() if isinstance(item, DendoNode)]
-            AllEdges = [item for item in self.dendogramObject.scene.items() if isinstance(item, Edge)]
+            DendoNodes = [item for item in self.communityDetectionEngine.dendogramObject.scene.items() if isinstance(item, DendoNode)]
+            AllEdges = [item for item in self.communityDetectionEngine.dendogramObject.scene.items() if isinstance(item, Edge)]
             
             for node in DendoNodes:
                 node.setAcceptHoverEvents(self.hoverRender)

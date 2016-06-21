@@ -362,7 +362,7 @@ class communityDetectionEngine(QtCore.QObject):
                                 if self.Graphwidget.Graph_data().ThresholdData[node1.counter-1][node2.counter-1] > 0:
                                     Edges = Edges + 1
                 if Edges != 0: 
-                    Sum=self.Matrix[i-1,j-1]/Edges
+                    Sum=float("{0:.2f}".format(self.Matrix[i-1,j-1]/Edges))
                 self.Matrix[i-1,j-1] = Sum
 
         self.induced_graph = nx.from_numpy_matrix(self.Matrix)

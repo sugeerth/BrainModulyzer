@@ -119,7 +119,6 @@ viewersLayout1.setContentsMargins(0,0,0,0)
 slice_views[0].sliceChanged.connect(brainTemplatePlot.setThreeSliceX)
 slice_views[0].regionSelected.connect(parcelationPlot.colorRelativeToRegion)
 
-
 slice_views[1] = SliceViewer(template_data, parcelation_data, 1, correlationTable, colorTable, selectedColor)
 viewersLayout1.addWidget(slice_views[1])
 viewersLayout1.setContentsMargins(0,0,0,0)
