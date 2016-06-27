@@ -12,14 +12,14 @@ import pickle
 """A central interface that links all the UIs in the widgets to their respective
 functionalities in the classes """
 class LayoutInit(QtGui.QWidget):
-    def __init__(self,widget,quantTable,Ui,dataSetLoader,screenshot,matrix_filename,centre_filename,template_filename,parcelation_filename):
+    def __init__(self,widget,quantTable,Ui,dataSetLoader,screenshot,matrix_filename,template_filename,parcelation_filename):
         super(LayoutInit,self).__init__()
 
         self.directory_path =os.environ['PYTHONPATH'].split(os.pathsep)
         self.directory_path[0] += str('/Snapshots')
 
         self.matrix_filename=matrix_filename
-        self.centre_filename=centre_filename
+        # self.centre_filename=centre_filename
         # self.centres_abbreviation =centres_abbreviation
         self.template_filename=template_filename
         self.parcelation_filename=parcelation_filename
@@ -188,7 +188,7 @@ class LayoutInit(QtGui.QWidget):
 
     def setPathForData(self):
         self.dataSetLoader.matrixPath.setText(self.matrix_filename)
-        self.dataSetLoader.centerPath.setText(self.centre_filename)
+        # self.dataSetLoader.centerPath.setText(self.centre_filename)
         self.dataSetLoader.abbrevPath.setText(self.centres_abbreviation)
         self.dataSetLoader.parcelPath.setText(self.parcelation_filename)
         self.dataSetLoader.templatePath.setText(self.template_filename)

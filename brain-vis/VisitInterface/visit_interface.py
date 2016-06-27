@@ -4,278 +4,11 @@ from PySide import QtCore, QtGui
 import re
 import tempfile
 import time
-import visit
-from color_table import *
-
-import vtk
-from vtk.util import numpy_support
 import os
-import numpy
-
-import vtk
-from numpy import *
-import nibabel as nib
-import numpy as np
-
-from PyQt4 import QtCore, QtGui
-from vtk.qt4.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
-
-class MouseInteractorHighLightActor(vtk.vtkInteractorStyleTrackballCamera):
- 
-    def __init__(self,parent=None):
-        self.AddObserver("LeftButtonPressEvent",self.leftButtonPressEvent)
- 
-        self.LastPickedActor = None
-        self.LastPickedProperty = vtk.vtkProperty()
- 
-    def leftButtonPressEvent(self,obj,event):
-        clickPos = self.GetInteractor().GetEventPosition()
- 
-        picker = vtk.vtkPropPicker()
-        picker.Pick(clickPos[0], clickPos[1], 0, self.GetDefaultRenderer())
- 
-        # get the new
-        self.NewPickedActor = picker.GetActor()
-        print self.NewPickedActor
- 
-        # If something was selected
-        if self.NewPickedActor:
-            # If we picked something before, reset its property
-            if self.LastPickedActor:
-                self.LastPickedActor.GetProperty().DeepCopy(self.LastPickedProperty)
- 
- 
-            # Save the property of the picked actor so that we can
-            # restore it next time
-            self.LastPickedProperty.DeepCopy(self.NewPickedActor.GetProperty())
-            # Highlight the picked actor by changing its properties
-            self.NewPickedActor.GetProperty().SetColor(0.0, 1.0, 0.0)
-            self.NewPickedActor.GetProperty().SetDiffuse(1.0)
-            self.NewPickedActor.GetProperty().SetSpecular(0.0)
- 
-            # save the last picked actor
-            self.LastPickedActor = self.NewPickedActor
- 
-        self.OnLeftButtonDown()
-        return
-
-size = 5
-
-template_filename = '/Users/sugeerthmurugesan/LBLProjects/ELectrode/SummerProject/JesseDataset/ch2better.nii.gz'
-parcelation_filename = '/Users/sugeerthmurugesan/LBLProjects/ELectrode/SummerProject/JesseDataset/allROIs.nii.gz'
-
-ParcelationReader = vtk.vtkNIFTIImageReader()
-TemplateReader = vtk.vtkNIFTIImageReader()
-
-Templatedmc =vtk.vtkDiscreteMarchingCubes()
-dmc =vtk.vtkDiscreteMarchingCubes()
-
-Template = vtk.vtkPolyData()
-Parcelation = vtk.vtkPolyData()
-
-#  print data 
-
-appendFilter = vtk.vtkAppendPolyData()
-cleanFilter = vtk.vtkCleanPolyData()
-
-mapper = vtk.vtkPolyDataMapper()
-TemplateMapper = vtk.vtkPolyDataMapper()
-ParcelationMapper = vtk.vtkPolyDataMapper()
-
-mapper2 = vtk.vtkPolyDataMapper()
-
-outline = vtk.vtkOutlineFilter()
-
-actor = vtk.vtkActor()
-actor1 = vtk.vtkActor()
-actor2 = vtk.vtkActor()
-
-renderer = vtk.vtkRenderer()
-renderWin = vtk.vtkRenderWindow()
-
-axesActor = vtk.vtkAnnotatedCubeActor()
-axes = vtk.vtkOrientationMarkerWidget()
-
-
-renderInteractor = vtk.vtkRenderWindowInteractor()
-
-colorsTemplate = vtk.vtkUnsignedCharArray()
-colorsTemplate.SetNumberOfComponents(3)
-
-colorsParcelation = vtk.vtkUnsignedCharArray()
-colorsParcelation.SetNumberOfComponents(3)
-
-points = vtk.vtkPoints()
-triangles = vtk.vtkCellArray()
-
-picker = vtk.vtkCellPicker()
-
-lut = vtk.vtkLookupTable()
-lut.SetNumberOfTableValues(7)
-nc = vtk.vtkNamedColors()
-colorNames = nc.GetColorNames().split('\n')
-
-global template_data 
-global parcelation_data
-
-def InitiatePickerForRenderer():
-    style = MouseInteractorHighLightActor()
-    style.SetDefaultRenderer(renderer)
-    renderInteractor.SetInteractorStyle(style)
-
-InitiatePickerForRenderer()
-
-template_data = None
-parcelation_data = None
-
-def DefineTemplateDataToBeMapped():
-    global template_data
-    TemplateReader.SetFileName(template_filename)
-
-    Templatedmc.SetInputConnection(TemplateReader.GetOutputPort())
-    # dmc.GenerateValues(1, 1, 1)`
-    Templatedmc.Update()
-    template_data = Templatedmc.GetOutput()
-
-def DefineParcelationDataToBeMapped():
-    global parcelation_data
-    ParcelationReader.SetFileName(parcelation_filename)
-    dmc.SetInputConnection(ParcelationReader.GetOutputPort())
-    # dmc.GenerateValues(1, 1, 1)
-    dmc.Update()
-    parcelation_data = dmc.GetOutput()
-
-def MergeTwoDatasets():
-    Template.ShallowCopy(template_data)
-    Parcelation.ShallowCopy(parcelation_data)
-
-def SetColors():
-    rgba = list(nc.GetColor4d("Red"))
-    rgba[3] = 0.5
-    nc.SetColor("My Red",rgba)
-    rgba = nc.GetColor4d("My Red")
-    lut.SetTableValue(0,rgba)
-    rgba = nc.GetColor4d("DarkGreen")
-    rgba[3] = 0.3
-    lut.SetTableValue(1,rgba)
-    lut.SetTableValue(2,nc.GetColor4d("Blue"))
-    lut.SetTableValue(3,nc.GetColor4d("Cyan"))
-    lut.SetTableValue(4,nc.GetColor4d("Magenta"))
-    lut.SetTableValue(5,nc.GetColor4d("Yellow"))
-    # lut.SetTableRange(elevation.GetScalarRange())
-    lut.Build()
-
-
-def AppendDatasets():
-    TemplateMapper.SetInputConnection(Templatedmc.GetOutputPort())
-    ParcelationMapper.SetInputConnection(dmc.GetOutputPort())
-    
-    ParcelationMapper.SetLookupTable(lut)
-    ParcelationMapper.SetScalarModeToUseCellData()
-
-def SetActorsAndOutline():
-    actor.SetMapper(TemplateMapper)
-    actor1.SetMapper(ParcelationMapper)
-
-    # outline
-    if vtk.VTK_MAJOR_VERSION <= 5:
-        outline.SetInputData(Templatedmc.GetOutput())
-    else:
-        outline.SetInputConnection(Templatedmc.GetOutputPort())
-
-    if vtk.VTK_MAJOR_VERSION <= 5:
-        mapper2.SetInput(outline.GetOutput())
-    else:
-        mapper2.SetInputConnection(outline.GetOutputPort())
-
-    actor2.SetMapper(mapper2)
-
-def AddAxisActor():
-    axesActor.SetXPlusFaceText('X')
-    axesActor.SetXMinusFaceText('X-')
-    axesActor.SetYMinusFaceText('Y')
-    axesActor.SetYPlusFaceText('Y-')
-    axesActor.SetZMinusFaceText('Z')
-    axesActor.SetZPlusFaceText('Z-')
-    axesActor.GetTextEdgesProperty().SetColor(1,1,0)
-    axesActor.GetTextEdgesProperty().SetLineWidth(2)
-    axesActor.GetCubeProperty().SetColor(0,0,1)
-    axes.SetOrientationMarker(axesActor)
-    axes.SetInteractor(renderInteractor)
-    axes.EnabledOn()
-    axes.InteractiveOn()
-    renderer.ResetCamera()
-
-def SetRenderer():
-    # With almost everything else ready, its time to initialize the renderer and window, as well as creating a method for exiting the application
-    actor.GetProperty().SetColor(1.0, 0.4, 0.4)
-    actor.GetProperty().SetOpacity(0.1)
-
-    renderer.AddActor(actor)
-    renderer.AddActor(actor1)
-    renderer.AddActor(actor2)
-
-    # renderer.SetBackground(1.0, 1.0, 1.0)
-
-    renderWin.AddRenderer(renderer)
-    renderInteractor.SetRenderWindow(renderWin)
-
-    renderWin.SetSize(500, 500)
-
-DefineTemplateDataToBeMapped()
-DefineParcelationDataToBeMapped()
-MergeTwoDatasets()
-SetColors()
-AppendDatasets()
-SetActorsAndOutline()
-SetRenderer()
-AddAxisActor()
-
-# A simple function to be called when the user decides to quit the application.
-def exitCheck(obj, event):
-    if obj.GetEventPending() != 0:
-        obj.SetAbortRender(1)
-
-# Tell the application to use the function as an exit check.
-renderWin.AddObserver("AbortCheckEvent", exitCheck)
-# picker.AddObserver("EndPickEvent", annotatePick)
-
-renderInteractor.Initialize()
-
-# picker.Pick(85, 126, 100,renderer)
-# Because nothing will be rendered without any input, we order the first render manually before control is handed over to the main-loop.
-renderWin.Render()
-
-renderInteractor.Start()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+import visit
+import re
+import csv
+from color_table import *
 
 # Helper functions
 def GetColor(colortable, value):
@@ -326,7 +59,6 @@ def OpenXYZCoordinateFile(filename):
 
 class BrainTemplatePlot(object):
     def __init__(self, template_data):
-        print template_data, "This is the template data"
         self.template_headername, self.template_dataname = SaveAsBOV(template_data, 'var')
         visit.OpenDatabase(self.template_headername)
         self.contour_id = visit.GetNumPlots()
@@ -390,13 +122,16 @@ Talks to python interface of the Visit to run easy visualizations
 class ParcelationPlot(QtCore.QObject):
     regionSelected = QtCore.Signal(int)
 
-    def __init__(self, region_data, centroidFilename, correlationTable, colorTable, selectedColor):
+    def __init__(self, region_data, parcelation_filename, correlationTable, colorTable, selectedColor):
         super(ParcelationPlot, self).__init__()
         self.correlationTable = correlationTable
         self.communityMode = False
+        self.centroidFilename = None
         self.colorTable = colorTable
+        self.region_data = region_data
         self.selectedColor = selectedColor
         self.nRegions = len(self.correlationTable.header)
+        self.parcelation_filename = parcelation_filename
 
         self.regionPlotId = -1
         self.centroidPlotId = -1
@@ -404,7 +139,10 @@ class ParcelationPlot(QtCore.QObject):
 
         self.setupColorTable()
         self.setupRegionPlot(region_data)
-        self.setupCentroidPlot(centroidFilename)
+
+        self.setCentreFilename()
+        self.setupCentroidPlot(self.centroidFilename)
+
         visit.SetActivePlots(self.centroidPlotId)
         visit.HideActivePlots()
         self.centroidMode = False
@@ -415,6 +153,56 @@ class ParcelationPlot(QtCore.QObject):
         # pass
         os.remove(region_headername)
         os.remove(region_dataname)
+
+    def setCentreFilename(self):
+        """
+        Logic to check whether there is a filename, if there is 
+        just load the file otherwise make sure that a new file is generated 
+        which is very much dataset specific 
+        """
+
+        self.CentrePath = os.environ['PYTHONPATH'].split(os.pathsep)
+        head, tail = os.path.split(self.parcelation_filename)
+        tail = tail.replace(".","") 
+        CenterFile = '%s%s'% (str(tail),str('CentreFile.csv'))
+        self.CentrePath[0]+='/CentreData/'+CenterFile
+
+        if os.path.isfile(self.CentrePath[0]):
+            self.centroidFilename = self.CentrePath[0]
+        else:
+            print "No Centre File Detected,\nComputing Centres for the Parcelation Plot\nPlease Wait"
+            i,j,k = np.shape(self.region_data)
+            Centroid = dict()
+            counter = 0
+            cx=0
+            cy=0
+            cz=0
+            for q in range(i):
+              for w in range(j):
+                  for e in range(k):
+                      value = self.region_data[q,w,e]
+                      try:
+                          if value>0:
+                              Centroid[value]
+                          else: 
+                              continue
+                      except KeyError:
+                          Centroid[value] = ((0,0,0),0)
+
+                      Centroid[value] = ((Centroid[value][0][0]+q,Centroid[value][0][1]+w,Centroid[value][0][2]+e),Centroid[value][1]+1)
+
+            NewChanges = dict()
+
+            # Warning the parcel centres are converted to integer values, this might \
+            #affect the uncertaininty associated with the visualization
+            for i,j in Centroid.iteritems():
+              Centroid[i] = (int(j[0][0]/j[1]), int(j[0][1]/j[1]), int(j[0][2]/j[1]), 1)
+
+            with open(self.CentrePath[0],'wb') as f:
+                w = csv.writer(f, delimiter=' ')
+                for i,j in Centroid.iteritems():
+                    w.writerow([int(j[0]),int(j[1]),int(j[2])])
+            self.centroidFilename = self.CentrePath[0]
 
     def setupColorTable(self):
         # Create empty color table

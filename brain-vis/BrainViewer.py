@@ -71,7 +71,7 @@ colorTable.setRange(correlationTable.valueRange())
 
 print "Setting up VisIt plots."
 brainTemplatePlot = BrainTemplatePlot(template_data)
-parcelationPlot = ParcelationPlot(parcelation_data, centre_filename, correlationTable, colorTable, selectedColor)
+parcelationPlot = ParcelationPlot(parcelation_data, parcelation_filename, correlationTable, colorTable, selectedColor)
 
 print "Creating main GUI."
 Counter = len(correlationTable.data)
@@ -173,8 +173,8 @@ Tab_1_CorrelationTable.selectedRegionChanged.connect(quantTableObject.setRegions
 
 print "Setting Graph interface"
 
-Graph_Layout=LayoutInit(widget,quantTableObject,ui,dataSetLoader,screenshot,matrix_filename,\
-    centre_filename,template_filename,parcelation_filename)
+Graph_Layout=LayoutInit(widget,quantTableObject,ui,dataSetLoader,screenshot,matrix_filename\
+    ,template_filename,parcelation_filename)
 
 widget.regionSelected.connect(parcelationPlot.colorRelativeToRegion)
 widget.regionSelected.connect(Tab_1_CorrelationTable.selectRegion)
@@ -281,9 +281,8 @@ for sv in slice_views:
     widget.CommunityColor.connect(sv.setRegionColors)
     widget.CommunityMode.connect(sv.Community)
 
-
-
 rwin2 = pyside_support.GetRenderWindow(1)
+
 rwin2.setMinimumSize(100, 100)
 
 visitViewerLayout.addWidget(rwin2)
