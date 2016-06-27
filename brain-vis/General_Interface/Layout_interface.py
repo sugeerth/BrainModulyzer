@@ -12,7 +12,7 @@ import pickle
 """A central interface that links all the UIs in the widgets to their respective
 functionalities in the classes """
 class LayoutInit(QtGui.QWidget):
-    def __init__(self,widget,quantTable,Ui,dataSetLoader,screenshot,matrix_filename,centre_filename,centres_abbreviation,template_filename,parcelation_filename):
+    def __init__(self,widget,quantTable,Ui,dataSetLoader,screenshot,matrix_filename,centre_filename,template_filename,parcelation_filename):
         super(LayoutInit,self).__init__()
 
         self.directory_path =os.environ['PYTHONPATH'].split(os.pathsep)
@@ -20,7 +20,7 @@ class LayoutInit(QtGui.QWidget):
 
         self.matrix_filename=matrix_filename
         self.centre_filename=centre_filename
-        self.centres_abbreviation =centres_abbreviation
+        # self.centres_abbreviation =centres_abbreviation
         self.template_filename=template_filename
         self.parcelation_filename=parcelation_filename
         self.Ui = Ui
@@ -168,7 +168,8 @@ class LayoutInit(QtGui.QWidget):
     def clickLineEdit(self,Flag):
         path, _ = QtGui.QFileDialog.getOpenFileName(self, "Open File", os.getcwd())
         if Flag == "centres_abbreviation": 
-            self.centres_abbreviation = path
+            pass
+            # self.centres_abbreviation = path
         else: 
             exec("%s='%s'" % (('self.'+Flag+'_filename'), path))
 
@@ -178,7 +179,7 @@ class LayoutInit(QtGui.QWidget):
     def dialogueConnect(self):
         self.dataSetLoader.matrix.clicked.connect(lambda: self.clickLineEdit("matrix"))
         self.dataSetLoader.center.clicked.connect(lambda: self.clickLineEdit("centre"))
-        self.dataSetLoader.abbrev.clicked.connect(lambda: self.clickLineEdit("centres_abbreviation"))
+        # self.dataSetLoader.abbrev.clicked.connect(lambda: self.clickLineEdit("centres_abbreviation"))
         self.dataSetLoader.parcel.clicked.connect(lambda: self.clickLineEdit("parcelation"))
         self.dataSetLoader.template1.clicked.connect(lambda: self.clickLineEdit("template"))
 

@@ -55,12 +55,27 @@ class SliceViewer(QtGui.QWidget):
         self.updateSliceLabel()
         slice_view_layout.addWidget(self.label)
 
+    # """
+    # wheel Events Changes   
+    # """    
+    # def wheelEvent(self, event):
+    #     self.scaleView(math.pow(2.0, -event.delta() / 1040.0))
+    # """
+    # Scale things based on wheel events
+    # """
+    # def scaleView(self, scaleFactor):
+    #     factor = self.matrix().scale(scaleFactor, scaleFactor).mapRect(QtCore.QRectF(0, 0, 5, 5)).width()
+    #     if factor < 0.07 or factor > 100:
+    #         return
+    #     self.scale(scaleFactor, scaleFactor)
+    #     del factor
+
     def extractSlice(self, volData):
         if self.axis == 0:
             return volData[self.displayedSlice, :, :]
         elif self.axis == 1:
             return volData[:, self.displayedSlice, :]
-        else:
+        elif self.axis == 2:
             return volData[:, :, self.displayedSlice]
 
     def updateSliceLabel(self):
@@ -121,10 +136,15 @@ class SliceViewer(QtGui.QWidget):
 
         pos = self.label.mapFromParent(event.pos())
         x, y = pos.x(), pos.y()
+        
         if self.scaleFactor > 1:
             x /= self.scaleFactor
             y /= self.scaleFactor
+
+        # Dont understand what this does
         parcelation_slice = self.extractSlice(self.parcelation)[:, ::-1]
+        
+        # Dont understand what this does
         if x < parcelation_slice.shape[0] and y < parcelation_slice.shape[1]:
             newId = parcelation_slice[x, y]
 

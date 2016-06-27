@@ -45,12 +45,13 @@ class Node(QtGui.QGraphicsItem):
         self.First = True
         self.nodesize = 12
         self.degreeCentrality = 1.0
-        self.Abbr = correlationTable.AbbrName
+        # FIX ME switched off untill centre abbreviation is sorted out
+        # self.Abbr = correlationTable.AbbrName
         self.Brain_Regions = correlationTable.RegionName[0]
         for i in range (self.counter-1):
             self.Brain_Regions[i] = self.Brain_Regions[i].replace(' ','')
         if not(self.ForCommunities): 
-            self.setToolTip(str(self.Abbr[self.counter-1][0]+ " , " + str(self.counter)))
+            self.setToolTip(str(self.Brain_Regions[self.counter-1]+ " , " + str(self.counter)))
         else: 
             self.setToolTip(str(counter))
         self.colorvalue = []
@@ -119,7 +120,7 @@ class Node(QtGui.QGraphicsItem):
     """
     def setNodeSize(self,value,nodeSizeFactor,Rank,Zscore):
         self.degreeCentrality = float(value)
-        self.setToolTip(str(self.Abbr[self.counter-1][0]+"\n"+nodeSizeFactor+":" + "{0:.2f}".format(self.degreeCentrality)\
+        self.setToolTip(str(self.Brain_Regions[self.counter-1]+"\n"+nodeSizeFactor+":" + "{0:.2f}".format(self.degreeCentrality)\
          + "\nRank:" + str(Rank) + "\nZ-score:" + "{0:.2f}".format(Zscore)))
         self.nodesize = 7 + 15 * value
 

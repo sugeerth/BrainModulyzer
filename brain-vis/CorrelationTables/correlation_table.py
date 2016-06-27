@@ -10,7 +10,7 @@ from PySide import QtCore, QtGui
 
 """Class responsible for transferring data from files to self.data"""
 class CorrelationTable(object):
-    def __init__(self, filename,centres_abbreviation,dataProcess=None):
+    def __init__(self, filename,dataProcess=None):
         self.header = None
         self.AbbrName = []
         self.data = []
@@ -23,13 +23,13 @@ class CorrelationTable(object):
             self.data=np.array([map(float, line) for line in reader])
         i = 0
 
-        try: 
-            with open(centres_abbreviation, 'rb') as csvfile:
-                reader = csv.reader(csvfile, delimiter='\n', quotechar='\"')
-                self.AbbrName= ([line for line in reader])
-            i = 0
-        except NameError:
-            pass
+        # try: 
+        #     with open(centres_abbreviation, 'rb') as csvfile:
+        #         reader = csv.reader(csvfile, delimiter='\n', quotechar='\"')
+        #         self.AbbrName= ([line for line in reader])
+        #     i = 0
+        # except NameError:
+        #     pass
 
     """
     Function for finding the absolute value of correlation values 

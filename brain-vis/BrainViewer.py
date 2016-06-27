@@ -63,7 +63,7 @@ template_data = nib.load(template_filename).get_data().astype(np.uint32)
 parcelation_data = nib.load(parcelation_filename).get_data()
 
 print "Creating correlation table display."
-correlationTable = CorrelationTable(matrix_filename,centres_abbreviation)
+correlationTable = CorrelationTable(matrix_filename)
 
 # colorTable = LinearColorTable();
 colorTable = CreateColorTable(colorTableName)
@@ -133,7 +133,7 @@ viewersLayout2.setContentsMargins(0,0,0,0)
 
 slice_views[2].sliceChanged.connect(brainTemplatePlot.setThreeSliceZ)
 slice_views[2].regionSelected.connect(parcelationPlot.colorRelativeToRegion)
-slice_views[2].setMinimumSize(250, 250)
+# slice_views[2].setMinimumSize(250, 250)
 
 print "Setting Graph data GraphDataStructure"
 Tab_2_AdjacencyMatrix = GraphVisualization(correlationTable.data)
@@ -173,7 +173,8 @@ Tab_1_CorrelationTable.selectedRegionChanged.connect(quantTableObject.setRegions
 
 print "Setting Graph interface"
 
-Graph_Layout=LayoutInit(widget,quantTableObject,ui,dataSetLoader,screenshot,matrix_filename,centre_filename,centres_abbreviation,template_filename,parcelation_filename)
+Graph_Layout=LayoutInit(widget,quantTableObject,ui,dataSetLoader,screenshot,matrix_filename,\
+    centre_filename,template_filename,parcelation_filename)
 
 widget.regionSelected.connect(parcelationPlot.colorRelativeToRegion)
 widget.regionSelected.connect(Tab_1_CorrelationTable.selectRegion)
@@ -280,6 +281,8 @@ for sv in slice_views:
     widget.CommunityColor.connect(sv.setRegionColors)
     widget.CommunityMode.connect(sv.Community)
 
+
+
 rwin2 = pyside_support.GetRenderWindow(1)
 rwin2.setMinimumSize(100, 100)
 
@@ -313,3 +316,8 @@ parcelationPlot.regionSelected.connect(quantTableObject.setRegions)
 
 if MainWindowShowFlag:
     main.show()
+
+
+
+
+
