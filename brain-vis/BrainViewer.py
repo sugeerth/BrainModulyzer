@@ -9,7 +9,7 @@ import cProfile
 import sys
 import pprint
 from PySide import QtCore, QtGui , QtUiTools
-from vtk.qt4.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
+from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 
 app = QtGui.QApplication(sys.argv)
 
@@ -67,7 +67,7 @@ print "Reading NII files."
 template_data = nib.load(template_filename).get_data().astype(np.uint32)
 parcelation_data = nib.load(parcelation_filename).get_data()
 
-print "Creating correlation table display."
+print "Setting up the correlation table display."
 correlationTable = CorrelationTable(matrix_filename)
 
 # colorTable = LinearColorTable();
@@ -78,14 +78,9 @@ print "Setting up Volumne Renderer"
 # brainTemplatePlot = BrainTemplatePlot(template_data)
 # parcelationPlot = ParcelationPlot(parcelation_data, parcelation_filename, correlationTable, colorTable, selectedColor)
 
-VolumneFrame = QtGui.QFrame()
-BoxLayoutView = QtGui.QVBoxLayout()
 
-vtkWidget = QVTKRenderWindowInteractor()
 
-VolumneRenderer = VolumneRendererWindow(parcelation_filename, template_filename, VolumneFrame, BoxLayoutView, vtkWidget)
-
-print "Creating main GUI."
+print "Setting main GUI."
 Counter = len(correlationTable.data)
 DataColor = np.zeros(Counter+1)
 
@@ -239,7 +234,7 @@ if GraphWindowShowFlag:
     BoxGraphWidget.show()
 
 """Window for correlation Table"""
-print "Setting Visit Plot" 
+print "Setting up Signals and Slots" 
 
 widget.CommunityColorAndDict.connect(Tab_1_CorrelationTable.setRegionColors)
 widget.CommunityColorAndDict.connect(Tab_2_CorrelationTable.setRegionColors)
@@ -296,7 +291,13 @@ for sv in slice_views:
     widget.CommunityColor.connect(sv.setRegionColors)
     widget.CommunityMode.connect(sv.Community)
 
-VolumneRenderer.setMinimumSize(100, 100)
+
+VolumneFrame = QtGui.QFrame()
+BoxLayoutView = QtGui.QVBoxLayout()
+vtkWidget = QVTKRenderWindowInteractor(VolumneFrame)
+
+VolumneRenderer = VolumneRendererWindow(parcelation_filename, template_filename, VolumneFrame, BoxLayoutView, vtkWidget)
+VolumneRenderer.hide()
 
 visitViewerLayout.addWidget(VolumneRenderer)
 visitViewerLayout.setContentsMargins(0,0,0,0)

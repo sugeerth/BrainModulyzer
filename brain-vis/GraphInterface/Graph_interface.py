@@ -180,7 +180,7 @@ class GraphWidget(QtGui.QGraphicsView):
         self.nodes = [weakref.ref(item) for item in self.scene().items() if isinstance(item, Node)]
         
         # setting a sample layout to show 
-        self.setLayout('fdp')
+        self.changeLayout('fdp')
 
     """
     Highlight edges for visualization
@@ -196,7 +196,7 @@ class GraphWidget(QtGui.QGraphicsView):
         self.Scene_to_be_updated.update()
 
     def LayoutCalculation(self):
-        self.setLayout('fdp')
+        self.changeLayout('fdp')
 
     def NewNodeSelected(self,idx):
         self.HighlightedId = idx 
@@ -304,7 +304,7 @@ class GraphWidget(QtGui.QGraphicsView):
         code for calculating the new layout-- Make sure the new layout is scalable
 
     """
-    def setLayout(self,Layout='sfdp'):
+    def changeLayout(self,Layout='sfdp'):
         Layout = (Layout.encode('ascii','ignore')).replace(' ','')
         self.g =  self.Graph_data().DrawHighlightedGraph(self.EdgeSliderValue)
 
@@ -413,7 +413,7 @@ class GraphWidget(QtGui.QGraphicsView):
     Selection of layouts
     """
     def SelectLayout(self, Layout):
-        self.setLayout(Layout)
+        self.changeLayout(Layout)
         self.Layout = Layout
 
     """
@@ -514,7 +514,7 @@ class GraphWidget(QtGui.QGraphicsView):
         self.EdgeSliderForGraph.setToolTip("Edge Weight: %0.2f" % (self.EdgeSliderValue))
 
         if not(self.PositionPreserve):
-            self.setLayout(self.Layout)
+            self.changeLayout(self.Layout)
 
         for edge in self.edges:
             edge().Threshold(value_for_slider)

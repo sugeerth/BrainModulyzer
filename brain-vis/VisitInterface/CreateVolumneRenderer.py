@@ -11,7 +11,7 @@ import numpy as np
 import sys
 import PySide
 from PySide import QtCore, QtGui
-from vtk.qt4.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
+from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from vtk.qt.QVTKRenderWindowInteractor import *
 
 class MouseInteractorHighLightActor(vtk.vtkInteractorStyleTrackballCamera):
@@ -58,21 +58,19 @@ def exitCheck(obj, event):
 	if obj.GetEventPending() != 0:
 		obj.SetAbortRender(1)
 
-class VolumneRendererWindow(PySide.QtGui.QWidget):
+class VolumneRendererWindow(PySide.QtGui.QMainWindow):
  
 	def __init__(self,parcelation_filename, template_filename,VolumneFrame, BoxLayoutView, vtkWidget):
 		super(VolumneRendererWindow,self).__init__()
-		print "Here is not something"
 
 		self.parcelation_filename = parcelation_filename
 		self.template_filename = template_filename
 		
-		print "Here is not something"
-
 		self.frame = VolumneFrame
 		self.BoxLayoutView = BoxLayoutView
+		vtkWidget = QVTKRenderWindowInteractor(VolumneFrame)
+
 		self.vtkWidget = vtkWidget
-		print "Here is not something"
 
 		self.setDataset()
 		self.RenderData()
@@ -84,6 +82,9 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 
 		self.frame.setLayout(self.BoxLayoutView)
 		self.setCentralWidget(self.frame)
+
+		# self.addWidget(self.frame)
+		# self.setLayout(self.BoxLayoutView)
 
 		self.FinalRenderView() 
 		# self.iren.Initialize()
@@ -117,8 +118,7 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.renderWin = vtk.vtkRenderWindow()
 
 		# self.vtkWidget = QVTKRenderWindowInteractor(self.frame)
-
-		self.myViewer.GetRenderWindow()
+		# self.myViewer.GetRenderWindow()
 
 		self.BoxLayoutView.addWidget(self.vtkWidget)
 
@@ -142,9 +142,10 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.picker = vtk.vtkCellPicker()
 
 		self.lut = vtk.vtkLookupTable()
-		self.luts.SetNumberOfTableValues(7)
-		self.nc = vtk.vtkNamedColors()
-		self.colorNames = nc.GetColorNames().split('\n')
+		self.lut.SetNumberOfTableValues(7)
+
+		# self.nc = vtk.vtkNamedColors()
+		# self.colorNames = nc.GetColorNames().split('\n')
 
 		self.template_data = None
 		self.parcelation_data = None
@@ -152,13 +153,13 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		# set Picker
 		self.style = MouseInteractorHighLightActor()
 		self.style.SetDefaultRenderer(self.renderer)
-		self.renderInteractor.SetInteractorStyle(style)
+		self.renderInteractor.SetInteractorStyle(self.style)
 
 	def RenderData(self):
 		self.DefineTemplateDataToBeMapped()
 		self.DefineParcelationDataToBeMapped()
 		self.MergeTwoDatasets()
-		self.SetColors()
+		# self.SetColors()
 		self.AppendDatasets()
 		self.SetActorsAndOutline()
 		self.SetRenderer()
@@ -237,8 +238,8 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.axesActor.GetTextEdgesProperty().SetColor(1,1,0)
 		self.axesActor.GetTextEdgesProperty().SetLineWidth(2)
 		self.axesActor.GetCubeProperty().SetColor(0,0,1)
-		self.axes.SetOrientationMarker(axesActor)
-		self.axes.SetInteractor(renderInteractor)
+		self.axes.SetOrientationMarker(self.axesActor)
+		self.axes.SetInteractor(self.renderInteractor)
 		self.axes.EnabledOn()
 		self.axes.InteractiveOn()
 		self.renderer.ResetCamera()
@@ -251,14 +252,14 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.actor.GetProperty().SetColor(1.0, 0.4, 0.4)
 		self.actor.GetProperty().SetOpacity(0.1)
 
-		self.renderer.AddActor(actor)
-		self.renderer.AddActor(actor1)
-		self.renderer.AddActor(actor2)
+		self.renderer.AddActor(self.actor)
+		self.renderer.AddActor(self.actor1)
+		self.renderer.AddActor(self.actor2)
 
 		# self.renderer.SetBackground(1.0, 1.0, 1.0)
 
-		self.renderWin.AddRenderer(renderer)
-		self.renderInteractor.SetRenderWindow(renderWin)
+		self.renderWin.AddRenderer(self.renderer)
+		self.renderInteractor.SetRenderWindow(self.renderWin)
 
 		self.renderWin.SetSize(500, 500)
 
