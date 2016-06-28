@@ -277,8 +277,6 @@ class ParcelationPlot(QtCore.QObject):
 
     def setRegionColors(self,region_colors):
         assert len(region_colors) == self.nRegions
-
-
         # Always use 256 colors since otherwise VisIt's color mapping does
         # not always match expected results
         # Colors: Background: black, region colors as passed by caller,
@@ -311,68 +309,3 @@ class ParcelationPlot(QtCore.QObject):
         self.communityMode = Flag
             # self.colorRelativeToRegion(self.regionId)
 
-    def makeActive(self):
-        visit.SetActivePlots(self.activePlotId)
-
-    def performPick3D(self):
-        visit.RegisterCallback("PickAttributes")
-        pattern = re.compile('<zonal> = \d*')
-        match = pattern.search(visit.GetPickOutput())
-        if match != None:
-            try:
-                regionId = int(match.group(0).split('=')[1]) - 1
-                self.regionSelected.emit(regionId)
-                visit.SetWindowMode("navigate")
-            except:
-                pass
-
-    def startPick3D(self):
-        visit.RegisterCallback("PickAttributes", lambda pa: self.performPick3D())
-        self.makeActive()
-        visit.SetWindowMode("zone pick")
-
-# ### Set up VisIt settings for plots
-# # Turn off annotations
-# annAtts = visit.GetAnnotationAttributes()
-# annAtts.userInfoFlag = 0
-# annAtts.databaseInfoFlag = 0
-# annAtts.timeInfoFlag = 0
-# annAtts.axes3D.visible = 0
-# annAtts.axes3D.triadFlag = 0
-# visit.SetAnnotationAttributes(annAtts)
-
-# # Never use scalable rendering, always use display lists for speed up
-# ratts = visit.GetRenderingAttributes()
-# ratts.displayListMode = ratts.Always
-# ratts.scalableActivationMode = ratts.Never
-# visit.SetRenderingAttributes(ratts)
-
-# # Disable output for picking
-# pickAtts = visit.GetPickAttributes()
-# pickAtts.variables = ("default")
-# pickAtts.showIncidentElements = 0
-# pickAtts.showNodeId = 0
-# pickAtts.showNodeDomainLogicalCoords = 0
-# pickAtts.showNodeBlockLogicalCoords = 0
-# pickAtts.showNodePhysicalCoords = 0
-# pickAtts.showZoneId = 0
-# pickAtts.showZoneDomainLogicalCoords = 0
-# pickAtts.showZoneBlockLogicalCoords = 1
-# pickAtts.doTimeCurve = 0
-# pickAtts.conciseOutput = 0
-# pickAtts.showTimeStep = 0
-# pickAtts.showMeshName = 0
-# pickAtts.showGlobalIds = 0
-# pickAtts.showPickLetter = 0
-# pickAtts.reusePickLetter = 1
-# pickAtts.createSpreadsheet = 0
-# pickAtts.floatFormat = "%g"
-# visit.SetPickAttributes(pickAtts)
-# visit.SuppressQueryOutputOn()
-
-# # Initial view
-# view3D = visit.GetView3D()
-# view3D.viewNormal = (0, 1, 0)
-# view3D.viewUp = (0, 0, 1)
-
-# visit.SetView3D(view3D)

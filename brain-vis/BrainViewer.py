@@ -6,8 +6,12 @@ import time
 from sys import platform as _platform
 import weakref
 import cProfile
+import sys
 import pprint
 from PySide import QtCore, QtGui , QtUiTools
+from vtk.qt4.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
+
+app = QtGui.QApplication(sys.argv)
 
 import community as cm
 try:
@@ -30,12 +34,13 @@ CorrelationTableDisplay, CommunityCorrelationTableDisplay
 from QuantData.quantTable import quantTable
 from QuantData.quantData import QuantData
 from VisitInterface.color_table import CreateColorTable
-from VisitInterface.visit_interface import ParcelationPlot, BrainTemplatePlot
+# from VisitInterface.visit_interface import ParcelationPlot, BrainTemplatePlot
 from VisitInterface.slice_viewer import *
 from GraphInterface.Graph_interface import GraphWidget
 from GraphInterface.GraphDataStructure import GraphVisualization
 from General_Interface.Layout_interface import LayoutInit
 from UIFiles.ProcessUi import ProcessQuantTable
+from VisitInterface.CreateVolumneRenderer import VolumneRendererWindow
 from PathFiles import *
 
 """
@@ -69,9 +74,16 @@ correlationTable = CorrelationTable(matrix_filename)
 colorTable = CreateColorTable(colorTableName)
 colorTable.setRange(correlationTable.valueRange())
 
-print "Setting up VisIt plots."
-brainTemplatePlot = BrainTemplatePlot(template_data)
-parcelationPlot = ParcelationPlot(parcelation_data, parcelation_filename, correlationTable, colorTable, selectedColor)
+print "Setting up Volumne Renderer"
+# brainTemplatePlot = BrainTemplatePlot(template_data)
+# parcelationPlot = ParcelationPlot(parcelation_data, parcelation_filename, correlationTable, colorTable, selectedColor)
+
+VolumneFrame = QtGui.QFrame()
+BoxLayoutView = QtGui.QVBoxLayout()
+
+vtkWidget = QVTKRenderWindowInteractor()
+
+VolumneRenderer = VolumneRendererWindow(parcelation_filename, template_filename, VolumneFrame, BoxLayoutView, vtkWidget)
 
 print "Creating main GUI."
 Counter = len(correlationTable.data)
@@ -116,23 +128,23 @@ slice_views[0] = SliceViewer(template_data, parcelation_data, 0, correlationTabl
 viewersLayout1.addWidget(slice_views[0])
 viewersLayout1.setContentsMargins(0,0,0,0)
 
-slice_views[0].sliceChanged.connect(brainTemplatePlot.setThreeSliceX)
-slice_views[0].regionSelected.connect(parcelationPlot.colorRelativeToRegion)
+# slice_views[0].sliceChanged.connect(brainTemplatePlot.setThreeSliceX)
+# slice_views[0].regionSelected.connect(parcelationPlot.colorRelativeToRegion)
 
 slice_views[1] = SliceViewer(template_data, parcelation_data, 1, correlationTable, colorTable, selectedColor)
 viewersLayout1.addWidget(slice_views[1])
 viewersLayout1.setContentsMargins(0,0,0,0)
 
-slice_views[1].sliceChanged.connect(brainTemplatePlot.setThreeSliceY)
-slice_views[1].regionSelected.connect(parcelationPlot.colorRelativeToRegion)
+# slice_views[1].sliceChanged.connect(brainTemplatePlot.setThreeSliceY)
+# slice_views[1].regionSelected.connect(parcelationPlot.colorRelativeToRegion)
 
 
 slice_views[2] = SliceViewer(template_data, parcelation_data, 2, correlationTable, colorTable, selectedColor)
 viewersLayout2.addWidget(slice_views[2])
 viewersLayout2.setContentsMargins(0,0,0,0)
 
-slice_views[2].sliceChanged.connect(brainTemplatePlot.setThreeSliceZ)
-slice_views[2].regionSelected.connect(parcelationPlot.colorRelativeToRegion)
+# slice_views[2].sliceChanged.connect(brainTemplatePlot.setThreeSliceZ)
+# slice_views[2].regionSelected.connect(parcelationPlot.colorRelativeToRegion)
 # slice_views[2].setMinimumSize(250, 250)
 
 print "Setting Graph data GraphDataStructure"
@@ -140,13 +152,13 @@ Tab_2_AdjacencyMatrix = GraphVisualization(correlationTable.data)
 
 print "Setting CorrelationTable for communities"
 Tab_2_CorrelationTable = CommunityCorrelationTableDisplay(correlationTable, colorTable,Tab_2_AdjacencyMatrix)
-Tab_2_CorrelationTable.selectedRegionChanged.connect(parcelationPlot.colorRelativeToRegion)
+# Tab_2_CorrelationTable.selectedRegionChanged.connect(parcelationPlot.colorRelativeToRegion)
 Tab_2_CorrelationTable.setMinimumSize(390, 460)
 
 print "Setting CorrelationTable"
 
 Tab_1_CorrelationTable = CorrelationTableDisplay(correlationTable, colorTable,Tab_2_AdjacencyMatrix)
-Tab_1_CorrelationTable.selectedRegionChanged.connect(parcelationPlot.colorRelativeToRegion)
+# Tab_1_CorrelationTable.selectedRegionChanged.connect(parcelationPlot.colorRelativeToRegion)
 Tab_1_CorrelationTable.setMinimumSize(390, 460)
 Tab_2_CorrelationTable.show()
 
@@ -176,9 +188,9 @@ print "Setting Graph interface"
 Graph_Layout=LayoutInit(widget,quantTableObject,ui,dataSetLoader,screenshot,matrix_filename\
     ,template_filename,parcelation_filename)
 
-widget.regionSelected.connect(parcelationPlot.colorRelativeToRegion)
+# widget.regionSelected.connect(parcelationPlot.colorRelativeToRegion)
 widget.regionSelected.connect(Tab_1_CorrelationTable.selectRegion)
-widget.CommunityColor.connect(parcelationPlot.setRegionColors)
+# widget.CommunityColor.connect(parcelationPlot.setRegionColors)
 widget.regionSelected.connect(Tab_2_CorrelationTable.selectRegion)
 widget.regionSelected.connect(quantTableObject.setRegions)
 
@@ -231,7 +243,7 @@ print "Setting Visit Plot"
 
 widget.CommunityColorAndDict.connect(Tab_1_CorrelationTable.setRegionColors)
 widget.CommunityColorAndDict.connect(Tab_2_CorrelationTable.setRegionColors)
-widget.CommunityMode.connect(parcelationPlot.Community)
+# widget.CommunityMode.connect(parcelationPlot.Community)
 
 # Code clicking the group button in the slide
 def buttonGroupClicked(number):
@@ -244,9 +256,11 @@ def buttonGroupClicked(number):
                 button.setChecked(True)
                 return
     if number == -2: 
-        parcelationPlot.setCentroidMode()
+        pass
+        # parcelationPlot.setCentroidMode()
     else:
-        parcelationPlot.setRegionMode()
+        pass
+        # parcelationPlot.setRegionMode()
 
 # Laying out the group buttons in visit plot
 box = QtGui.QHBoxLayout()
@@ -257,8 +271,9 @@ buttonGroup.buttonClicked[int].connect(buttonGroupClicked)
 r0=QtGui.QRadioButton("Centroids")
 r1=QtGui.QRadioButton("Regions")
 r1.setChecked(True)
-r0.clicked.connect(parcelationPlot.setCentroidMode)
-r1.clicked.connect(parcelationPlot.setRegionMode)
+# Define regions 
+# r0.clicked.connect(parcelationPlot.setCentroidMode)
+# r1.clicked.connect(parcelationPlot.setRegionMode)
 
 buttonGroup.addButton(r0)
 buttonGroup.addButton(r1)
@@ -281,11 +296,9 @@ for sv in slice_views:
     widget.CommunityColor.connect(sv.setRegionColors)
     widget.CommunityMode.connect(sv.Community)
 
-rwin2 = pyside_support.GetRenderWindow(1)
+VolumneRenderer.setMinimumSize(100, 100)
 
-rwin2.setMinimumSize(100, 100)
-
-visitViewerLayout.addWidget(rwin2)
+visitViewerLayout.addWidget(VolumneRenderer)
 visitViewerLayout.setContentsMargins(0,0,0,0)
 visitViewerLayout.addLayout(box)
 visitViewerLayout.setContentsMargins(0,0,0,0)
@@ -296,27 +309,26 @@ visitViewerLayout.setContentsMargins(0,0,0,0)
 
 toggleThreeSliceButton = QtGui.QPushButton("Show/Hide Slices")
 visitControlsLayout.addWidget(toggleThreeSliceButton)
-toggleThreeSliceButton.clicked.connect(brainTemplatePlot.toggleThreeSlice)
+
+# toggleThreeSliceButton.clicked.connect(brainTemplatePlot.toggleThreeSlice)
 toggleBrainSurfaceButton = QtGui.QPushButton("Show/Hide Brain Surfaces")
 
 visitControlsLayout.addWidget(toggleBrainSurfaceButton)
 visitControlsLayout.setContentsMargins(0,0,0,0)
-toggleBrainSurfaceButton.clicked.connect(brainTemplatePlot.toggleBrainSurface)
+
+# toggleBrainSurfaceButton.clicked.connect(brainTemplatePlot.toggleBrainSurface)
 pickButton = QtGui.QPushButton("Pick Region")
 
 visitControlsLayout.addWidget(pickButton)
 visitControlsLayout.setContentsMargins(0,0,0,0)
 
-pickButton.clicked.connect(parcelationPlot.startPick3D)
-parcelationPlot.regionSelected.connect(Tab_1_CorrelationTable.selectRegion)
-parcelationPlot.regionSelected.connect(widget.NodeSelected)
-parcelationPlot.regionSelected.connect(Tab_2_CorrelationTable.selectRegion)
-parcelationPlot.regionSelected.connect(quantTableObject.setRegions)
+# pickButton.clicked.connect(parcelationPlot.startPick3D)
+# parcelationPlot.regionSelected.connect(Tab_1_CorrelationTable.selectRegion)
+# parcelationPlot.regionSelected.connect(widget.NodeSelected)
+# parcelationPlot.regionSelected.connect(Tab_2_CorrelationTable.selectRegion)
+# parcelationPlot.regionSelected.connect(quantTableObject.setRegions)
 
 if MainWindowShowFlag:
     main.show()
 
-
-
-
-
+sys.exit(app.exec_())

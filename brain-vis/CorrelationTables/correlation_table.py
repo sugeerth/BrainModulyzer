@@ -23,14 +23,6 @@ class CorrelationTable(object):
             self.data=np.array([map(float, line) for line in reader])
         i = 0
 
-        # try: 
-        #     with open(centres_abbreviation, 'rb') as csvfile:
-        #         reader = csv.reader(csvfile, delimiter='\n', quotechar='\"')
-        #         self.AbbrName= ([line for line in reader])
-        #     i = 0
-        # except NameError:
-        #     pass
-
     """
     Function for finding the absolute value of correlation values 
     """
@@ -47,12 +39,7 @@ class CorrelationTable(object):
 
 """Class acting as a parent class for CorrelationTableDisplay and CommunityCorrelationTableDisplay 
 Common Functions are implemented in these classes
-
-
-"""
-
-
-""" Pseudo Code
+ Pseudo Code
 detect communities using the louvain algorithm 
 For every brain region a community is assigned 
 sort the brain regions based on community number 
@@ -62,15 +49,9 @@ assign brain region labels using the sorted order for both row and column
 
 initialize entries of the matrix as 
  empty when no edges are in between row i and column j and brain region i and regions j does not belong to the same community
-
  the community color provided that the brain region i and brain region j belong to the same community and have edges between them 
-
  if the threshold is changed perform this again  
-
-
 deference every community to their respective 
-
-
 Set the labels of the matrix"""
 
 

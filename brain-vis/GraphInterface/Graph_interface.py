@@ -28,7 +28,7 @@ except:
     print "Couldn't import all required packages. See README.m for a list of required packages and installation instructions."
     raise
 
-from VisitInterface.visit_interface import GetColor
+# from VisitInterface.visit_interface import GetColor
 
 from GraphDataStructure import GraphVisualization
 
