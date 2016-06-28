@@ -116,6 +116,7 @@ allViewersLayout.setContentsMargins(0,0,0,0)
 allViewersLayout.addLayout(viewersLayout2)
 allViewersLayout.setContentsMargins(0,0,0,0)
 
+VolumneRenderer = VolumneRendererWindow(parcelation_filename, template_filename)
 
 print "Setting Slice Views"
 slice_views = [None, None, None]
@@ -251,11 +252,9 @@ def buttonGroupClicked(number):
                 button.setChecked(True)
                 return
     if number == -2: 
-        pass
-        # parcelationPlot.setCentroidMode()
+        VolumneRenderer.setCentroidMode()
     else:
-        pass
-        # parcelationPlot.setRegionMode()
+        VolumneRenderer.setRegionMode()
 
 # Laying out the group buttons in visit plot
 box = QtGui.QHBoxLayout()
@@ -267,8 +266,8 @@ r0=QtGui.QRadioButton("Centroids")
 r1=QtGui.QRadioButton("Regions")
 r1.setChecked(True)
 # Define regions 
-# r0.clicked.connect(parcelationPlot.setCentroidMode)
-# r1.clicked.connect(parcelationPlot.setRegionMode)
+r0.clicked.connect(VolumneRenderer.setCentroidMode)
+r1.clicked.connect(VolumneRenderer.setRegionMode)
 
 buttonGroup.addButton(r0)
 buttonGroup.addButton(r1)
@@ -292,12 +291,6 @@ for sv in slice_views:
     widget.CommunityMode.connect(sv.Community)
 
 
-VolumneFrame = QtGui.QFrame()
-BoxLayoutView = QtGui.QVBoxLayout()
-vtkWidget = QVTKRenderWindowInteractor(VolumneFrame)
-
-VolumneRenderer = VolumneRendererWindow(parcelation_filename, template_filename, VolumneFrame, BoxLayoutView, vtkWidget)
-VolumneRenderer.hide()
 
 visitViewerLayout.addWidget(VolumneRenderer)
 visitViewerLayout.setContentsMargins(0,0,0,0)
@@ -317,7 +310,7 @@ toggleBrainSurfaceButton = QtGui.QPushButton("Show/Hide Brain Surfaces")
 visitControlsLayout.addWidget(toggleBrainSurfaceButton)
 visitControlsLayout.setContentsMargins(0,0,0,0)
 
-# toggleBrainSurfaceButton.clicked.connect(brainTemplatePlot.toggleBrainSurface)
+toggleBrainSurfaceButton.clicked.connect(VolumneRenderer.toggleBrainSurface)
 pickButton = QtGui.QPushButton("Pick Region")
 
 visitControlsLayout.addWidget(pickButton)

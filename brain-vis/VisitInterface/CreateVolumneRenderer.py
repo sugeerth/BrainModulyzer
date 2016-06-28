@@ -39,15 +39,15 @@ class MouseInteractorHighLightActor(vtk.vtkInteractorStyleTrackballCamera):
                 self.LastPickedActor.GetProperty().DeepCopy(self.LastPickedProperty)
  
  
-            # Save the property of the picked actor so that we can
+            # Save the property of the picked TemplateActor so that we can
             # restore it next time
             self.LastPickedProperty.DeepCopy(self.NewPickedActor.GetProperty())
-            # Highlight the picked actor by changing its properties
+            # Highlight the picked TemplateActor by changing its properties
             self.NewPickedActor.GetProperty().SetColor(0.0, 1.0, 0.0)
             self.NewPickedActor.GetProperty().SetDiffuse(1.0)
             self.NewPickedActor.GetProperty().SetSpecular(0.0)
  
-            # save the last picked actor
+            # save the last picked TemplateActor
             self.LastPickedActor = self.NewPickedActor
  
         self.OnLeftButtonDown()
@@ -58,21 +58,25 @@ def exitCheck(obj, event):
 	if obj.GetEventPending() != 0:
 		obj.SetAbortRender(1)
 
-class VolumneRendererWindow(PySide.QtGui.QMainWindow):
- 
-	def __init__(self,parcelation_filename, template_filename,VolumneFrame, BoxLayoutView, vtkWidget):
+class VolumneRendererWindow(PySide.QtGui.QWidget):
+	regionSelected = QtCore.Signal(int)
+
+	def __init__(self,parcelation_filename, template_filename):
 		super(VolumneRendererWindow,self).__init__()
 
 		self.parcelation_filename = parcelation_filename
 		self.template_filename = template_filename
-		
-		self.frame = VolumneFrame
-		self.BoxLayoutView = BoxLayoutView
-		vtkWidget = QVTKRenderWindowInteractor(VolumneFrame)
 
-		self.vtkWidget = vtkWidget
+		self.frame = QtGui.QFrame()
+		self.BoxLayoutView = QtGui.QVBoxLayout()
+
+		self.BoxLayoutView.setContentsMargins(0, 0, 0, 0)
+		self.setLayout(self.BoxLayoutView)
+		self.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
 
 		self.setDataset()
+		self.setFlags()
+
 		self.RenderData()
 
 		# Create source
@@ -80,14 +84,14 @@ class VolumneRendererWindow(PySide.QtGui.QMainWindow):
 		source.SetCenter(0, 0, 0)
 		source.SetRadius(5.0)
 
-		self.frame.setLayout(self.BoxLayoutView)
-		self.setCentralWidget(self.frame)
-
-		# self.addWidget(self.frame)
-		# self.setLayout(self.BoxLayoutView)
-
 		self.FinalRenderView() 
-		# self.iren.Initialize()
+		self.show()
+
+	def setFlags(self):
+		self.setCentroidMode = False
+		self.toggleBrainSurface = True
+
+
 	def setDataset(self): 
 		self.ParcelationReader = vtk.vtkNIFTIImageReader()
 		self.TemplateReader = vtk.vtkNIFTIImageReader()
@@ -105,30 +109,27 @@ class VolumneRendererWindow(PySide.QtGui.QMainWindow):
 		self.TemplateMapper = vtk.vtkPolyDataMapper()
 		self.ParcelationMapper = vtk.vtkPolyDataMapper()
 
-
 		self.mapper2 = vtk.vtkPolyDataMapper()
 
 		self.outline = vtk.vtkOutlineFilter()
 
-		self.actor = vtk.vtkActor()
-		self.actor1 = vtk.vtkActor()
-		self.actor2 = vtk.vtkActor()
+		self.TemplateActor = vtk.vtkActor()
+		self.ParcelationActor = vtk.vtkActor()
+		self.OutlineActor = vtk.vtkActor()
 
 		self.renderer = vtk.vtkRenderer()
+
+		self.renderer.SetBackground(1, 1, 1)
+		self.renderer.SetViewport(0, 0, 1, 1)
+
 		self.renderWin = vtk.vtkRenderWindow()
-
-		# self.vtkWidget = QVTKRenderWindowInteractor(self.frame)
-		# self.myViewer.GetRenderWindow()
-
-		self.BoxLayoutView.addWidget(self.vtkWidget)
-
-		self.vtkWidget.GetRenderWindow().AddRenderer(self.renderer)
+		self.renderWin.AddRenderer(self.renderer)
 
 		self.axesActor = vtk.vtkAnnotatedCubeActor()
 		self.axes = vtk.vtkOrientationMarkerWidget()
 
-		# self.renderInteractor = vtk.vtkRenderWindowInteractor()
-		self.renderInteractor = self.vtkWidget.GetRenderWindow().GetInteractor()
+		self.renderInteractor = QVTKRenderWindowInteractor(self,rw=self.renderWin)
+		self.BoxLayoutView.addWidget(self.renderInteractor)
 
 		self.colorsTemplate = vtk.vtkUnsignedCharArray()
 		self.colorsTemplate.SetNumberOfComponents(3)
@@ -143,9 +144,6 @@ class VolumneRendererWindow(PySide.QtGui.QMainWindow):
 
 		self.lut = vtk.vtkLookupTable()
 		self.lut.SetNumberOfTableValues(7)
-
-		# self.nc = vtk.vtkNamedColors()
-		# self.colorNames = nc.GetColorNames().split('\n')
 
 		self.template_data = None
 		self.parcelation_data = None
@@ -196,8 +194,8 @@ class VolumneRendererWindow(PySide.QtGui.QMainWindow):
 		self.ParcelationMapper.SetScalarModeToUseCellData()
 
 	def SetActorsAndOutline(self):
-		self.actor.SetMapper(self.TemplateMapper)
-		self.actor1.SetMapper(self.ParcelationMapper)
+		self.TemplateActor.SetMapper(self.TemplateMapper)
+		self.ParcelationActor.SetMapper(self.ParcelationMapper)
 
 		# outline
 		if vtk.VTK_MAJOR_VERSION <= 5:
@@ -210,7 +208,8 @@ class VolumneRendererWindow(PySide.QtGui.QMainWindow):
 		else:
 			self.mapper2.SetInputConnection(self.outline.GetOutputPort())
 
-		self.actor2.SetMapper(self.mapper2)
+		self.OutlineActor.SetMapper(self.mapper2)
+		self.OutlineActor.GetProperty().SetColor(0,0,0)
 
 	def SetColors(self):
 		rgba = list(nc.GetColor4d("Red"))
@@ -249,19 +248,40 @@ class VolumneRendererWindow(PySide.QtGui.QMainWindow):
 		#initialize the renderer and window, as well as 
 		#creating a method for exiting the application
 
-		self.actor.GetProperty().SetColor(1.0, 0.4, 0.4)
-		self.actor.GetProperty().SetOpacity(0.1)
+		self.TemplateActor.GetProperty().SetColor(1.0, 0.4, 0.4)
+		self.TemplateActor.GetProperty().SetOpacity(0.1)
 
-		self.renderer.AddActor(self.actor)
-		self.renderer.AddActor(self.actor1)
-		self.renderer.AddActor(self.actor2)
+		if self.toggleBrainSurface:
+			self.renderer.AddActor(self.TemplateActor)
+		else:
+			pass
 
-		# self.renderer.SetBackground(1.0, 1.0, 1.0)
+		if self.setCentroidMode: 
+			self.renderer.AddActor(self.ParcelationActor)
+		else: 
+			self.addSpheres()
 
-		self.renderWin.AddRenderer(self.renderer)
+		self.renderer.AddActor(self.OutlineActor)
 		self.renderInteractor.SetRenderWindow(self.renderWin)
 
-		self.renderWin.SetSize(500, 500)
+	def addSpheres(self):
+		pass
+
+	"""
+	Interactive slots that need the help of an external caller method 
+	"""
+	def setCentroidMode(self):
+		self.setCentroidMode = True
+		self.SetRenderer()
+
+	def setRegionMode(self):
+		self.setCentroidMode = False
+		self.SetRenderer()
+
+	def	toggleBrainSurface(self):	
+		self.toggleBrainSurface = not(self.toggleBrainSurface)
+		self.SetRenderer()
+
 
 
 
