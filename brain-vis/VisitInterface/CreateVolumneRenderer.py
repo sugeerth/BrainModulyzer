@@ -213,12 +213,21 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 
 	def setDataset(self): 
 		self.ParcelationReader = vtk.vtkNIFTIImageReader()
+		self.ParcelationReader.SetFileName(self.parcelation_filename)
+		self.ParcelMapToColors = vtk.vtkImageMapToColors()
+		self.ParcelationNumpy = nib.load(self.parcelation_filename).get_data().astype(np.uint8)
+		self.ParcelationReader.Update()
+
 		self.TemplateReader = vtk.vtkNIFTIImageReader()
+		self.TemplateReader.SetFileName(self.template_filename)
+		self.TemplateMapToColors = vtk.vtkImageMapToColors()
+		self.TemplateNumpy = nib.load(self.template_filename).get_data().astype(np.uint8)
+		self.TemplateReader.Update()
+
 		self.ParcelationNumpy = []
 		self.TemplateNumpy = []
 
 		self.Templatedmc =vtk.vtkDiscreteMarchingCubes()
-
 		self.dmc =vtk.vtkDiscreteMarchingCubes()
 
 		self.Template = vtk.vtkPolyData()
@@ -251,11 +260,15 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.axes2 = vtk.vtkCubeAxesActor2D()
 		self.axes3 = vtk.vtkCubeAxesActor2D()
 
-	    self.nc = vtk.vtkNamedColors()
-	 
-	    self.lut = vtk.vtkLookupTable()
-	    self.lut.SetNumberOfTableValues(self.nRegions)
-	    self.lut.Build()
+		self.nc = vtk.vtkNamedColors()
+
+		self.lut = vtk.vtkLookupTable()
+		self.lut.SetNumberOfTableValues(self.nRegions)
+		self.lut.Build()
+
+		self.colorData = vtk.vtkUnsignedCharArray()
+		self.colorData.SetName('colors') # Any name will work here.
+		self.colorData.SetNumberOfComponents(3)
 
 		self.TextProperty = vtk.vtkTextProperty()
 		self.TextProperty.SetColor(0,0,0)
@@ -268,19 +281,10 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.renderInteractor = QVTKRenderWindowInteractor(self,rw=self.renderWin)
 		self.BoxLayoutView.addWidget(self.renderInteractor)
 
-		self.colorsTemplate = vtk.vtkUnsignedCharArray()
-		self.colorsTemplate.SetNumberOfComponents(3)
-
-		self.colorsParcelation = vtk.vtkUnsignedCharArray()
-		self.colorsParcelation.SetNumberOfComponents(3)
-
 		self.points = vtk.vtkPoints()
 		self.triangles = vtk.vtkCellArray()
 
 		self.picker = vtk.vtkCellPicker()
-
-		self.lut = vtk.vtkLookupTable()
-		self.lut.SetNumberOfTableValues(7)
 
 		self.template_data = None
 		self.parcelation_data = None
@@ -301,35 +305,52 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.AddAxisActor()
 		self.SetAxisValues()
 
-	def MakeLUT(tableSize):
-	    '''
-	    Make a lookup table from a set of named colors.
-	    :param: tableSize - The table size
-	    :return: The lookup table.
-	    '''
-	    for index,data in enumerate(self.region_colors):
-	    	self.lut.SetTableValue(index,data)
+	def MakeLUT(self,tableSize):
+		'''
+		Make a lookup table from a set of named colors.
+		:param: tableSize - The table size
+		:return: The lookup table.
+		'''
+		regionId = 0
+		region_colors = [ self.colorTable.getColor(self.correlationTable.value(regionId, i)) for i in range(self.nRegions) ]
+		region_colors[regionId] = self.selectedColor
 
-	    	
-	    # # Fill in a few known colors, the rest will be generated if needed
-	    # lut.SetTableValue(0,nc.GetColor4d("Black"))
-	    # lut.SetTableValue(1,nc.GetColor4d("Banana"))
-	    # lut.SetTableValue(2,nc.GetColor4d("Tomato"))
-	    # lut.SetTableValue(3,nc.GetColor4d("Wheat"))
-	    # lut.SetTableValue(4,nc.GetColor4d("Lavender"))
-	    # lut.SetTableValue(5,nc.GetColor4d("Flesh"))
-	    # lut.SetTableValue(6,nc.GetColor4d("Raspberry"))
-	    # lut.SetTableValue(7,nc.GetColor4d("Salmon"))
-	    # lut.SetTableValue(8,nc.GetColor4d("Mint"))
-	    # lut.SetTableValue(9,nc.GetColor4d("Peacock"))
+		index = 0 
+		for index in range(tableSize):
+			data = region_colors[index]
+			r= float(data[0])/255
+			g=float(data[1])/255
+			b=float(data[2])/255
+			a=float(data[3])/255
+			self.lut.SetTableValue(index,(r,g,b,a))
+			index+=1
+
+	def MakeCellData(self,tableSize, lut, colors):
+		for i in range(0,tableSize):
+			rgb = [0.0,0.0,0.0]
+			# colors.InsertNextTuple3(self.region_colors[i-1][0],self.region_colors[i-1][1],self.region_colors[i-1][2])
+			lut.GetColor(float(i)/(tableSize-1),rgb)
+			ucrgb = list(map(int, [x * 255 for x in rgb]))
+			colors.InsertNextTuple3(ucrgb[0], ucrgb[1], ucrgb[2])
+			s = '['+ ', '.join(['{:0.6f}'.format(x) for x in rgb]) + ']'
 
 	def setColors(self):
-		self.MakeLUT()
-		print self.lut
-		self.ParcelationMapper.SetLookupTable(self.lut)
-		self.ParcelationMapper.SetScalarModeToUseCellData()
-		self.SetActorsAndOutline()
-		self.SetRenderer()
+		self.MakeLUT(self.nRegions)
+		self.MakeCellData(self.nRegions,self.lut,self.colorData)
+		print('Using a lookup table from a set of named colors.')
+		# self.ParcelationMapper.SetLookupTable(self.lut)
+		# self.ParcelationMapper.SetScalarModeToUsePointData()
+
+		# self.ParcelMapToColors.SetInputConnection(self.ParcelationReader.GetOutputPort())
+		# self.ParcelMapToColors.SetLookupTable(self.lut)
+
+		# value = self.dmc.GetOutput().GetPointData().GetScalars()
+		# # self.colorData.SetLookupTable(self.lut)
+		# # print self.colorData
+		# for i in range(value.GetNumberOfTuples()):
+		# 	if value.GetTuple1(i)>0:
+		# 		print value.GetTuple1(i)
+		# self.dmc.GetOutput().GetPointData().SetScalars(self.colorData)
 
 	def SetAxisValues(self):
 		self.axes2.SetInputConnection(self.Templatedmc.GetOutputPort())
@@ -348,7 +369,6 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.axes3.SetAxisLabelTextProperty(self.TextProperty)
 		self.renderer.AddViewProp(self.axes3)
 
-
 	def FinalRenderView(self):
 		# Tell the application to use the function as an exit check.
 		self.renderWin.AddObserver("AbortCheckEvent", exitCheck)
@@ -357,9 +377,6 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.renderInteractor.Start()
 
 	def DefineTemplateDataToBeMapped(self):
-		self.TemplateReader.SetFileName(self.template_filename)
-		self.TemplateReader.Update()
-		self.TemplateNumpy = nib.load(self.template_filename).get_data().astype(np.uint8)
 
 		self.Templatedmc.SetInputConnection(self.TemplateReader.GetOutputPort())
 		self.Templatedmc.Update()
@@ -367,29 +384,29 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.template_data = self.Templatedmc.GetOutput()
 
 	def DefineParcelationDataToBeMapped(self):
-		self.ParcelationReader.SetFileName(self.parcelation_filename)
-		self.ParcelationReader.Update()
-		self.ParcelationNumpy = template_data = nib.load(self.parcelation_filename).get_data().astype(np.uint8)
-
 		self.dmc.SetInputConnection(self.ParcelationReader.GetOutputPort())
-		
+		# self.dmc.GenerateValues(1,1,1)
+		# self.dmc.GenerateValues(2,2,2)
+		# self.dmc.GenerateValues(3,3,3)
+
 		self.PixX = self.ParcelationReader.GetNIFTIHeader().GetPixDim(1)
 		self.PixY = self.ParcelationReader.GetNIFTIHeader().GetPixDim(2)
 		self.PixZ = self.ParcelationReader.GetNIFTIHeader().GetPixDim(3)
 		# Getting the style object to invoke here because we get the real Pix dimensions
 		self.style = MouseInteractorHighLightActor(self,self.selectedColor[:3], self.PixX, self.PixY,self.PixZ)
 		# self.style.locationRegionSelected.connect(self.locationRegionSelectedIn)		
-
 		self.dmc.Update()
-
 		self.parcelation_data = self.dmc.GetOutput()
 
 	def AppendDatasets(self):
 		self.TemplateMapper.SetInputConnection(self.Templatedmc.GetOutputPort())
 		self.ParcelationMapper.SetInputConnection(self.dmc.GetOutputPort())
 		
+		print self.lut 
 		self.ParcelationMapper.SetLookupTable(self.lut)
+		print self.ParcelationMapper
 		self.ParcelationMapper.SetScalarModeToUseCellData()
+		print self.ParcelationMapper
 
 	def SetActorsAndOutline(self):
 		self.TemplateActor.SetMapper(self.TemplateMapper)
@@ -408,22 +425,6 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 
 		self.OutlineActor.SetMapper(self.mapper2)
 		self.OutlineActor.GetProperty().SetColor(0,0,0)
-
-	# def SetColors(self):
-	# 	rgba = list(nc.GetColor4d("Red"))
-	# 	rgba[3] = 0.5
-	# 	nc.SetColor("My Red",rgba)
-	# 	rgba = nc.GetColor4d("My Red")
-	# 	lut.SetTableValue(0,rgba)
-	# 	rgba = nc.GetColor4d("DarkGreen")
-	# 	rgba[3] = 0.3
-	# 	lut.SetTableValue(1,rgba)
-	# 	lut.SetTableValue(2,nc.GetColor4d("Blue"))
-	# 	lut.SetTableValue(3,nc.GetColor4d("Cyan"))
-	# 	lut.SetTableValue(4,nc.GetColor4d("Magenta"))
-	# 	lut.SetTableValue(5,nc.GetColor4d("Yellow"))
-	# 	lut.Build()
-
 
 	def AddAxisActor(self):
 		self.axesActor.SetXPlusFaceText('X')
@@ -481,7 +482,6 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.renderer.AddViewProp(self.OutlineActor)
 		self.renderInteractor.SetRenderWindow(self.renderWin)
 		self.renderWin.GetInteractor().Render()
-
 
 	def addSlices(self):
 		pass
@@ -567,7 +567,6 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 			region_colors = [ self.colorTable.getColor(self.correlationTable.value(regionId, i)) for i in range(self.nRegions) ]
 			region_colors[regionId] = self.selectedColor
 			self.setRegionColors(region_colors)	
-
 
 	def Community(self, Flag):
 		self.communityMode = Flag
