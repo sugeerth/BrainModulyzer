@@ -382,9 +382,10 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 			self.addSpheres()
 
 		if self.toggleThreeSlicesFlag: 
-			pass
+			self.addSlices()
 		else: 
-			pass
+			self.removeSlices()
+			
 
 		if self.PickingFlag:
 			# set Picker
@@ -457,7 +458,6 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 	def setRegionColors(self,region_colors):
 		assert len(region_colors) == self.nRegions
 		self.region_colors = region_colors
-		print self.region_colors
 		# Always use 256 colors since otherwise VisIt's color mapping does
 		# not always match expected results
 		# Colors: Background: black, region colors as passed by caller,
@@ -467,7 +467,7 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 
 
 	def colorRelativeToRegion(self, regionId):
-		print "reached here",regionId
+		 "reached here",regionId
 		self.regionId = regionId
 		if not(self.communityMode):
 			region_colors = [ self.colorTable.getColor(self.correlationTable.value(regionId, i)) for i in range(self.nRegions) ]
@@ -501,7 +501,3 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		# tsatts.z = sliceZ
 		# visit.SetOperatorOptions(tsatts)
 		# visit.DrawPlots()		
-
-
-
-
