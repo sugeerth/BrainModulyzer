@@ -400,13 +400,16 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 
 	def AppendDatasets(self):
 		self.TemplateMapper.SetInputConnection(self.Templatedmc.GetOutputPort())
+		self.TemplateMapper.ScalarVisibilityOff()
+
 		self.ParcelationMapper.SetInputConnection(self.dmc.GetOutputPort())
+		self.ParcelationMapper.ScalarVisibilityOff()
 		
-		print self.lut 
-		self.ParcelationMapper.SetLookupTable(self.lut)
-		print self.ParcelationMapper
-		self.ParcelationMapper.SetScalarModeToUseCellData()
-		print self.ParcelationMapper
+		# print self.lut 
+		# self.ParcelationMapper.SetLookupTable(self.lut)
+		# print self.ParcelationMapper
+		# self.ParcelationMapper.SetScalarModeToUsePointData()
+		# print self.ParcelationMapper
 
 	def SetActorsAndOutline(self):
 		self.TemplateActor.SetMapper(self.TemplateMapper)
@@ -425,6 +428,8 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 
 		self.OutlineActor.SetMapper(self.mapper2)
 		self.OutlineActor.GetProperty().SetColor(0,0,0)
+		# self.ParcelationActor.GetProperty().SetColor(0,1,0)
+		# self.ParcelationActor.GetProperty().SetOpacity(0.4)
 
 	def AddAxisActor(self):
 		self.axesActor.SetXPlusFaceText('X')
@@ -447,7 +452,7 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		#initialize the renderer and window, as well as 
 		#creating a method for exiting the application
 
-		self.TemplateActor.GetProperty().SetColor(1.0, 0.4, 0.4)
+		self.TemplateActor.GetProperty().SetColor(1.0, 1.0, 1.0)
 		self.TemplateActor.GetProperty().SetOpacity(0.1)
 
 		if self.toggleBrainSurfaceFlag:
