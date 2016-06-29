@@ -8,8 +8,8 @@ from numpy import *
 import nibabel as nib
 import numpy as np
 import csv
-from vtk.util import numpy_support
 
+import pprint
 import sys
 import PySide
 from PySide import QtCore, QtGui
@@ -18,7 +18,8 @@ from vtk.qt.QVTKRenderWindowInteractor import *
 
 class MouseInteractorHighLightActor(vtk.vtkInteractorStyleTrackballCamera):
  
-    def __init__(self,parent=None):
+    def __init__(self,selectedColor):
+    	self.selectedColor = selectedColor
         self.AddObserver("LeftButtonPressEvent",self.leftButtonPressEvent)
  
         self.LastPickedActor = None
@@ -44,9 +45,9 @@ class MouseInteractorHighLightActor(vtk.vtkInteractorStyleTrackballCamera):
             # restore it next time
             self.LastPickedProperty.DeepCopy(self.NewPickedActor.GetProperty())
             # Highlight the picked TemplateActor by changing its properties
-            self.NewPickedActor.GetProperty().SetDiffuseColor(0.0, 1.0, 0.0)
-            self.NewPickedActor.GetProperty().SetDiffuse(1.0)
-            self.NewPickedActor.GetProperty().SetSpecular(0.0)
+            self.NewPickedActor.GetProperty().SetColor(self.selectedColor)
+            # self.NewPickedActor.GetProperty().SetDiffuse(1.0)
+            # self.NewPickedActor.GetProperty().SetSpecular(0.0)
             # save the last picked TemplateActor
             self.LastPickedActor = self.NewPickedActor
  
@@ -163,6 +164,13 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.toggleThreeSlicesFlag = True
 		self.communityMode = False
 		self.PickingFlag = True
+		self.SphereActors = []
+		self.region_colors = None
+		
+		#PixelDimensions Spacing
+		self.PixX = 0
+		self.PixY = 0
+		self.PixZ = 0
 
 	def setDataset(self): 
 		self.ParcelationReader = vtk.vtkNIFTIImageReader()
@@ -235,7 +243,6 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.DefineParcelationDataToBeMapped()
 		# self.MergeTwoDatasets()
 		# self.SetColors()
-		print "done"
 		self.AppendDatasets()
 		self.SetActorsAndOutline()
 		self.SetRenderer()
@@ -271,54 +278,9 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 
 	def DefineTemplateDataToBeMapped(self):
 		self.TemplateReader.SetFileName(self.template_filename)
-		# Numpy compatability 
-		# self.TemplateReader = nib.load(self.template_filename).get_data().astype(uint8)
-
-		# self.TemplateReader = zeros([301, 310, 320], dtype=uint8)
-		# # self.TemplateReaderNumpy = np.copy(self.TemplateReader)
-		# x,y,z = self.TemplateReader.shape
-
-		# self.TemplateReader[0:35, 0:35, 0:35] = 50
-		# self.TemplateReader[25:55, 25:55, 25:55] = 100
-		# self.TemplateReader[45:74, 45:74, 45:74] = 150
-		# self.TemplateReader[74:174, 74:174, 75:174] = 200
-		# self.TemplateReader[174:300, 174:300, 175:300] = 200
-
-
-		# # For VTK to be able to use the data, it must be stored as a VTK-image. This can be done by the vtkImageImport-class which
-		# # imports raw data and stores it.
-		# # self.VtkTemplateData = numpy_support.numpy_to_vtk(num_array=self.TemplateReader.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
-
-
-	 # 	self.VtkTemplateData = vtk.vtkImageImport()
-
-		# # The preaviusly created array is converted to a string of chars and imported.
-		# data_string = self.TemplateReader.tostring()
-		# self.VtkTemplateData.CopyImportVoidPointer(data_string, len(data_string))
-		# self.VtkTemplateData.SetDimensions()
-		# # The type of the newly imported data is set to unsigned char (uint8)
-		# self.VtkTemplateData.SetDataScalarTypeToUnsignedChar()
-		# # Because the data that is imported only contains an intensity value (it isnt RGB-coded or someting similar), the importer
-		# # must be told this is the case.
-		# self.VtkTemplateData.SetNumberOfScalarComponents(1)
-		# # The following two functions describe how the data is stored and the dimensions of the array it is stored in. For this
-		# # simple case, all axes are of length 75 and begins with the first element. For other data, this is probably not the case.
-		# # I have to admit however, that I honestly dont know the difference between SetDataExtent() and SetWholeExtent() although
-		# # VTK complains if not both are used.
-
-		# self.VtkTemplateData.SetDataExtent(0, x-1, 0, y-1, 0, z-1)
-		# self.VtkTemplateData.SetWholeExtent(0, x-1, 0, y-1, 0, z-1)
-		# self.VtkTemplateData.SetDataOrigin(0,0,0)
-		# self.VtkTemplateData.Update()
-
-		# # # self.VtkTemplateData.SetDataExtent(0, 74, 0, 74, 0, 74)
-		# # # self.VtkTemplateData.SetWholeExtent(0, 74, 0, 74, 0, 74)
-		
 		self.TemplateReader.Update()
 
 		self.Templatedmc.SetInputConnection(self.TemplateReader.GetOutputPort())
-		print self.TemplateReader.GetNIFTIHeader()
-
 		self.Templatedmc.Update()
 
 		self.template_data = self.Templatedmc.GetOutput()
@@ -326,45 +288,6 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 	def DefineParcelationDataToBeMapped(self):
 		self.ParcelationReader.SetFileName(self.parcelation_filename)
 
-		# # Numpy compatability 
-		# self.ParcelationReader = nib.load(self.parcelation_filename).get_data().astype(uint8)
-
-
-		# self.ParcelationReader = zeros([301, 310, 320], dtype=uint8)
-		# # self.ParcelationReaderNumpy = np.copy(self.ParcelationReader)
-		# x,y,z = self.ParcelationReader.shape
-
-
-		# self.ParcelationReader[0:35, 0:35, 0:35] = 50
-		# self.ParcelationReader[25:55, 25:55, 25:55] = 100
-		# self.ParcelationReader[45:74, 45:74, 45:74] = 150
-		# self.ParcelationReader[74:174, 74:174, 75:174] = 200
-		# self.ParcelationReader[174:300, 174:300, 175:300] = 200
-
-
-		# # x,y,z = np.shape(self.ParcelationReader)
-		# # print np.shape(self.TemplateReader)
-		# # For VTK to be able to use the data, it must be stored as a VTK-image. This can be done by the vtkImageImport-class which
-		# # imports raw data and stores it.
-		# self.VtkParcelationData = vtk.vtkImageImport()
-		# # The preaviusly created array is converted to a string of chars and imported.
-		# data_string = self.ParcelationReader.tostring()
-		# self.VtkParcelationData.CopyImportVoidPointer(data_string, len(data_string))
-		# # The type of the newly imported data is set to unsigned char (uint8)
-		# self.VtkParcelationData.SetDataScalarTypeToUnsignedChar()
-		# # Because the data that is imported only contains an intensity value (it isnt RGB-coded or someting similar), the importer
-		# # must be told this is the case.
-		# self.VtkParcelationData.SetNumberOfScalarComponents(1)
-		# # The following two functions describe how the data is stored and the dimensions of the array it is stored in. For this
-		# # simple case, all axes are of length 75 and begins with the first element. For other data, this is probably not the case.
-		# # I have to admit however, that I honestly dont know the difference between SetDataExtent() and SetWholeExtent() although
-		# # VTK complains if not both are used.
-		# self.VtkParcelationData.SetDataExtent(0, x-1, 0, y-1, 0, z-1)
-		# self.VtkParcelationData.SetWholeExtent(0, x-1, 0, y-1, 0, z-1)
-		# self.VtkParcelationData.SetDataOrigin(0,0,0)
-		# self.VtkParcelationData.Update()
-		# # self.VtkParcelationData.SetDataExtent(0, 74, 0, 74, 0, 74)
-		# # self.VtkParcelationData.SetWholeExtent(0, 74, 0, 74, 0, 74)
 		self.ParcelationReader.Update()
 		self.dmc.SetInputConnection(self.ParcelationReader.GetOutputPort())
 		
@@ -446,13 +369,16 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.TemplateActor.GetProperty().SetOpacity(0.1)
 
 		if self.toggleBrainSurfaceFlag:
-			self.renderer.AddActor(self.TemplateActor)
+			self.renderer.AddViewProp(self.TemplateActor)
 		else:
 			self.renderer.RemoveActor(self.TemplateActor)
 
 		if not(self.setCentroidModeFlag): 
-			self.renderer.AddActor(self.ParcelationActor)
+			if self.SphereActors:
+				self.removeSpheres()
+			self.renderer.AddViewProp(self.ParcelationActor)
 		else: 
+			self.renderer.RemoveActor(self.ParcelationActor)
 			self.addSpheres()
 
 		if self.toggleThreeSlicesFlag: 
@@ -462,44 +388,47 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 
 		if self.PickingFlag:
 			# set Picker
-			self.style = MouseInteractorHighLightActor()
+			self.style = MouseInteractorHighLightActor(self.selectedColor[:3])
 			self.style.SetDefaultRenderer(self.renderer)
 			self.renderInteractor.SetInteractorStyle(self.style)	
 		else:
 			self.style = None
 			self.renderInteractor.SetInteractorStyle(self.style)
 
-		self.renderer.AddActor(self.OutlineActor)
+		self.renderer.AddViewProp(self.OutlineActor)
 		self.renderInteractor.SetRenderWindow(self.renderWin)
+
+
+	def removeSpheres(self):
+		for actor in self.SphereActors:
+			self.renderer.RemoveActor(actor)
 
 	def addSpheres(self):
 		for i in range(self.nRegions):
 			source = vtk.vtkSphereSource()
 			# random position and radius
-			x = float(self.Centroid[i][0]) 
-			y = float(self.Centroid[i][1]) 
-			z = float(self.Centroid[i][2]) 
+			x = float(self.Centroid[i][0])* self.PixX 
+			y = float(self.Centroid[i][1])* self.PixY 
+			z = float(self.Centroid[i][2])* self.PixZ 
 			radius = 5
 
 			source.SetRadius(radius)
 			source.SetCenter(x,y,z)
-			# source.SetPhiResolution(11)
-			# source.SetThetaResolution(21)
 
 			mapper = vtk.vtkPolyDataMapper()
 			mapper.SetInputConnection(source.GetOutputPort())
 			actor = vtk.vtkActor()
 			actor.SetMapper(mapper)
+			r = float(self.region_colors[i][0])/255
+			g = float(self.region_colors[i][1])/255
+			b = float(self.region_colors[i][2])/255
 
-			r = vtk.vtkMath.Random(.4, 1.0)
-			g = vtk.vtkMath.Random(.4, 1.0)
-			b = vtk.vtkMath.Random(.4, 1.0)
-			actor.GetProperty().SetDiffuseColor(r, g, b)
-			actor.GetProperty().SetDiffuse(.8)
-			actor.GetProperty().SetSpecular(.5)
+			actor.GetProperty().SetColor(r, g, b)
+			# actor.GetProperty().SetDiffuse(.8)
+			# actor.GetProperty().SetSpecular(.5)
 			actor.GetProperty().SetSpecularColor(1.0,1.0,1.0)
-			actor.GetProperty().SetSpecularPower(30.0)
-
+			# actor.GetProperty().SetSpecularPower(30.0)
+			self.SphereActors.append(actor)
 			self.renderer.AddViewProp(actor)
 
 	"""
@@ -527,13 +456,18 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 
 	def setRegionColors(self,region_colors):
 		assert len(region_colors) == self.nRegions
+		self.region_colors = region_colors
+		print self.region_colors
 		# Always use 256 colors since otherwise VisIt's color mapping does
 		# not always match expected results
 		# Colors: Background: black, region colors as passed by caller,
 		#         fill up remaining colors with black
 		colors = [ (0, 0, 0, 255) ]  + region_colors + [ (0, 0, 0, 255) ] * ( 256 - self.nRegions - 1)
+		self.SetRenderer()
+
 
 	def colorRelativeToRegion(self, regionId):
+		print "reached here",regionId
 		self.regionId = regionId
 		if not(self.communityMode):
 			region_colors = [ self.colorTable.getColor(self.correlationTable.value(regionId, i)) for i in range(self.nRegions) ]

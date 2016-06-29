@@ -122,23 +122,22 @@ slice_views[0] = SliceViewer(template_data, parcelation_data, 0, correlationTabl
 viewersLayout1.addWidget(slice_views[0])
 viewersLayout1.setContentsMargins(0,0,0,0)
 
-# slice_views[0].sliceChanged.connect(brainTemplatePlot.setThreeSliceX)
-# slice_views[0].regionSelected.connect(parcelationPlot.colorRelativeToRegion)
+slice_views[0].sliceChanged.connect(VolumneRenderer.setThreeSliceX)
+slice_views[0].regionSelected.connect(VolumneRenderer.colorRelativeToRegion)
 
 slice_views[1] = SliceViewer(template_data, parcelation_data, 1, correlationTable, colorTable, selectedColor)
 viewersLayout1.addWidget(slice_views[1])
 viewersLayout1.setContentsMargins(0,0,0,0)
 
-# slice_views[1].sliceChanged.connect(brainTemplatePlot.setThreeSliceY)
-# slice_views[1].regionSelected.connect(parcelationPlot.colorRelativeToRegion)
-
+slice_views[1].sliceChanged.connect(VolumneRenderer.setThreeSliceY)
+slice_views[1].regionSelected.connect(VolumneRenderer.colorRelativeToRegion)
 
 slice_views[2] = SliceViewer(template_data, parcelation_data, 2, correlationTable, colorTable, selectedColor)
 viewersLayout2.addWidget(slice_views[2])
 viewersLayout2.setContentsMargins(0,0,0,0)
 
-# slice_views[2].sliceChanged.connect(brainTemplatePlot.setThreeSliceZ)
-# slice_views[2].regionSelected.connect(parcelationPlot.colorRelativeToRegion)
+slice_views[2].sliceChanged.connect(VolumneRenderer.setThreeSliceZ)
+slice_views[2].regionSelected.connect(VolumneRenderer.colorRelativeToRegion)
 # slice_views[2].setMinimumSize(250, 250)
 
 print "Setting Graph data GraphDataStructure"
@@ -146,13 +145,13 @@ Tab_2_AdjacencyMatrix = GraphVisualization(correlationTable.data)
 
 print "Setting CorrelationTable for communities"
 Tab_2_CorrelationTable = CommunityCorrelationTableDisplay(correlationTable, colorTable,Tab_2_AdjacencyMatrix)
-# Tab_2_CorrelationTable.selectedRegionChanged.connect(parcelationPlot.colorRelativeToRegion)
+Tab_2_CorrelationTable.selectedRegionChanged.connect(VolumneRenderer.colorRelativeToRegion)
 Tab_2_CorrelationTable.setMinimumSize(390, 460)
 
 print "Setting CorrelationTable"
 
 Tab_1_CorrelationTable = CorrelationTableDisplay(correlationTable, colorTable,Tab_2_AdjacencyMatrix)
-# Tab_1_CorrelationTable.selectedRegionChanged.connect(parcelationPlot.colorRelativeToRegion)
+Tab_1_CorrelationTable.selectedRegionChanged.connect(VolumneRenderer.colorRelativeToRegion)
 Tab_1_CorrelationTable.setMinimumSize(390, 460)
 Tab_2_CorrelationTable.show()
 
@@ -313,10 +312,10 @@ visitControlsLayout.addWidget(pickButton)
 visitControlsLayout.setContentsMargins(0,0,0,0)
 
 pickButton.clicked.connect(VolumneRenderer.EnablePicking)
-# parcelationPlot.regionSelected.connect(Tab_1_CorrelationTable.selectRegion)
-# parcelationPlot.regionSelected.connect(widget.NodeSelected)
-# parcelationPlot.regionSelected.connect(Tab_2_CorrelationTable.selectRegion)
-# parcelationPlot.regionSelected.connect(quantTableObject.setRegions)
+VolumneRenderer.regionSelected.connect(Tab_1_CorrelationTable.selectRegion)
+VolumneRenderer.regionSelected.connect(widget.NodeSelected)
+VolumneRenderer.regionSelected.connect(Tab_2_CorrelationTable.selectRegion)
+VolumneRenderer.regionSelected.connect(quantTableObject.setRegions)
 
 if MainWindowShowFlag:
     main.show()
