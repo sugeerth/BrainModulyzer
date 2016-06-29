@@ -8,6 +8,7 @@ from numpy import *
 import nibabel as nib
 import numpy as np
 import csv
+from vtk.util import numpy_support
 
 import sys
 import PySide
@@ -28,18 +29,10 @@ class MouseInteractorHighLightActor(vtk.vtkInteractorStyleTrackballCamera):
         pos = self.GetInteractor().GetPicker().GetPickPosition()
  
         picker = vtk.vtkPropPicker()
-        WorldPicker = vtk.vtkWorldPointPicker()
-
         picker.Pick(clickPos[0], clickPos[1], 0, self.GetDefaultRenderer())
-        WorldPicker.Pick(clickPos[0], clickPos[1], 0, self.GetDefaultRenderer())
-        
-        self.PickedActor = picker.GetActor()
-
         # get the new
         self.NewPickedActor = picker.GetActor()
-        print self.NewPickedActor
  
- 	
         # If something was selected
         if self.NewPickedActor:
             # If we picked something before, reset its property
@@ -176,6 +169,7 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.TemplateReader = vtk.vtkNIFTIImageReader()
 
 		self.Templatedmc =vtk.vtkDiscreteMarchingCubes()
+
 		self.dmc =vtk.vtkDiscreteMarchingCubes()
 
 		self.Template = vtk.vtkPolyData()
@@ -204,6 +198,14 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.renderWin = vtk.vtkRenderWindow()
 		self.renderWin.AddRenderer(self.renderer)
 
+		self.axes2 = vtk.vtkCubeAxesActor2D()
+		self.axes3 = vtk.vtkCubeAxesActor2D()
+
+		self.TextProperty = vtk.vtkTextProperty()
+		self.TextProperty.SetColor(0,0,0)
+		# self.TextProperty.ShadowOn()
+		self.TextProperty.SetFontSize(100)
+
 		self.axesActor = vtk.vtkAnnotatedCubeActor()
 		self.axes = vtk.vtkOrientationMarkerWidget()
 
@@ -228,16 +230,37 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.parcelation_data = None
 
 
-
 	def RenderData(self):
 		self.DefineTemplateDataToBeMapped()
 		self.DefineParcelationDataToBeMapped()
-		self.MergeTwoDatasets()
+		# self.MergeTwoDatasets()
 		# self.SetColors()
+		print "done"
 		self.AppendDatasets()
 		self.SetActorsAndOutline()
 		self.SetRenderer()
 		self.AddAxisActor()
+		self.SetAxisValues()
+
+
+	def SetAxisValues(self):
+		self.axes2.SetInputConnection(self.Templatedmc.GetOutputPort())
+		self.axes2.SetCamera(self.renderer.GetActiveCamera())
+		self.axes2.SetLabelFormat("%6.4g")
+		self.axes2.SetFlyModeToOuterEdges()
+		self.axes2.SetAxisTitleTextProperty(self.TextProperty)
+		self.axes2.SetAxisLabelTextProperty(self.TextProperty)
+		self.renderer.AddViewProp(self.axes2)
+
+		self.axes3.SetInputConnection(self.Templatedmc.GetOutputPort())
+		self.axes3.SetCamera(self.renderer.GetActiveCamera())
+		self.axes3.SetLabelFormat("%6.4g")
+		self.axes3.SetFlyModeToClosestTriad()
+		self.axes3.ScalingOff()
+		self.axes3.SetAxisTitleTextProperty(self.TextProperty)
+		self.axes3.SetAxisLabelTextProperty(self.TextProperty)
+		self.renderer.AddViewProp(self.axes3)
+
 
 	def FinalRenderView(self):
 		# Tell the application to use the function as an exit check.
@@ -248,14 +271,109 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 
 	def DefineTemplateDataToBeMapped(self):
 		self.TemplateReader.SetFileName(self.template_filename)
+		# Numpy compatability 
+		# self.TemplateReader = nib.load(self.template_filename).get_data().astype(uint8)
+
+		# self.TemplateReader = zeros([301, 310, 320], dtype=uint8)
+		# # self.TemplateReaderNumpy = np.copy(self.TemplateReader)
+		# x,y,z = self.TemplateReader.shape
+
+		# self.TemplateReader[0:35, 0:35, 0:35] = 50
+		# self.TemplateReader[25:55, 25:55, 25:55] = 100
+		# self.TemplateReader[45:74, 45:74, 45:74] = 150
+		# self.TemplateReader[74:174, 74:174, 75:174] = 200
+		# self.TemplateReader[174:300, 174:300, 175:300] = 200
+
+
+		# # For VTK to be able to use the data, it must be stored as a VTK-image. This can be done by the vtkImageImport-class which
+		# # imports raw data and stores it.
+		# # self.VtkTemplateData = numpy_support.numpy_to_vtk(num_array=self.TemplateReader.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
+
+
+	 # 	self.VtkTemplateData = vtk.vtkImageImport()
+
+		# # The preaviusly created array is converted to a string of chars and imported.
+		# data_string = self.TemplateReader.tostring()
+		# self.VtkTemplateData.CopyImportVoidPointer(data_string, len(data_string))
+		# self.VtkTemplateData.SetDimensions()
+		# # The type of the newly imported data is set to unsigned char (uint8)
+		# self.VtkTemplateData.SetDataScalarTypeToUnsignedChar()
+		# # Because the data that is imported only contains an intensity value (it isnt RGB-coded or someting similar), the importer
+		# # must be told this is the case.
+		# self.VtkTemplateData.SetNumberOfScalarComponents(1)
+		# # The following two functions describe how the data is stored and the dimensions of the array it is stored in. For this
+		# # simple case, all axes are of length 75 and begins with the first element. For other data, this is probably not the case.
+		# # I have to admit however, that I honestly dont know the difference between SetDataExtent() and SetWholeExtent() although
+		# # VTK complains if not both are used.
+
+		# self.VtkTemplateData.SetDataExtent(0, x-1, 0, y-1, 0, z-1)
+		# self.VtkTemplateData.SetWholeExtent(0, x-1, 0, y-1, 0, z-1)
+		# self.VtkTemplateData.SetDataOrigin(0,0,0)
+		# self.VtkTemplateData.Update()
+
+		# # # self.VtkTemplateData.SetDataExtent(0, 74, 0, 74, 0, 74)
+		# # # self.VtkTemplateData.SetWholeExtent(0, 74, 0, 74, 0, 74)
+		
+		self.TemplateReader.Update()
+
 		self.Templatedmc.SetInputConnection(self.TemplateReader.GetOutputPort())
+		print self.TemplateReader.GetNIFTIHeader()
+
 		self.Templatedmc.Update()
+
 		self.template_data = self.Templatedmc.GetOutput()
 
 	def DefineParcelationDataToBeMapped(self):
 		self.ParcelationReader.SetFileName(self.parcelation_filename)
+
+		# # Numpy compatability 
+		# self.ParcelationReader = nib.load(self.parcelation_filename).get_data().astype(uint8)
+
+
+		# self.ParcelationReader = zeros([301, 310, 320], dtype=uint8)
+		# # self.ParcelationReaderNumpy = np.copy(self.ParcelationReader)
+		# x,y,z = self.ParcelationReader.shape
+
+
+		# self.ParcelationReader[0:35, 0:35, 0:35] = 50
+		# self.ParcelationReader[25:55, 25:55, 25:55] = 100
+		# self.ParcelationReader[45:74, 45:74, 45:74] = 150
+		# self.ParcelationReader[74:174, 74:174, 75:174] = 200
+		# self.ParcelationReader[174:300, 174:300, 175:300] = 200
+
+
+		# # x,y,z = np.shape(self.ParcelationReader)
+		# # print np.shape(self.TemplateReader)
+		# # For VTK to be able to use the data, it must be stored as a VTK-image. This can be done by the vtkImageImport-class which
+		# # imports raw data and stores it.
+		# self.VtkParcelationData = vtk.vtkImageImport()
+		# # The preaviusly created array is converted to a string of chars and imported.
+		# data_string = self.ParcelationReader.tostring()
+		# self.VtkParcelationData.CopyImportVoidPointer(data_string, len(data_string))
+		# # The type of the newly imported data is set to unsigned char (uint8)
+		# self.VtkParcelationData.SetDataScalarTypeToUnsignedChar()
+		# # Because the data that is imported only contains an intensity value (it isnt RGB-coded or someting similar), the importer
+		# # must be told this is the case.
+		# self.VtkParcelationData.SetNumberOfScalarComponents(1)
+		# # The following two functions describe how the data is stored and the dimensions of the array it is stored in. For this
+		# # simple case, all axes are of length 75 and begins with the first element. For other data, this is probably not the case.
+		# # I have to admit however, that I honestly dont know the difference between SetDataExtent() and SetWholeExtent() although
+		# # VTK complains if not both are used.
+		# self.VtkParcelationData.SetDataExtent(0, x-1, 0, y-1, 0, z-1)
+		# self.VtkParcelationData.SetWholeExtent(0, x-1, 0, y-1, 0, z-1)
+		# self.VtkParcelationData.SetDataOrigin(0,0,0)
+		# self.VtkParcelationData.Update()
+		# # self.VtkParcelationData.SetDataExtent(0, 74, 0, 74, 0, 74)
+		# # self.VtkParcelationData.SetWholeExtent(0, 74, 0, 74, 0, 74)
+		self.ParcelationReader.Update()
 		self.dmc.SetInputConnection(self.ParcelationReader.GetOutputPort())
+		
+		self.PixX = self.ParcelationReader.GetNIFTIHeader().GetPixDim(1)
+		self.PixY = self.ParcelationReader.GetNIFTIHeader().GetPixDim(2)
+		self.PixZ = self.ParcelationReader.GetNIFTIHeader().GetPixDim(3)
+
 		self.dmc.Update()
+
 		self.parcelation_data = self.dmc.GetOutput()
 
 	def MergeTwoDatasets(self):
@@ -328,12 +446,12 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.TemplateActor.GetProperty().SetOpacity(0.1)
 
 		if self.toggleBrainSurfaceFlag:
-			self.renderer.AddViewProp(self.TemplateActor)
+			self.renderer.AddActor(self.TemplateActor)
 		else:
 			self.renderer.RemoveActor(self.TemplateActor)
 
 		if not(self.setCentroidModeFlag): 
-			self.renderer.AddViewProp(self.ParcelationActor)
+			self.renderer.AddActor(self.ParcelationActor)
 		else: 
 			self.addSpheres()
 
@@ -351,75 +469,38 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 			self.style = None
 			self.renderInteractor.SetInteractorStyle(self.style)
 
-		self.renderer.AddViewProp(self.OutlineActor)
+		self.renderer.AddActor(self.OutlineActor)
 		self.renderInteractor.SetRenderWindow(self.renderWin)
 
 	def addSpheres(self):
-		point = vtk.vtkPoints()
 		for i in range(self.nRegions):
+			source = vtk.vtkSphereSource()
 			# random position and radius
 			x = float(self.Centroid[i][0]) 
 			y = float(self.Centroid[i][1]) 
 			z = float(self.Centroid[i][2]) 
 			radius = 5
-			point.InsertNextPoint(x,y,z)
 
-		implicitPolyDataDistance = vtk.vtkImplicitPolyDataDistance()
-		implicitPolyDataDistance.SetInput(self.Templatedmc.GetOutput())
+			source.SetRadius(radius)
+			source.SetCenter(x,y,z)
+			# source.SetPhiResolution(11)
+			# source.SetThetaResolution(21)
 
-		# Add distances to each point
-		signedDistances = vtk.vtkFloatArray()
-		signedDistances.SetNumberOfComponents(1)
-		signedDistances.SetName("SignedDistances")
+			mapper = vtk.vtkPolyDataMapper()
+			mapper.SetInputConnection(source.GetOutputPort())
+			actor = vtk.vtkActor()
+			actor.SetMapper(mapper)
 
-		# Evaluate the signed distance function at all of the grid points
-		for pointId in range(point.GetNumberOfPoints()):
-			p = point.GetPoint(pointId)
-			signedDistance = implicitPolyDataDistance.EvaluateFunction(p)
-			signedDistances.InsertNextValue(signedDistance)
+			r = vtk.vtkMath.Random(.4, 1.0)
+			g = vtk.vtkMath.Random(.4, 1.0)
+			b = vtk.vtkMath.Random(.4, 1.0)
+			actor.GetProperty().SetDiffuseColor(r, g, b)
+			actor.GetProperty().SetDiffuse(.8)
+			actor.GetProperty().SetSpecular(.5)
+			actor.GetProperty().SetSpecularColor(1.0,1.0,1.0)
+			actor.GetProperty().SetSpecularPower(30.0)
 
-		PolyData = vtk.vtkPolyData()
-		PolyData.SetPoints(point)
-		PolyData.GetPointData().SetScalars(signedDistances)
-
-		GlyphFilter = vtk.vtkVertexGlyphFilter()
-
-		if vtk.VTK_MAJOR_VERSION <= 5:
-			GlyphFilter.AddInput(PolyData)
-		else:
-			GlyphFilter.AddInputData(PolyData)
-		
-		GlyphFilter.Update()
-
-		PointsMapper = vtk.vtkPolyDataMapper()
-		PointsMapper.SetInputConnection(GlyphFilter.GetOutputPort())
-		PointsMapper.ScalarVisibilityOn()
-
-		PointsActor = vtk.vtkActor()
-		PointsActor.SetMapper(PointsMapper)
-
-		# PointsActor.GetProperty().setPointSize(5)
-		self.renderer.AddViewProp(PointsActor)
-		# source.SetRadius(radius)
-		# source.SetCenter(x,y,z)
-		# # source.SetPhiResolution(11)
-		# # source.SetThetaResolution(21)
-
-		# mapper = vtk.vtkPolyDataMapper()
-		# mapper.SetInputConnection(source.GetOutputPort())
-		# actor = vtk.vtkActor()
-		# actor.SetMapper(mapper)
-
-		# r = vtk.vtkMath.Random(.4, 1.0)
-		# g = vtk.vtkMath.Random(.4, 1.0)
-		# b = vtk.vtkMath.Random(.4, 1.0)
-		# actor.GetProperty().SetDiffuseColor(r, g, b)
-		# actor.GetProperty().SetDiffuse(.8)
-		# actor.GetProperty().SetSpecular(.5)
-		# actor.GetProperty().SetSpecularColor(1.0,1.0,1.0)
-		# actor.GetProperty().SetSpecularPower(30.0)
-
-		# self.renderer.AddActor(actor)
+			self.renderer.AddViewProp(actor)
 
 	"""
 	Interactive slots that need the help of an external caller method 
