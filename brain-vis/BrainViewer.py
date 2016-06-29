@@ -78,8 +78,6 @@ print "Setting up Volumne Renderer"
 # brainTemplatePlot = BrainTemplatePlot(template_data)
 # parcelationPlot = ParcelationPlot(parcelation_data, parcelation_filename, correlationTable, colorTable, selectedColor)
 
-
-
 print "Setting main GUI."
 Counter = len(correlationTable.data)
 DataColor = np.zeros(Counter+1)
@@ -116,7 +114,7 @@ allViewersLayout.setContentsMargins(0,0,0,0)
 allViewersLayout.addLayout(viewersLayout2)
 allViewersLayout.setContentsMargins(0,0,0,0)
 
-VolumneRenderer = VolumneRendererWindow(parcelation_filename, template_filename)
+VolumneRenderer = VolumneRendererWindow(parcelation_filename, template_filename, correlationTable,selectedColor,colorTable)
 
 print "Setting Slice Views"
 slice_views = [None, None, None]
@@ -184,9 +182,9 @@ print "Setting Graph interface"
 Graph_Layout=LayoutInit(widget,quantTableObject,ui,dataSetLoader,screenshot,matrix_filename\
     ,template_filename,parcelation_filename)
 
-# widget.regionSelected.connect(parcelationPlot.colorRelativeToRegion)
+widget.regionSelected.connect(VolumneRenderer.colorRelativeToRegion)
 widget.regionSelected.connect(Tab_1_CorrelationTable.selectRegion)
-# widget.CommunityColor.connect(parcelationPlot.setRegionColors)
+widget.CommunityColor.connect(VolumneRenderer.setRegionColors)
 widget.regionSelected.connect(Tab_2_CorrelationTable.selectRegion)
 widget.regionSelected.connect(quantTableObject.setRegions)
 
@@ -239,7 +237,7 @@ print "Setting up Signals and Slots"
 
 widget.CommunityColorAndDict.connect(Tab_1_CorrelationTable.setRegionColors)
 widget.CommunityColorAndDict.connect(Tab_2_CorrelationTable.setRegionColors)
-# widget.CommunityMode.connect(parcelationPlot.Community)
+widget.CommunityMode.connect(VolumneRenderer.Community)
 
 # Code clicking the group button in the slide
 def buttonGroupClicked(number):
@@ -290,8 +288,6 @@ for sv in slice_views:
     widget.CommunityColor.connect(sv.setRegionColors)
     widget.CommunityMode.connect(sv.Community)
 
-
-
 visitViewerLayout.addWidget(VolumneRenderer)
 visitViewerLayout.setContentsMargins(0,0,0,0)
 visitViewerLayout.addLayout(box)
@@ -304,7 +300,7 @@ visitViewerLayout.setContentsMargins(0,0,0,0)
 toggleThreeSliceButton = QtGui.QPushButton("Show/Hide Slices")
 visitControlsLayout.addWidget(toggleThreeSliceButton)
 
-# toggleThreeSliceButton.clicked.connect(brainTemplatePlot.toggleThreeSlice)
+toggleThreeSliceButton.clicked.connect(VolumneRenderer.toggleThreeSlice)
 toggleBrainSurfaceButton = QtGui.QPushButton("Show/Hide Brain Surfaces")
 
 visitControlsLayout.addWidget(toggleBrainSurfaceButton)
@@ -316,7 +312,7 @@ pickButton = QtGui.QPushButton("Pick Region")
 visitControlsLayout.addWidget(pickButton)
 visitControlsLayout.setContentsMargins(0,0,0,0)
 
-# pickButton.clicked.connect(parcelationPlot.startPick3D)
+pickButton.clicked.connect(VolumneRenderer.EnablePicking)
 # parcelationPlot.regionSelected.connect(Tab_1_CorrelationTable.selectRegion)
 # parcelationPlot.regionSelected.connect(widget.NodeSelected)
 # parcelationPlot.regionSelected.connect(Tab_2_CorrelationTable.selectRegion)
