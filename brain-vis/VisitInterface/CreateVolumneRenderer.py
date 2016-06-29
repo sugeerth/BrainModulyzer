@@ -17,42 +17,77 @@ from vtk.qt.QVTKRenderWindowInteractor import QVTKRenderWindowInteractor
 from vtk.qt.QVTKRenderWindowInteractor import *
 
 class MouseInteractorHighLightActor(vtk.vtkInteractorStyleTrackballCamera):
+
+	def __init__(self,VolumneRendererWindow, selectedColor, PixX, PixY, PixZ):
+		super(MouseInteractorHighLightActor, self).__init__()
+
+		self.selectedColor = selectedColor
+		self.VolumneRendererWindow = VolumneRendererWindow
+
+		self.AddObserver("LeftButtonPressEvent",self.leftButtonPressEvent)
+
+		self.PixX = PixX
+		self.PixY = PixY
+		self.PixZ = PixZ
+		self.LastPickedActor = None
+		self.LastPickedProperty = vtk.vtkProperty()
+
+	def leftButtonPressEvent(self,obj,event):
+		clickPos = self.GetInteractor().GetEventPosition()
+		pos = self.GetInteractor().GetPicker().GetPickPosition()
+		picker = vtk.vtkPropPicker()
+		picker.Pick(clickPos[0], clickPos[1], 0, self.GetDefaultRenderer())
+		# get the new
+		self.NewPickedActor = picker.GetActor()
+		"""
+		Idea is to compare the xyz locations with the numpy parcels to get the 
+		selected Id 
+		"""
+
+		# If something was selected
+		if self.NewPickedActor:
+			# If we picked something before, reset its property
+			if self.LastPickedActor:
+				self.LastPickedActor.GetProperty().DeepCopy(self.LastPickedProperty)
+			# Save the property of the picked TemplateActor so that we can
+			# restore it next time
+			self.LastPickedProperty.DeepCopy(self.NewPickedActor.GetProperty())
+			# Highlight the picked TemplateActor by changing its properties
+			# self.NewPickedActor.GetProperty().SetColor(self.selectedColor)
+			
+
+			bounds= self.NewPickedActor.GetBounds()  
+			if self.VolumneRendererWindow.setCentroidModeFlag: 
+				XValue = 1/self.PixX
+				YValue = 1/self.PixY
+				ZValue = 1/self.PixZ
+
+				X = bounds[0]*XValue
+				x = bounds[1]*XValue
+
+				Y = bounds[2]*YValue
+				y = bounds[3]*YValue
+
+				Z = bounds[4]*ZValue
+				z = bounds[5]*ZValue
+
+				if self.VolumneRendererWindow.SphereActors:
+					index = 0
+					for actor in self.VolumneRendererWindow.SphereActors:
+						if actor == self.NewPickedActor:
+							break
+						index +=1
+
+
+				self.VolumneRendererWindow.RegionSelectedIn(index)
+
+			# self.NewPickedActor.GetProperty().SetDiffuse(1.0)
+			# self.NewPickedActor.GetProperty().SetSpecular(0.0)
+			# save the last picked TemplateActor
+			self.LastPickedActor = self.NewPickedActor
  
-    def __init__(self,selectedColor):
-    	self.selectedColor = selectedColor
-        self.AddObserver("LeftButtonPressEvent",self.leftButtonPressEvent)
- 
-        self.LastPickedActor = None
-        self.LastPickedProperty = vtk.vtkProperty()
- 
-    def leftButtonPressEvent(self,obj,event):
-        clickPos = self.GetInteractor().GetEventPosition()
-        pos = self.GetInteractor().GetPicker().GetPickPosition()
- 
-        picker = vtk.vtkPropPicker()
-        picker.Pick(clickPos[0], clickPos[1], 0, self.GetDefaultRenderer())
-        # get the new
-        self.NewPickedActor = picker.GetActor()
- 
-        # If something was selected
-        if self.NewPickedActor:
-            # If we picked something before, reset its property
-            if self.LastPickedActor:
-                self.LastPickedActor.GetProperty().DeepCopy(self.LastPickedProperty)
- 
- 
-            # Save the property of the picked TemplateActor so that we can
-            # restore it next time
-            self.LastPickedProperty.DeepCopy(self.NewPickedActor.GetProperty())
-            # Highlight the picked TemplateActor by changing its properties
-            self.NewPickedActor.GetProperty().SetColor(self.selectedColor)
-            # self.NewPickedActor.GetProperty().SetDiffuse(1.0)
-            # self.NewPickedActor.GetProperty().SetSpecular(0.0)
-            # save the last picked TemplateActor
-            self.LastPickedActor = self.NewPickedActor
- 
-        self.OnLeftButtonDown()
-        return
+		self.OnLeftButtonDown()
+		return
 
 # A simple function to be called when the user decides to quit the application.
 def exitCheck(obj, event):
@@ -175,6 +210,8 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 	def setDataset(self): 
 		self.ParcelationReader = vtk.vtkNIFTIImageReader()
 		self.TemplateReader = vtk.vtkNIFTIImageReader()
+		self.ParcelationNumpy = []
+		self.TemplateNumpy = []
 
 		self.Templatedmc =vtk.vtkDiscreteMarchingCubes()
 
@@ -238,17 +275,26 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.parcelation_data = None
 
 
+	def RegionSelectedIn(self, Id):
+		self.colorRelativeToRegion(Id)
+		self.regionSelected.emit(Id)
+
+
 	def RenderData(self):
 		self.DefineTemplateDataToBeMapped()
 		self.DefineParcelationDataToBeMapped()
 		# self.MergeTwoDatasets()
 		# self.SetColors()
 		self.AppendDatasets()
+		self.setColors()
 		self.SetActorsAndOutline()
 		self.SetRenderer()
 		self.AddAxisActor()
 		self.SetAxisValues()
 
+	def setColors(self):
+		# self.Template 
+		ParcelData = self.ParcelationReader.GetOutput()
 
 	def SetAxisValues(self):
 		self.axes2.SetInputConnection(self.Templatedmc.GetOutputPort())
@@ -279,6 +325,7 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 	def DefineTemplateDataToBeMapped(self):
 		self.TemplateReader.SetFileName(self.template_filename)
 		self.TemplateReader.Update()
+		self.TemplateNumpy = nib.load(self.template_filename).get_data().astype(np.uint8)
 
 		self.Templatedmc.SetInputConnection(self.TemplateReader.GetOutputPort())
 		self.Templatedmc.Update()
@@ -287,13 +334,17 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 
 	def DefineParcelationDataToBeMapped(self):
 		self.ParcelationReader.SetFileName(self.parcelation_filename)
-
 		self.ParcelationReader.Update()
+		self.ParcelationNumpy = template_data = nib.load(self.parcelation_filename).get_data().astype(np.uint8)
+
 		self.dmc.SetInputConnection(self.ParcelationReader.GetOutputPort())
 		
 		self.PixX = self.ParcelationReader.GetNIFTIHeader().GetPixDim(1)
 		self.PixY = self.ParcelationReader.GetNIFTIHeader().GetPixDim(2)
 		self.PixZ = self.ParcelationReader.GetNIFTIHeader().GetPixDim(3)
+		# Getting the style object to invoke here because we get the real Pix dimensions
+		self.style = MouseInteractorHighLightActor(self,self.selectedColor[:3], self.PixX, self.PixY,self.PixZ)
+		# self.style.locationRegionSelected.connect(self.locationRegionSelectedIn)		
 
 		self.dmc.Update()
 
@@ -389,10 +440,11 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 
 		if self.PickingFlag:
 			# set Picker
-			self.style = MouseInteractorHighLightActor(self.selectedColor[:3])
+			# self.style = MouseInteractorHighLightActor(self,self.selectedColor[:3], self.PixX, self.PixY,self.PixZ)
 			self.style.SetDefaultRenderer(self.renderer)
 			self.renderInteractor.SetInteractorStyle(self.style)	
 		else:
+			del self.style
 			self.style = None
 			self.renderInteractor.SetInteractorStyle(self.style)
 
@@ -400,11 +452,20 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.renderInteractor.SetRenderWindow(self.renderWin)
 
 
+	def addSlices(self):
+		pass
+
+	def removeSlices(self):
+		pass
+
 	def removeSpheres(self):
 		for actor in self.SphereActors:
 			self.renderer.RemoveActor(actor)
+		del self.SphereActors
 
 	def addSpheres(self):
+		self.removeSpheres()
+		self.SphereActors = []
 		for i in range(self.nRegions):
 			source = vtk.vtkSphereSource()
 			# random position and radius
@@ -425,6 +486,8 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 			b = float(self.region_colors[i][2])/255
 
 			actor.GetProperty().SetColor(r, g, b)
+			actor.GetProperty().SetColor(r, g, b)
+
 			# actor.GetProperty().SetDiffuse(.8)
 			# actor.GetProperty().SetSpecular(.5)
 			actor.GetProperty().SetSpecularColor(1.0,1.0,1.0)
@@ -461,13 +524,12 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		# Always use 256 colors since otherwise VisIt's color mapping does
 		# not always match expected results
 		# Colors: Background: black, region colors as passed by caller,
-		#         fill up remaining colors with black
+		#		 fill up remaining colors with black
 		colors = [ (0, 0, 0, 255) ]  + region_colors + [ (0, 0, 0, 255) ] * ( 256 - self.nRegions - 1)
 		self.SetRenderer()
 
 
 	def colorRelativeToRegion(self, regionId):
-		 "reached here",regionId
 		self.regionId = regionId
 		if not(self.communityMode):
 			region_colors = [ self.colorTable.getColor(self.correlationTable.value(regionId, i)) for i in range(self.nRegions) ]

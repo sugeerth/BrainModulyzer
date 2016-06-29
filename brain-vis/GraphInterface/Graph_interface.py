@@ -572,9 +572,6 @@ class GraphWidget(QtGui.QGraphicsView):
         self.Lineditor.returnPressed.connect(self.LineEditChanged)
         self.EdgeWeight.connect(self.EdgeSliderForGraph.setValue)
 
-
-
-
     """
     Colors for the Graph and Edges 
     Defining the colors of edges and nodes

@@ -317,6 +317,9 @@ VolumneRenderer.regionSelected.connect(widget.NodeSelected)
 VolumneRenderer.regionSelected.connect(Tab_2_CorrelationTable.selectRegion)
 VolumneRenderer.regionSelected.connect(quantTableObject.setRegions)
 
+for sv in slice_views:
+    VolumneRenderer.regionSelected.connect(sv.regionSelected)
+
 if MainWindowShowFlag:
     main.show()
 
