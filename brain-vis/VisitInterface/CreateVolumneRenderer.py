@@ -71,8 +71,6 @@ class MouseInteractorHighLightActor(vtk.vtkInteractorStyleTrackballCamera):
 				Z = bounds[4]*ZValue
 				z = bounds[5]*ZValue
 
-				print "Picking"
-
 				if self.VolumneRendererWindow.SphereActors:
 					index = 0
 					for actor in self.VolumneRendererWindow.SphereActors:
@@ -215,7 +213,10 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.Parcel = []
 		self.Slices = [None,None,None]
 		self.region_colors = None
-		
+
+		self.SetXAxisValues = 0 
+		self.SetYAxisValues = 0 
+		self.SetZAxisValues = 0 
 		#PixelDimensions Spacing
 		self.PixX = 0
 		self.PixY = 0
@@ -440,8 +441,6 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.addSpheres()
 		self.addSlices()
 
-		self.removeSlices()
-
 		self.UpdateRenderer()
 		self.renderWin.GetInteractor().Render()
 
@@ -495,7 +494,22 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 
 	# def CreateColorImage(self, vtkImageData, NumpyData):
 
+	def setThreeSliceX(self, sliceX):
+		self.SetXAxisValues = float(sliceX)*self.PixX
+		self.addSliceX()
+
+	def setThreeSliceY(self, sliceY):
+		self.SetYAxisValues = float(sliceY)*self.PixY
+		self.addSliceY()
+
+	def setThreeSliceZ(self, sliceZ):
+		self.SetZAxisValues = float(sliceZ)*self.PixX
+		self.addSliceZ()
+
 	def addSliceX(self):
+		if not(self.toggleThreeSlicesFlag): 
+			return
+
 		# create source
 		x, y  = np.shape(self.SliceX.image_data)
 		self.SliceX.image_data = np.array(self.SliceX.image_data, dtype=uint16)
@@ -550,11 +564,14 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		# # self.renderer.AddViewProp(ia)
 		# # # ren1.SetBackground(0.1,0.2,0.4)
 		# # # renWin.SetSize(300,300)
-
+		
+		if not(self.Slices[0] == None):
+			self.renderer.RemoveActor(self.Slices[0])
+			self.Slices[0] = None
 
 		planeSource = vtk.vtkPlane()
 
-		planeSource.SetOrigin(100.0,0.0,0.0)
+		planeSource.SetOrigin(self.SetXAxisValues,0.0,0.0)
 		planeSource.SetNormal(1.0,0.0,0.0)
 
 		#create cutter
@@ -562,6 +579,7 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		cutter.SetCutFunction(planeSource)
 		cutter.SetInputConnection(self.Templatedmc.GetOutputPort())
 		cutter.Update()
+		
 		cutterMapper=vtk.vtkPolyDataMapper()
 		cutterMapper.SetInputConnection(cutter.GetOutputPort())
 		cutterMapper.ScalarVisibilityOn()
@@ -575,16 +593,25 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.Slices[0] = planeActor
 
 		self.renderer.AddViewProp(planeActor)
+
+		self.renderWin.GetInteractor().Render()
+
 	
 	def addSliceY(self):
+		if not(self.toggleThreeSlicesFlag): 
+			return
+		if not(self.Slices[1]== None):
+			self.renderer.RemoveActor(self.Slices[1])
+			self.Slices[1] = None
+
 		# create source
 		x, y  = np.shape(self.SliceY.image_data)
 		self.SliceX.image_data = np.array(self.SliceX.image_data, dtype=uint8)
 
 		planeSource = vtk.vtkPlane()
 
-		planeSource.SetOrigin(0.0,0.0,100.0)
-		planeSource.SetNormal(0.0,0.0,1.0)
+		planeSource.SetOrigin(0.0,self.SetYAxisValues,0.0)
+		planeSource.SetNormal(0.0,1.0,0.0)
 
 		#create cutter
 		cutter=vtk.vtkCutter()
@@ -604,16 +631,24 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.Slices[1] = planeActor
 
 		self.renderer.AddViewProp(planeActor)
+		self.renderWin.GetInteractor().Render()
+
 
 	def addSliceZ(self):
+		if not(self.toggleThreeSlicesFlag): 
+			return
+		if not(self.Slices[2]== None):
+			self.renderer.RemoveActor(self.Slices[2])
+			self.Slices[2] = None 
+
 		# create source
 		x, y  = np.shape(self.SliceZ.image_data)
 		self.SliceX.image_data = np.array(self.SliceX.image_data, dtype=uint8)
 
 		planeSource = vtk.vtkPlane()
 
-		planeSource.SetOrigin(0.0,100.0,0.0)
-		planeSource.SetNormal(0.0,1.0,0.0)
+		planeSource.SetOrigin(0.0,0.0,self.SetZAxisValues)
+		planeSource.SetNormal(0.0,0.0,1.0)
 
 		#create cutter
 		cutter=vtk.vtkCutter()
@@ -633,9 +668,8 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.Slices[2] = planeActor
 
 		self.renderer.AddViewProp(planeActor)
+		self.renderWin.GetInteractor().Render()
 
-	def removeSlices(self):
-		pass
 
 	def removeParcels(self):
 		if self.Parcel:
@@ -807,26 +841,3 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 	def Community(self, Flag):
 		self.communityMode = Flag
 
-	def setThreeSliceX(self, sliceX):
-		pass
-		# visit.SetActivePlots(self.threeslice_id)
-		# tsatts = visit.GetOperatorOptions(0)
-		# tsatts.x = sliceX
-		# visit.SetOperatorOptions(tsatts)
-		# visit.DrawPlots()
-
-	def setThreeSliceY(self, sliceY):
-		pass
-		# visit.SetActivePlots(self.threeslice_id)
-		# tsatts = visit.GetOperatorOptions(0)
-		# tsatts.y = sliceY
-		# visit.SetOperatorOptions(tsatts)
-		# visit.DrawPlots()
-
-	def setThreeSliceZ(self, sliceZ):
-		pass
-		# visit.SetActivePlots(self.threeslice_id)
-		# tsatts = visit.GetOperatorOptions(0)
-		# tsatts.z = sliceZ
-		# visit.SetOperatorOptions(tsatts)
-		# visit.DrawPlots()		
