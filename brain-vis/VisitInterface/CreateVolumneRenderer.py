@@ -71,7 +71,6 @@ class MouseInteractorHighLightActor(vtk.vtkInteractorStyleTrackballCamera):
 				Z = bounds[4]*ZValue
 				z = bounds[5]*ZValue
 
-				print self.NewPickedActor
 				print "Picking"
 
 				if self.VolumneRendererWindow.SphereActors:
@@ -214,6 +213,7 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.MapMetrics = False
 		self.SphereActors = []
 		self.Parcel = []
+		self.Slices = [None,None,None]
 		self.region_colors = None
 		
 		#PixelDimensions Spacing
@@ -222,7 +222,6 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.PixZ = 0
 
 	def ColorParcelationPoints(self,x,y,z):
-		print x,y,z
 		self.Parcelation
 
 	def setDataset(self): 
@@ -439,8 +438,8 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 
 		self.addParcels()
 		self.addSpheres()
-
 		self.addSlices()
+
 		self.removeSlices()
 
 		self.UpdateRenderer()
@@ -462,9 +461,9 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 			self.UpdateSpheres(True)
 
 		if self.toggleThreeSlicesFlag: 
-			self.addSlices()
+			self.UpdateSlices(True)
 		else: 
-			self.removeSlices()
+			self.UpdateSlices(False)
 
 		if self.PickingFlag:
 			# set Picker
@@ -477,7 +476,17 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 			self.style = None
 			self.renderInteractor.SetInteractorStyle(self.style)
 
+
+		# print self.renderer.GetActors().GetLastItem()
 		self.renderWin.GetInteractor().Render()
+
+
+	def UpdateSlices(self,Visibility):
+		for actor in self.Slices:
+			if Visibility:
+				actor.GetProperty().SetOpacity(1)
+			else:
+				actor.GetProperty().SetOpacity(0)
 
 	def addSlices(self):
 		self.addSliceX()
@@ -487,64 +496,89 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 	def addSliceX(self):
 		# create source
 		x, y  = np.shape(self.SliceX.image_data)
-		dataImporter = vtk.vtkImageImport()
-		data_string = self.SliceX.image_data.tostring()
-		dataImporter.CopyImportVoidPointer(data_string, len(data_string))
-		dataImporter.SetDataScalarTypeToUnsignedChar()
-		dataImporter.SetNumberOfScalarComponents(1)
+		self.SliceX.image_data = np.array(self.SliceX.image_data, dtype=uint8)
 
-		# # mapper
-		mapper = vtk.vtkPolyDataMapper()
-		mapper.SetInputConnection(dataImporter.GetOutput())
+		planeSource = vtk.vtkPlane()
 
-		# actor
-		actor = vtk.vtkActor()
-		actor.SetMapper(mapper)
+		planeSource.SetOrigin(100.0,0.0,0.0)
+		planeSource.SetNormal(1.0,0.0,0.0)
 
-		self.SliceXActor = actor
-		# assign actor to the renderer
-		self.renderer.AddViewProp(actor)
+		#create cutter
+		cutter=vtk.vtkCutter()
+		cutter.SetCutFunction(planeSource)
+		cutter.SetInputConnection(self.Templatedmc.GetOutputPort())
+		cutter.Update()
+		cutterMapper=vtk.vtkPolyDataMapper()
+		cutterMapper.SetInputConnection(cutter.GetOutputPort())
+		cutterMapper.ScalarVisibilityOn()
+
+		#create plane actor
+		planeActor=vtk.vtkActor()
+		planeActor.GetProperty().SetColor(1.0,0,0)
+		planeActor.GetProperty().SetLineWidth(2)
+		planeActor.SetMapper(cutterMapper)
+
+		self.Slices[0] = planeActor
+
+		self.renderer.AddViewProp(planeActor)
 	
 	def addSliceY(self):
-
+		# create source
 		x, y  = np.shape(self.SliceY.image_data)
-		dataImporter = vtk.vtkImageImport()
-		data_string = self.SliceY.image_data.tostring()
-		dataImporter.CopyImportVoidPointer(data_string, len(data_string))
-		dataImporter.SetDataScalarTypeToUnsignedChar()
-		dataImporter.SetNumberOfScalarComponents(1)
+		self.SliceX.image_data = np.array(self.SliceX.image_data, dtype=uint8)
 
-		dataImporter.SetDataExtent(0, x-1, 0, y-1, 0, 1)
-		dataImporter.SetWholeExtent(0, x-1, 0, y-1, 0, 1)
-		# # mapper
-		mapper = vtk.vtkPolyDataMapper()
-		mapper.SetInputConnection(dataImporter.GetOutput())
+		planeSource = vtk.vtkPlane()
 
-		# # actor
-		actor = vtk.vtkActor()
-		actor.SetMapper(mapper)
-		self.SliceYActor = actor
-		self.renderer.AddViewProp(actor)
+		planeSource.SetOrigin(0.0,0.0,100.0)
+		planeSource.SetNormal(0.0,0.0,1.0)
+
+		#create cutter
+		cutter=vtk.vtkCutter()
+		cutter.SetCutFunction(planeSource)
+		cutter.SetInputConnection(self.Templatedmc.GetOutputPort())
+		cutter.Update()
+		cutterMapper=vtk.vtkPolyDataMapper()
+		cutterMapper.SetInputConnection(cutter.GetOutputPort())
+		cutterMapper.ScalarVisibilityOn()
+
+		#create plane actor
+		planeActor=vtk.vtkActor()
+		planeActor.GetProperty().SetColor(1.0,0,1)
+		planeActor.GetProperty().SetLineWidth(2)
+		planeActor.SetMapper(cutterMapper)
+
+		self.Slices[1] = planeActor
+
+		self.renderer.AddViewProp(planeActor)
 
 	def addSliceZ(self):
-		import pprint
-		pprint.pprint(self.SliceZ.image_data)
+		# create source
 		x, y  = np.shape(self.SliceZ.image_data)
-		dataImporter = vtk.vtkImageImport()
-		data_string = self.SliceZ.image_data.tostring()
-		dataImporter.CopyImportVoidPointer(data_string, len(data_string))
-		dataImporter.SetDataScalarTypeToUnsignedChar()
-		dataImporter.SetNumberOfScalarComponents(1)
+		self.SliceX.image_data = np.array(self.SliceX.image_data, dtype=uint8)
 
-		# # mapper
-		mapper = vtk.vtkPolyDataMapper()
-		mapper.SetInputConnection(source.GetOutput())
+		planeSource = vtk.vtkPlane()
 
-		# actor
-		actor = vtk.vtkActor()
-		actor.SetMapper(mapper)
-		self.SliceZActor = actor
-		self.renderer.AddViewProp(actor)
+		planeSource.SetOrigin(0.0,100.0,0.0)
+		planeSource.SetNormal(0.0,1.0,0.0)
+
+		#create cutter
+		cutter=vtk.vtkCutter()
+		cutter.SetCutFunction(planeSource)
+		cutter.SetInputConnection(self.Templatedmc.GetOutputPort())
+		cutter.Update()
+		cutterMapper=vtk.vtkPolyDataMapper()
+		cutterMapper.SetInputConnection(cutter.GetOutputPort())
+		cutterMapper.ScalarVisibilityOn()
+
+		#create plane actor
+		planeActor=vtk.vtkActor()
+		planeActor.GetProperty().SetColor(1.0,1,0)
+		planeActor.GetProperty().SetLineWidth(2)
+		planeActor.SetMapper(cutterMapper)
+
+		self.Slices[2] = planeActor
+
+		self.renderer.AddViewProp(planeActor)
 
 	def removeSlices(self):
 		pass
@@ -607,15 +641,6 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 			z = float(self.Centroid[i][2])* self.PixZ 
 			
 			radius = 5
-			# if self.MapMetrics:
-			# 	Size = eval('self.widget.'+self.widget.nodeSizeFactor+'[i]')
-			# 	radius*= Size 
-			# 	if radius < 5: 
-			# 		radius = 5  
-			# 	else:
-			# 		radius*= Size 
-			# else: 
-			# 	radius = 5
 
 			source.SetRadius(radius)
 			source.SetCenter(x,y,z)
@@ -655,8 +680,6 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 				r= 0.1
 				b= 0.1
 				g= 0.1
-
-					
 
 			actor.GetProperty().SetColor(r, g, b)
 			actor.GetProperty().SetSpecularColor(1.0,1.0,1.0)
