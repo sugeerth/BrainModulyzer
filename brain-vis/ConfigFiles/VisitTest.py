@@ -48,7 +48,6 @@ nextRenderWindowIndex = 0
 RenderWindowList = [ IsoContourWindow(1) ]
  
  
- 
 def ReturnNextWindow():
     global RenderWindowList
     global nextRenderWindowIndex

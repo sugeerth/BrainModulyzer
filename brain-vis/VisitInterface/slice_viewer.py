@@ -28,6 +28,7 @@ class SliceViewer(QtGui.QWidget):
         self.selectedColor = selectedColor
         self.CommunityMode = False
         self.displayedSlice = 0
+        self.QImage = []
         # FIX  with the scale factor it was 350 earlier 
         if len(self.correlationTable.data) > 100: 
             scalefactor = 350 
@@ -88,6 +89,7 @@ class SliceViewer(QtGui.QWidget):
             image_data.flat[idx] = self.clut[parcelation_slice.flat[idx]-1]
         image_data = np.array(image_data[:, ::-1], order='F')
         image = QtGui.QImage(image_data, image_data.shape[0], image_data.shape[1], QtGui.QImage.Format_ARGB32)
+        self.image_data = image_data
         # if self.scaleFactor > 1:
         image = image.scaled(self.scaleFactor*image.width(), self.scaleFactor*image.height())
         self.label.setPixmap(QtGui.QPixmap.fromImage(image))

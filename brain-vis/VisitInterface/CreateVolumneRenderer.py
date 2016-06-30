@@ -71,6 +71,9 @@ class MouseInteractorHighLightActor(vtk.vtkInteractorStyleTrackballCamera):
 				Z = bounds[4]*ZValue
 				z = bounds[5]*ZValue
 
+				print self.NewPickedActor
+				print "Picking"
+
 				if self.VolumneRendererWindow.SphereActors:
 					index = 0
 					for actor in self.VolumneRendererWindow.SphereActors:
@@ -78,9 +81,13 @@ class MouseInteractorHighLightActor(vtk.vtkInteractorStyleTrackballCamera):
 							break
 						index +=1
 					self.VolumneRendererWindow.RegionSelectedIn(index)
-				else: 
-					self.VolumneRendererWindow.ColorParcelationPoints(X+1,Y+1,Z+1)
-
+				elif self.VolumneRendererWindow.Parcel: 
+					index = 0
+					for actor in self.VolumneRendererWindow.Parcel:
+						if actor == self.NewPickedActor:
+							break
+						index +=1
+					self.VolumneRendererWindow.RegionSelectedIn(index)
 			# self.NewPickedActor.GetProperty().SetDiffuse(1.0)
 			# self.NewPickedActor.GetProperty().SetSpecular(0.0)
 			# save the last picked TemplateActor
@@ -97,13 +104,18 @@ def exitCheck(obj, event):
 class VolumneRendererWindow(PySide.QtGui.QWidget):
 	regionSelected = QtCore.Signal(int)
 
-	def __init__(self,parcelation_filename, template_filename,correlationTable,selectedColor,colorTable):
+	def __init__(self,parcelation_filename, template_filename,correlationTable,selectedColor,colorTable,SliceX,SliceY,SliceZ):
 		super(VolumneRendererWindow,self).__init__()
 
 		self.correlationTable = correlationTable
 
 		self.nRegions = len(self.correlationTable.header)
 		self.selectedColor = selectedColor
+
+		self.widget = None
+		self.SliceX = SliceX
+		self.SliceY = SliceY
+		self.SliceZ = SliceZ
 
 		self.colorTable = colorTable
 		self.region_data = nib.load(parcelation_filename).get_data().astype(np.uint32)
@@ -199,7 +211,9 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.toggleThreeSlicesFlag = True
 		self.communityMode = False
 		self.PickingFlag = True
+		self.MapMetrics = False
 		self.SphereActors = []
+		self.Parcel = []
 		self.region_colors = None
 		
 		#PixelDimensions Spacing
@@ -214,7 +228,6 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 	def setDataset(self): 
 		self.ParcelationReader = vtk.vtkNIFTIImageReader()
 		self.ParcelationReader.SetFileName(self.parcelation_filename)
-		self.ParcelMapToColors = vtk.vtkImageMapToColors()
 		self.ParcelationNumpy = nib.load(self.parcelation_filename).get_data().astype(np.uint8)
 		self.ParcelationReader.Update()
 
@@ -231,28 +244,23 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.dmc =vtk.vtkDiscreteMarchingCubes()
 
 		self.Template = vtk.vtkPolyData()
-		self.Parcelation = vtk.vtkPolyData()
 
 		self.appendFilter = vtk.vtkAppendPolyData()
 		self.cleanFilter = vtk.vtkCleanPolyData()
 
 		self.mapper = vtk.vtkPolyDataMapper()
 		self.TemplateMapper = vtk.vtkPolyDataMapper()
-		self.ParcelationMapper = vtk.vtkPolyDataMapper()
 
 		self.mapper2 = vtk.vtkPolyDataMapper()
 
 		self.outline = vtk.vtkOutlineFilter()
-		self.ParcelationThreshold = vtk.vtkThreshold()
 
 		self.TemplateActor = vtk.vtkActor()
-		self.ParcelationActor = vtk.vtkActor()
 		self.OutlineActor = vtk.vtkActor()
 
 		self.renderer = vtk.vtkRenderer()
 
 		self.renderer.SetBackground(1, 1, 1)
-		# self.renderer.SetViewport(0, 0, 1, 1)
 
 		self.renderWin = vtk.vtkRenderWindow()
 		self.renderWin.AddRenderer(self.renderer)
@@ -287,7 +295,6 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.picker = vtk.vtkCellPicker()
 
 		self.template_data = None
-		self.parcelation_data = None
 
 	def RegionSelectedIn(self, Id):
 		if not(Id == self.nRegions):
@@ -297,7 +304,6 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 	def RenderData(self):
 		self.DefineTemplateDataToBeMapped()
 		self.DefineParcelationDataToBeMapped()
-		# self.MergeTwoDatasets()
 		self.setColors()
 		self.AppendDatasets()
 		self.SetActorsAndOutline()
@@ -328,7 +334,6 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 	def MakeCellData(self,tableSize, lut, colors):
 		for i in range(0,tableSize):
 			rgb = [0.0,0.0,0.0]
-			# colors.InsertNextTuple3(self.region_colors[i-1][0],self.region_colors[i-1][1],self.region_colors[i-1][2])
 			lut.GetColor(float(i)/(tableSize-1),rgb)
 			ucrgb = list(map(int, [x * 255 for x in rgb]))
 			colors.InsertNextTuple3(ucrgb[0], ucrgb[1], ucrgb[2])
@@ -337,20 +342,6 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 	def setColors(self):
 		self.MakeLUT(self.nRegions)
 		self.MakeCellData(self.nRegions,self.lut,self.colorData)
-		print('Using a lookup table from a set of named colors.')
-		# self.ParcelationMapper.SetLookupTable(self.lut)
-		# self.ParcelationMapper.SetScalarModeToUsePointData()
-
-		# self.ParcelMapToColors.SetInputConnection(self.ParcelationReader.GetOutputPort())
-		# self.ParcelMapToColors.SetLookupTable(self.lut)
-
-		# value = self.dmc.GetOutput().GetPointData().GetScalars()
-		# # self.colorData.SetLookupTable(self.lut)
-		# # print self.colorData
-		# for i in range(value.GetNumberOfTuples()):
-		# 	if value.GetTuple1(i)>0:
-		# 		print value.GetTuple1(i)
-		# self.dmc.GetOutput().GetPointData().SetScalars(self.colorData)
 
 	def SetAxisValues(self):
 		self.axes2.SetInputConnection(self.Templatedmc.GetOutputPort())
@@ -359,6 +350,7 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.axes2.SetFlyModeToOuterEdges()
 		self.axes2.SetAxisTitleTextProperty(self.TextProperty)
 		self.axes2.SetAxisLabelTextProperty(self.TextProperty)
+		self.axes2.GetProperty().SetColor(0,0,0)
 		self.renderer.AddViewProp(self.axes2)
 
 		self.axes3.SetInputConnection(self.Templatedmc.GetOutputPort())
@@ -367,6 +359,7 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.axes3.SetFlyModeToClosestTriad()
 		self.axes3.SetAxisTitleTextProperty(self.TextProperty)
 		self.axes3.SetAxisLabelTextProperty(self.TextProperty)
+		self.axes3.GetProperty().SetColor(0,0,0)
 		self.renderer.AddViewProp(self.axes3)
 
 	def FinalRenderView(self):
@@ -384,36 +377,19 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.template_data = self.Templatedmc.GetOutput()
 
 	def DefineParcelationDataToBeMapped(self):
-		self.dmc.SetInputConnection(self.ParcelationReader.GetOutputPort())
-		# self.dmc.GenerateValues(1,1,1)
-		# self.dmc.GenerateValues(2,2,2)
-		# self.dmc.GenerateValues(3,3,3)
-
 		self.PixX = self.ParcelationReader.GetNIFTIHeader().GetPixDim(1)
 		self.PixY = self.ParcelationReader.GetNIFTIHeader().GetPixDim(2)
 		self.PixZ = self.ParcelationReader.GetNIFTIHeader().GetPixDim(3)
 		# Getting the style object to invoke here because we get the real Pix dimensions
 		self.style = MouseInteractorHighLightActor(self,self.selectedColor[:3], self.PixX, self.PixY,self.PixZ)
 		# self.style.locationRegionSelected.connect(self.locationRegionSelectedIn)		
-		self.dmc.Update()
-		self.parcelation_data = self.dmc.GetOutput()
 
 	def AppendDatasets(self):
 		self.TemplateMapper.SetInputConnection(self.Templatedmc.GetOutputPort())
 		self.TemplateMapper.ScalarVisibilityOff()
 
-		self.ParcelationMapper.SetInputConnection(self.dmc.GetOutputPort())
-		self.ParcelationMapper.ScalarVisibilityOff()
-		
-		# print self.lut 
-		# self.ParcelationMapper.SetLookupTable(self.lut)
-		# print self.ParcelationMapper
-		# self.ParcelationMapper.SetScalarModeToUsePointData()
-		# print self.ParcelationMapper
-
 	def SetActorsAndOutline(self):
 		self.TemplateActor.SetMapper(self.TemplateMapper)
-		self.ParcelationActor.SetMapper(self.ParcelationMapper)
 
 		# outline
 		if vtk.VTK_MAJOR_VERSION <= 5:
@@ -428,8 +404,12 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 
 		self.OutlineActor.SetMapper(self.mapper2)
 		self.OutlineActor.GetProperty().SetColor(0,0,0)
-		# self.ParcelationActor.GetProperty().SetColor(0,1,0)
-		# self.ParcelationActor.GetProperty().SetOpacity(0.4)
+
+		self.TemplateActor.GetProperty().SetColor(1.0, 1.0, 1.0)
+		self.TemplateActor.GetProperty().SetOpacity(0.1)
+
+		self.renderer.AddViewProp(self.OutlineActor)
+		self.renderInteractor.SetRenderWindow(self.renderWin)
 
 	def AddAxisActor(self):
 		self.axesActor.SetXPlusFaceText('X')
@@ -452,9 +432,21 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		#initialize the renderer and window, as well as 
 		#creating a method for exiting the application
 
-		self.TemplateActor.GetProperty().SetColor(1.0, 1.0, 1.0)
-		self.TemplateActor.GetProperty().SetOpacity(0.1)
+		if self.toggleBrainSurfaceFlag:
+			self.renderer.AddViewProp(self.TemplateActor)
+		else:
+			self.renderer.RemoveActor(self.TemplateActor)
 
+		self.addParcels()
+		self.addSpheres()
+
+		self.addSlices()
+		self.removeSlices()
+
+		self.UpdateRenderer()
+		self.renderWin.GetInteractor().Render()
+
+	def UpdateRenderer(self):
 		if self.toggleBrainSurfaceFlag:
 			self.renderer.AddViewProp(self.TemplateActor)
 		else:
@@ -462,11 +454,12 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 
 		if not(self.setCentroidModeFlag): 
 			if self.SphereActors:
-				self.removeSpheres()
-			self.renderer.AddViewProp(self.ParcelationActor)
+				self.UpdateSpheres(False)
+			self.UpdateParcels(True)
 		else: 
-			self.renderer.RemoveActor(self.ParcelationActor)
-			self.addSpheres()
+			if self.Parcel:
+				self.UpdateParcels(False)
+			self.UpdateSpheres(True)
 
 		if self.toggleThreeSlicesFlag: 
 			self.addSlices()
@@ -484,15 +477,84 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 			self.style = None
 			self.renderInteractor.SetInteractorStyle(self.style)
 
-		self.renderer.AddViewProp(self.OutlineActor)
-		self.renderInteractor.SetRenderWindow(self.renderWin)
 		self.renderWin.GetInteractor().Render()
 
 	def addSlices(self):
-		pass
+		self.addSliceX()
+		self.addSliceY()
+		self.addSliceZ()
+
+	def addSliceX(self):
+		# create source
+		x, y  = np.shape(self.SliceX.image_data)
+		dataImporter = vtk.vtkImageImport()
+		data_string = self.SliceX.image_data.tostring()
+		dataImporter.CopyImportVoidPointer(data_string, len(data_string))
+		dataImporter.SetDataScalarTypeToUnsignedChar()
+		dataImporter.SetNumberOfScalarComponents(1)
+
+		# # mapper
+		mapper = vtk.vtkPolyDataMapper()
+		mapper.SetInputConnection(dataImporter.GetOutput())
+
+		# actor
+		actor = vtk.vtkActor()
+		actor.SetMapper(mapper)
+
+		self.SliceXActor = actor
+		# assign actor to the renderer
+		self.renderer.AddViewProp(actor)
+	
+	def addSliceY(self):
+
+		x, y  = np.shape(self.SliceY.image_data)
+		dataImporter = vtk.vtkImageImport()
+		data_string = self.SliceY.image_data.tostring()
+		dataImporter.CopyImportVoidPointer(data_string, len(data_string))
+		dataImporter.SetDataScalarTypeToUnsignedChar()
+		dataImporter.SetNumberOfScalarComponents(1)
+
+		dataImporter.SetDataExtent(0, x-1, 0, y-1, 0, 1)
+		dataImporter.SetWholeExtent(0, x-1, 0, y-1, 0, 1)
+		# # mapper
+		mapper = vtk.vtkPolyDataMapper()
+		mapper.SetInputConnection(dataImporter.GetOutput())
+
+		# # actor
+		actor = vtk.vtkActor()
+		actor.SetMapper(mapper)
+		self.SliceYActor = actor
+		self.renderer.AddViewProp(actor)
+
+	def addSliceZ(self):
+		import pprint
+		pprint.pprint(self.SliceZ.image_data)
+		x, y  = np.shape(self.SliceZ.image_data)
+		dataImporter = vtk.vtkImageImport()
+		data_string = self.SliceZ.image_data.tostring()
+		dataImporter.CopyImportVoidPointer(data_string, len(data_string))
+		dataImporter.SetDataScalarTypeToUnsignedChar()
+		dataImporter.SetNumberOfScalarComponents(1)
+
+		# # mapper
+		mapper = vtk.vtkPolyDataMapper()
+		mapper.SetInputConnection(source.GetOutput())
+
+		# actor
+		actor = vtk.vtkActor()
+		actor.SetMapper(mapper)
+		self.SliceZActor = actor
+		self.renderer.AddViewProp(actor)
 
 	def removeSlices(self):
 		pass
+
+	def removeParcels(self):
+		if self.Parcel:
+			for actor in self.Parcel:
+				self.renderer.RemoveActor(actor)
+			del self.Parcel
+			self.Parcel = None
 
 	def removeSpheres(self):
 		if self.SphereActors:
@@ -500,6 +562,39 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 				self.renderer.RemoveActor(actor)
 			del self.SphereActors
 			self.SphereActors = None
+
+	def addParcels(self):
+		self.removeParcels()
+		self.Parcel = []
+		for i in range(self.nRegions):
+			dmc =vtk.vtkDiscreteMarchingCubes()
+			dmc.SetInputConnection(self.ParcelationReader.GetOutputPort())
+			dmc.GenerateValues(i,i,i)
+			dmc.Update()
+
+			mapper = vtk.vtkPolyDataMapper()
+			mapper.SetInputConnection(dmc.GetOutputPort())
+			mapper.ScalarVisibilityOff()
+
+			actor = vtk.vtkActor()
+			actor.SetMapper(mapper)
+
+			if self.region_colors:
+				r = float(self.region_colors[i][0])/255
+				g = float(self.region_colors[i][1])/255
+				b = float(self.region_colors[i][2])/255
+			else:
+				r= 0.1
+				b= 0.1
+				g= 0.1
+
+			actor.GetProperty().SetColor(r,g,b)
+			# actor.GetProperty().SetDiffuse(.8)
+			# actor.GetProperty().SetSpecular(.5)
+			actor.GetProperty().SetSpecularColor(1.0,1.0,1.0)
+			# actor.GetProperty().SetSpecularPower(30.0)
+			self.Parcel.append(actor)
+			self.renderer.AddViewProp(actor)
 
 	def addSpheres(self):
 		self.removeSpheres()
@@ -510,21 +605,34 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 			x = float(self.Centroid[i][0])* self.PixX 
 			y = float(self.Centroid[i][1])* self.PixY 
 			z = float(self.Centroid[i][2])* self.PixZ 
+			
 			radius = 5
+			# if self.MapMetrics:
+			# 	Size = eval('self.widget.'+self.widget.nodeSizeFactor+'[i]')
+			# 	radius*= Size 
+			# 	if radius < 5: 
+			# 		radius = 5  
+			# 	else:
+			# 		radius*= Size 
+			# else: 
+			# 	radius = 5
 
 			source.SetRadius(radius)
 			source.SetCenter(x,y,z)
 
 			mapper = vtk.vtkPolyDataMapper()
 			mapper.SetInputConnection(source.GetOutputPort())
+			mapper.ScalarVisibilityOff()
+
 			actor = vtk.vtkActor()
 			actor.SetMapper(mapper)
+
 			if self.region_colors:
 				r = float(self.region_colors[i][0])/255
 				g = float(self.region_colors[i][1])/255
 				b = float(self.region_colors[i][2])/255
 			else:
-				r = 0.1
+				r= 0.1
 				b= 0.1
 				g= 0.1
 			actor.GetProperty().SetColor(r, g, b)
@@ -532,39 +640,80 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 			self.SphereActors.append(actor)
 			self.renderer.AddViewProp(actor)
 
+	def UpdateSpheres(self, Visibility):
+		for i in range(self.nRegions):
+			if self.SphereActors:
+				actor = self.SphereActors[i]
+				if not(Visibility): 
+					actor.GetProperty().SetOpacity(0)
+					continue
+			if self.region_colors:
+				r = float(self.region_colors[i][0])/255
+				g = float(self.region_colors[i][1])/255
+				b = float(self.region_colors[i][2])/255
+			else:
+				r= 0.1
+				b= 0.1
+				g= 0.1
+
+					
+
+			actor.GetProperty().SetColor(r, g, b)
+			actor.GetProperty().SetSpecularColor(1.0,1.0,1.0)
+			actor.GetProperty().SetOpacity(1)
+		self.renderWin.GetInteractor().Render()
+
+	def UpdateParcels(self,Visibility):
+		for i in range(self.nRegions):
+			if self.Parcel:
+				actor = self.Parcel[i]
+				if not(Visibility): 
+					actor.GetProperty().SetOpacity(0)
+					continue
+			if self.region_colors:
+				r = float(self.region_colors[i-1][0])/255
+				g = float(self.region_colors[i-1][1])/255
+				b = float(self.region_colors[i-1][2])/255
+			else:
+				r= 0.1
+				b= 0.1
+				g= 0.1
+			actor.GetProperty().SetColor(r, g, b)
+			actor.GetProperty().SetOpacity(1)
+			# actor.GetProperty().SetDiffuse(.8)
+			# actor.GetProperty().SetSpecular(.5)
+			actor.GetProperty().SetSpecularColor(1.0,1.0,1.0)
+			# actor.GetProperty().SetSpecularPower(30.0)
+
+		self.renderWin.GetInteractor().Render()
+
 	"""
 	Interactive slots that need the help of an external caller method 
 	"""
 	def setCentroidMode(self):
 		self.setCentroidModeFlag = True
-		self.SetRenderer()
+		self.UpdateRenderer()
 
 	def setRegionMode(self):
 		self.setCentroidModeFlag = False
-		self.SetRenderer()
+		self.UpdateRenderer()
 
 	def	toggleBrainSurface(self):	
 		self.toggleBrainSurfaceFlag = not(self.toggleBrainSurfaceFlag)
-		self.SetRenderer()
+		self.UpdateRenderer()
 
 	def	toggleThreeSlice(self):
 		self.toggleThreeSlicesFlag = not(self.toggleThreeSlicesFlag)
-		self.SetRenderer()
+		self.UpdateRenderer()
 
 	def	EnablePicking(self):
 		self.PickingFlag = not(self.PickingFlag)
-		self.SetRenderer()
+		self.UpdateRenderer()
 
 	def setRegionColors(self,region_colors):
 		assert len(region_colors) == self.nRegions
 		self.region_colors = region_colors
-		self.setColors()
-		# Always use 256 colors since otherwise VisIt's color mapping does
-		# not always match expected results
-		# Colors: Background: black, region colors as passed by caller,
-		#		 fill up remaining colors with black
-		colors = [ (0, 0, 0, 255) ]  + region_colors + [ (0, 0, 0, 255) ] * ( 256 - self.nRegions - 1)
-		self.SetRenderer()
+		self.UpdateRenderer()
 
 	def colorRelativeToRegion(self, regionId):
 		self.regionId = regionId
@@ -573,9 +722,13 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 			region_colors[regionId] = self.selectedColor
 			self.setRegionColors(region_colors)	
 
+	# def MapGraphMetrics(self):
+	# 	self.MapMetrics = not(self.MapMetrics)
+	# 	self.addSpheres()
+	# 	self.UpdateRenderer()
+
 	def Community(self, Flag):
 		self.communityMode = Flag
-		# self.colorRelativeToRegion(self.regionId)
 
 	def setThreeSliceX(self, sliceX):
 		pass

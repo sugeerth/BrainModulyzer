@@ -114,7 +114,6 @@ allViewersLayout.setContentsMargins(0,0,0,0)
 allViewersLayout.addLayout(viewersLayout2)
 allViewersLayout.setContentsMargins(0,0,0,0)
 
-VolumneRenderer = VolumneRendererWindow(parcelation_filename, template_filename, correlationTable,selectedColor,colorTable)
 
 print "Setting Slice Views"
 slice_views = [None, None, None]
@@ -122,23 +121,25 @@ slice_views[0] = SliceViewer(template_data, parcelation_data, 0, correlationTabl
 viewersLayout1.addWidget(slice_views[0])
 viewersLayout1.setContentsMargins(0,0,0,0)
 
-slice_views[0].sliceChanged.connect(VolumneRenderer.setThreeSliceX)
-slice_views[0].regionSelected.connect(VolumneRenderer.colorRelativeToRegion)
+
 
 slice_views[1] = SliceViewer(template_data, parcelation_data, 1, correlationTable, colorTable, selectedColor)
 viewersLayout1.addWidget(slice_views[1])
 viewersLayout1.setContentsMargins(0,0,0,0)
 
-slice_views[1].sliceChanged.connect(VolumneRenderer.setThreeSliceY)
-slice_views[1].regionSelected.connect(VolumneRenderer.colorRelativeToRegion)
 
 slice_views[2] = SliceViewer(template_data, parcelation_data, 2, correlationTable, colorTable, selectedColor)
 viewersLayout2.addWidget(slice_views[2])
 viewersLayout2.setContentsMargins(0,0,0,0)
 
+VolumneRenderer = VolumneRendererWindow(parcelation_filename, template_filename, correlationTable,selectedColor,colorTable, slice_views[0],slice_views[1],slice_views[2])
+slice_views[0].sliceChanged.connect(VolumneRenderer.setThreeSliceX)
+slice_views[0].regionSelected.connect(VolumneRenderer.colorRelativeToRegion)
+slice_views[1].sliceChanged.connect(VolumneRenderer.setThreeSliceY)
+slice_views[1].regionSelected.connect(VolumneRenderer.colorRelativeToRegion)
 slice_views[2].sliceChanged.connect(VolumneRenderer.setThreeSliceZ)
 slice_views[2].regionSelected.connect(VolumneRenderer.colorRelativeToRegion)
-# slice_views[2].setMinimumSize(250, 250)
+
 
 print "Setting Graph data GraphDataStructure"
 Tab_2_AdjacencyMatrix = GraphVisualization(correlationTable.data)
@@ -174,7 +175,7 @@ widget.ThresholdChange.connect(quantData.ThresholdChange)
 quantTableObject = quantTable(quantData,widget)
 quantData.DataChange.connect(quantTableObject.setTableModel)
 Tab_1_CorrelationTable.selectedRegionChanged.connect(quantTableObject.setRegions)
-
+VolumneRenderer.widget = widget
 
 print "Setting Graph interface"
 
@@ -296,11 +297,19 @@ visitControlsLayout = QtGui.QHBoxLayout()
 visitViewerLayout.addLayout(visitControlsLayout)
 visitViewerLayout.setContentsMargins(0,0,0,0)
 
-toggleThreeSliceButton = QtGui.QPushButton("Show/Hide Slices")
+toggleThreeSliceButton = QtGui.QPushButton("Slices")
 visitControlsLayout.addWidget(toggleThreeSliceButton)
 
 toggleThreeSliceButton.clicked.connect(VolumneRenderer.toggleThreeSlice)
-toggleBrainSurfaceButton = QtGui.QPushButton("Show/Hide Brain Surfaces")
+toggleBrainSurfaceButton = QtGui.QPushButton("Brain Surface")
+
+# Another Feature Online 
+
+# MapMetrics = QtGui.QPushButton("Graph Metrics")
+# MapMetrics.clicked.connect(VolumneRenderer.MapGraphMetrics)
+
+# visitControlsLayout.addWidget(MapMetrics)
+# visitControlsLayout.setContentsMargins(0,0,0,0)
 
 visitControlsLayout.addWidget(toggleBrainSurfaceButton)
 visitControlsLayout.setContentsMargins(0,0,0,0)
