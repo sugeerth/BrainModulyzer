@@ -493,10 +493,64 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.addSliceY()
 		self.addSliceZ()
 
+	# def CreateColorImage(self, vtkImageData, NumpyData):
+
 	def addSliceX(self):
 		# create source
 		x, y  = np.shape(self.SliceX.image_data)
-		self.SliceX.image_data = np.array(self.SliceX.image_data, dtype=uint8)
+		self.SliceX.image_data = np.array(self.SliceX.image_data, dtype=uint16)
+
+		dataImporter = vtk.vtkImageImport()
+
+		if self.SliceX.image_data.dtype == numpy.uint8:
+			dataImporter.SetDataScalarTypeToUnsignedChar()
+		elif self.SliceX.image_data.dtype == numpy.uint16:
+			dataImporter.SetDataScalarTypeToUnsignedShort()
+		elif self.SliceX.image_data.dtype == numpy.uint32:
+			dataImporter.SetDataScalarTypeToInt()
+		elif self.SliceX.image_data.dtype == numpy.int16:
+			dataImporter.SetDataScalarTypeToShort()
+		else:
+			raise RuntimeError("unknown data type %r of volume" % (self.SliceX.image_data.dtype,))
+
+		# planeSource = vtk.vtkPlane()
+		# planeSource.SetOrigin(100.0,0.0,0.0)
+		# planeSource.SetNormal(1.0,0.0,0.0)
+
+		# # dataImporter.SetImportVoidPointer(self.SliceX.image_data.ravel(), len(self.SliceX.image_data.ravel()))
+		# # dataImporter.SetNumberOfScalarComponents(3)
+		# # extent = [0, 1, 0, self.SliceX.image_data.shape[1]-1, 0, self.SliceX.image_data.shape[0]-1]
+		# # dataImporter.SetDataExtent(*extent)
+		# # dataImporter.SetWholeExtent(*extent)
+
+		# # im = vtk.vtkImageResliceMapper()
+		# # im.SetInputConnection(dataImporter.GetOutputPort())
+		# # im.SetSlabThickness(2)
+		# # im.SetSlicePlane(planeSource) 
+
+		# # # print im.GetBounds()
+
+		# # # im.SliceFacesCameraOn()
+		# # # im.SliceAtFocalPointOn()
+		# # # im.BorderOff()
+
+		# # ip = vtk.vtkImageProperty()
+		# # # ip.SetColorWindow(2000)
+		# # # ip.SetColorLevel(1000)
+		# # ip.SetAmbient(0.0)
+		# # ip.SetDiffuse(1.0)
+		# # ip.SetOpacity(1.0)
+		# # ip.SetInterpolationTypeToLinear()
+
+		# # ia = vtk.vtkImageSlice()
+		# # ia.SetMapper(im)
+		# # ia.SetProperty(ip)
+		# # self.Slices[0] = ia
+
+		# # self.renderer.AddViewProp(ia)
+		# # # ren1.SetBackground(0.1,0.2,0.4)
+		# # # renWin.SetSize(300,300)
+
 
 		planeSource = vtk.vtkPlane()
 
