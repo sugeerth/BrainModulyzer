@@ -315,12 +315,12 @@ visitControlsLayout.addWidget(toggleBrainSurfaceButton)
 visitControlsLayout.setContentsMargins(0,0,0,0)
 
 toggleBrainSurfaceButton.clicked.connect(VolumneRenderer.toggleBrainSurface)
-pickButton = QtGui.QPushButton("Pick Region")
+# pickButton = QtGui.QPushButton("Pick Region")
 
-visitControlsLayout.addWidget(pickButton)
+# visitControlsLayout.addWidget(pickButton)
 visitControlsLayout.setContentsMargins(0,0,0,0)
 
-pickButton.clicked.connect(VolumneRenderer.EnablePicking)
+# pickButton.clicked.connect(VolumneRenderer.EnablePicking)
 VolumneRenderer.regionSelected.connect(Tab_1_CorrelationTable.selectRegion)
 VolumneRenderer.regionSelected.connect(widget.NodeSelected)
 VolumneRenderer.regionSelected.connect(Tab_2_CorrelationTable.selectRegion)

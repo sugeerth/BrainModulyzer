@@ -44,6 +44,7 @@ class MouseInteractorHighLightActor(vtk.vtkInteractorStyleTrackballCamera):
 		selected Id 
 		"""
 
+
 		# If something was selected
 		if self.NewPickedActor:
 			# If we picked something before, reset its property
@@ -58,19 +59,6 @@ class MouseInteractorHighLightActor(vtk.vtkInteractorStyleTrackballCamera):
 
 			bounds= self.NewPickedActor.GetBounds()  
 			if self.VolumneRendererWindow.setCentroidModeFlag: 
-				XValue = 1/self.PixX
-				YValue = 1/self.PixY
-				ZValue = 1/self.PixZ
-
-				X = bounds[0]*XValue
-				x = bounds[1]*XValue
-
-				Y = bounds[2]*YValue
-				y = bounds[3]*YValue
-
-				Z = bounds[4]*ZValue
-				z = bounds[5]*ZValue
-
 				if self.VolumneRendererWindow.SphereActors:
 					index = 0
 					for actor in self.VolumneRendererWindow.SphereActors:
@@ -78,13 +66,14 @@ class MouseInteractorHighLightActor(vtk.vtkInteractorStyleTrackballCamera):
 							break
 						index +=1
 					self.VolumneRendererWindow.RegionSelectedIn(index)
-				elif self.VolumneRendererWindow.Parcel: 
+			else:
+				if self.VolumneRendererWindow.Parcel: 
 					index = 0
 					for actor in self.VolumneRendererWindow.Parcel:
 						if actor == self.NewPickedActor:
 							break
 						index +=1
-					self.VolumneRendererWindow.RegionSelectedIn(index)
+					self.VolumneRendererWindow.RegionSelectedIn(index-1)
 			# self.NewPickedActor.GetProperty().SetDiffuse(1.0)
 			# self.NewPickedActor.GetProperty().SetSpecular(0.0)
 			# save the last picked TemplateActor
@@ -406,6 +395,8 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.OutlineActor.GetProperty().SetColor(0,0,0)
 
 		self.TemplateActor.GetProperty().SetColor(1.0, 1.0, 1.0)
+		self.TemplateActor.PickableOff()
+
 		self.TemplateActor.GetProperty().SetOpacity(0.1)
 
 		self.renderer.AddViewProp(self.OutlineActor)
@@ -513,84 +504,52 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		# create source
 		x, y  = np.shape(self.SliceX.image_data)
 		self.SliceX.image_data = np.array(self.SliceX.image_data, dtype=uint16)
+		print np.shape(self.SliceX.image_data)
 
-		dataImporter = vtk.vtkImageImport()
 
-		if self.SliceX.image_data.dtype == numpy.uint8:
-			dataImporter.SetDataScalarTypeToUnsignedChar()
-		elif self.SliceX.image_data.dtype == numpy.uint16:
-			dataImporter.SetDataScalarTypeToUnsignedShort()
-		elif self.SliceX.image_data.dtype == numpy.uint32:
-			dataImporter.SetDataScalarTypeToInt()
-		elif self.SliceX.image_data.dtype == numpy.int16:
-			dataImporter.SetDataScalarTypeToShort()
-		else:
-			raise RuntimeError("unknown data type %r of volume" % (self.SliceX.image_data.dtype,))
+
+
+
+
+		# dataImporter = vtk.vtkImageImport()
+
+		# if self.SliceX.image_data.dtype == numpy.uint8:
+		# 	dataImporter.SetDataScalarTypeToUnsignedChar()
+		# elif self.SliceX.image_data.dtype == numpy.uint16:
+		# 	dataImporter.SetDataScalarTypeToUnsignedShort()
+		# elif self.SliceX.image_data.dtype == numpy.uint32:
+		# 	dataImporter.SetDataScalarTypeToInt()
+		# elif self.SliceX.image_data.dtype == numpy.int16:
+		# 	dataImporter.SetDataScalarTypeToShort()
+		# else:
+		# 	raise RuntimeError("unknown data type %r of volume" % (self.SliceX.image_data.dtype,))
+		
+		# if not(self.Slices[0] == None):
+		# 	self.renderer.RemoveActor(self.Slices[0])
+		# 	self.Slices[0] = None
 
 		# planeSource = vtk.vtkPlane()
-		# planeSource.SetOrigin(100.0,0.0,0.0)
+
+		# planeSource.SetOrigin(self.SetXAxisValues,0.0,0.0)
 		# planeSource.SetNormal(1.0,0.0,0.0)
 
-		# # dataImporter.SetImportVoidPointer(self.SliceX.image_data.ravel(), len(self.SliceX.image_data.ravel()))
-		# # dataImporter.SetNumberOfScalarComponents(3)
-		# # extent = [0, 1, 0, self.SliceX.image_data.shape[1]-1, 0, self.SliceX.image_data.shape[0]-1]
-		# # dataImporter.SetDataExtent(*extent)
-		# # dataImporter.SetWholeExtent(*extent)
-
-		# # im = vtk.vtkImageResliceMapper()
-		# # im.SetInputConnection(dataImporter.GetOutputPort())
-		# # im.SetSlabThickness(2)
-		# # im.SetSlicePlane(planeSource) 
-
-		# # # print im.GetBounds()
-
-		# # # im.SliceFacesCameraOn()
-		# # # im.SliceAtFocalPointOn()
-		# # # im.BorderOff()
-
-		# # ip = vtk.vtkImageProperty()
-		# # # ip.SetColorWindow(2000)
-		# # # ip.SetColorLevel(1000)
-		# # ip.SetAmbient(0.0)
-		# # ip.SetDiffuse(1.0)
-		# # ip.SetOpacity(1.0)
-		# # ip.SetInterpolationTypeToLinear()
-
-		# # ia = vtk.vtkImageSlice()
-		# # ia.SetMapper(im)
-		# # ia.SetProperty(ip)
-		# # self.Slices[0] = ia
-
-		# # self.renderer.AddViewProp(ia)
-		# # # ren1.SetBackground(0.1,0.2,0.4)
-		# # # renWin.SetSize(300,300)
+		# #create cutter
+		# cutter=vtk.vtkCutter()
+		# cutter.SetCutFunction(planeSource)
+		# cutter.SetInputConnection(self.Templatedmc.GetOutputPort())
+		# cutter.Update()
 		
-		if not(self.Slices[0] == None):
-			self.renderer.RemoveActor(self.Slices[0])
-			self.Slices[0] = None
+		# cutterMapper=vtk.vtkPolyDataMapper()
+		# cutterMapper.SetInputConnection(cutter.GetOutputPort())
+		# cutterMapper.ScalarVisibilityOn()
 
-		planeSource = vtk.vtkPlane()
+		# #create plane actor
+		# planeActor=vtk.vtkActor()
+		# planeActor.GetProperty().SetColor(1.0,0,0)
+		# planeActor.GetProperty().SetLineWidth(2)
+		# planeActor.SetMapper(cutterMapper)
 
-		planeSource.SetOrigin(self.SetXAxisValues,0.0,0.0)
-		planeSource.SetNormal(1.0,0.0,0.0)
-
-		#create cutter
-		cutter=vtk.vtkCutter()
-		cutter.SetCutFunction(planeSource)
-		cutter.SetInputConnection(self.Templatedmc.GetOutputPort())
-		cutter.Update()
-		
-		cutterMapper=vtk.vtkPolyDataMapper()
-		cutterMapper.SetInputConnection(cutter.GetOutputPort())
-		cutterMapper.ScalarVisibilityOn()
-
-		#create plane actor
-		planeActor=vtk.vtkActor()
-		planeActor.GetProperty().SetColor(1.0,0,0)
-		planeActor.GetProperty().SetLineWidth(2)
-		planeActor.SetMapper(cutterMapper)
-
-		self.Slices[0] = planeActor
+		# self.Slices[0] = planeActor
 
 		self.renderer.AddViewProp(planeActor)
 
@@ -817,9 +776,9 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.toggleThreeSlicesFlag = not(self.toggleThreeSlicesFlag)
 		self.UpdateRenderer()
 
-	def	EnablePicking(self):
-		self.PickingFlag = not(self.PickingFlag)
-		self.UpdateRenderer()
+	# def	EnablePicking(self):
+	# 	self.PickingFlag = not(self.PickingFlag)
+	# 	self.UpdateRenderer()
 
 	def setRegionColors(self,region_colors):
 		assert len(region_colors) == self.nRegions
