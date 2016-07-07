@@ -8,7 +8,7 @@ from numpy import *
 import nibabel as nib
 import numpy as np
 import csv
-
+import math
 import pprint
 import sys
 import PySide
@@ -359,7 +359,6 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.renderInteractor.Start()
 
 	def DefineTemplateDataToBeMapped(self):
-
 		self.Templatedmc.SetInputConnection(self.TemplateReader.GetOutputPort())
 		self.Templatedmc.Update()
 
@@ -472,11 +471,12 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 
 
 	def UpdateSlices(self,Visibility):
-		for actor in self.Slices:
-			if Visibility:
-				actor.GetProperty().SetOpacity(1)
-			else:
-				actor.GetProperty().SetOpacity(0)
+		pass
+		# for actor in self.Slices:
+		# 	if Visibility:
+		# 		actor.GetProperty().SetOpacity(1)
+		# 	else:
+		# 		actor.GetProperty().SetOpacity(0)
 
 	def addSlices(self):
 		self.addSliceX()
@@ -497,138 +497,112 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.SetZAxisValues = float(sliceZ)*self.PixX
 		self.addSliceZ()
 
+	def createImageDataFromNumpy(self,ImageData, NumpyImage,SliceP):
+		x, y  = np.shape(NumpyImage)
+
+		X = int(x*self.PixX)
+		Y = int(y*self.PixY)
+		print X,Y
+
+		if SliceP == "X":
+			ImageData.SetDimensions(Y,X,1)
+		elif SliceP == "Y":
+			ImageData.SetDimensions(X,1,Y)
+		elif SliceP == "Z":
+			ImageData.SetDimensions(X,Y,1)
+
+		if vtk.VTK_MAJOR_VERSION <= 5: 
+			ImageData.SetDataScalarTypeToUnsignedChar()
+			ImageData.SetNumberOfComponents(3)
+			ImageData.AllocateScalars()
+		else: 
+			ImageData.AllocateScalars(vtk.VTK_UNSIGNED_CHAR,3)
+
+		dim = ImageData.GetDimensions()
+
+		i = j = 0
+		for i in np.arange(0,dim[2],self.PixX):
+			for j in np.arange(0,dim[1],self.PixY):
+				i = int(i)
+				j = int(j)
+				print i,j
+				if SliceP == "X":
+					ImageData.SetScalarComponentFromDouble(j,i,0,0,0)
+					ImageData.SetScalarComponentFromDouble(j,i,0,1,0)
+					ImageData.SetScalarComponentFromDouble(j,i,0,2,255)
+				elif SliceP == "Y":
+					ImageData.SetScalarComponentFromDouble(j,0,i,0,255)
+					ImageData.SetScalarComponentFromDouble(j,0,i,1,0)
+					ImageData.SetScalarComponentFromDouble(j,0,i,2,255)
+				elif SliceP == "Z":
+					ImageData.SetScalarComponentFromDouble(i,j,0,0,255)
+					ImageData.SetScalarComponentFromDouble(i,j,0,1,0)
+					ImageData.SetScalarComponentFromDouble(i,j,0,2,255)
+
 	def addSliceX(self):
 		if not(self.toggleThreeSlicesFlag): 
 			return
-
 		# create source
-		x, y  = np.shape(self.SliceX.image_data)
-		self.SliceX.image_data = np.array(self.SliceX.image_data, dtype=uint16)
-		print np.shape(self.SliceX.image_data)
-
-
-
-
-
-
-		# dataImporter = vtk.vtkImageImport()
-
-		# if self.SliceX.image_data.dtype == numpy.uint8:
-		# 	dataImporter.SetDataScalarTypeToUnsignedChar()
-		# elif self.SliceX.image_data.dtype == numpy.uint16:
-		# 	dataImporter.SetDataScalarTypeToUnsignedShort()
-		# elif self.SliceX.image_data.dtype == numpy.uint32:
-		# 	dataImporter.SetDataScalarTypeToInt()
-		# elif self.SliceX.image_data.dtype == numpy.int16:
-		# 	dataImporter.SetDataScalarTypeToShort()
-		# else:
-		# 	raise RuntimeError("unknown data type %r of volume" % (self.SliceX.image_data.dtype,))
+		self.SliceX.image_data = self.SliceX.image_data
 		
-		# if not(self.Slices[0] == None):
-		# 	self.renderer.RemoveActor(self.Slices[0])
-		# 	self.Slices[0] = None
-
-		# planeSource = vtk.vtkPlane()
-
-		# planeSource.SetOrigin(self.SetXAxisValues,0.0,0.0)
-		# planeSource.SetNormal(1.0,0.0,0.0)
-
-		# #create cutter
-		# cutter=vtk.vtkCutter()
-		# cutter.SetCutFunction(planeSource)
-		# cutter.SetInputConnection(self.Templatedmc.GetOutputPort())
-		# cutter.Update()
-		
-		# cutterMapper=vtk.vtkPolyDataMapper()
-		# cutterMapper.SetInputConnection(cutter.GetOutputPort())
-		# cutterMapper.ScalarVisibilityOn()
-
-		# #create plane actor
-		# planeActor=vtk.vtkActor()
-		# planeActor.GetProperty().SetColor(1.0,0,0)
-		# planeActor.GetProperty().SetLineWidth(2)
-		# planeActor.SetMapper(cutterMapper)
-
-		# self.Slices[0] = planeActor
-
-		self.renderer.AddViewProp(planeActor)
-
-		self.renderWin.GetInteractor().Render()
-
-	
-	def addSliceY(self):
-		if not(self.toggleThreeSlicesFlag): 
-			return
-		if not(self.Slices[1]== None):
-			self.renderer.RemoveActor(self.Slices[1])
-			self.Slices[1] = None
-
-		# create source
-		x, y  = np.shape(self.SliceY.image_data)
-		self.SliceX.image_data = np.array(self.SliceX.image_data, dtype=uint8)
-
 		planeSource = vtk.vtkPlane()
 
 		planeSource.SetOrigin(0.0,self.SetYAxisValues,0.0)
 		planeSource.SetNormal(0.0,1.0,0.0)
 
-		#create cutter
-		cutter=vtk.vtkCutter()
-		cutter.SetCutFunction(planeSource)
-		cutter.SetInputConnection(self.Templatedmc.GetOutputPort())
-		cutter.Update()
-		cutterMapper=vtk.vtkPolyDataMapper()
-		cutterMapper.SetInputConnection(cutter.GetOutputPort())
-		cutterMapper.ScalarVisibilityOn()
+		ImageData = vtk.vtkImageData()
+		self.createImageDataFromNumpy(ImageData, self.SliceX.image_data, "X") 
+		
+		ResliceMapper = vtk.vtkImageResliceMapper() 
+		ResliceMapper.SetInputData(ImageData)
 
-		#create plane actor
-		planeActor=vtk.vtkActor()
-		planeActor.GetProperty().SetColor(1.0,0,1)
-		planeActor.GetProperty().SetLineWidth(2)
-		planeActor.SetMapper(cutterMapper)
+		imageSlice = vtk.vtkImageSlice() 
+		imageSlice.SetMapper(ResliceMapper)
 
-		self.Slices[1] = planeActor
+		self.Slices[0] = imageSlice
 
-		self.renderer.AddViewProp(planeActor)
+		self.renderer.AddViewProp(imageSlice)
 		self.renderWin.GetInteractor().Render()
+
+	def addSliceY(self):
+		if not(self.toggleThreeSlicesFlag): 
+			return
+
+		pass
+
+		# ImageData = vtk.vtkImageData()
+		# self.createImageDataFromNumpy(ImageData, self.SliceY.image_data, "Y") 
+		
+		# ResliceMapper = vtk.vtkImageResliceMapper() 
+		# ResliceMapper.SetInputData(ImageData)
+
+		# imageSlice = vtk.vtkImageSlice() 
+		# imageSlice.SetMapper(ResliceMapper)
+
+		# self.Slices[1] = imageSlice
+
+		# self.renderer.AddViewProp(imageSlice)
+		# self.renderWin.GetInteractor().Render()
 
 
 	def addSliceZ(self):
 		if not(self.toggleThreeSlicesFlag): 
 			return
-		if not(self.Slices[2]== None):
-			self.renderer.RemoveActor(self.Slices[2])
-			self.Slices[2] = None 
 
-		# create source
-		x, y  = np.shape(self.SliceZ.image_data)
-		self.SliceX.image_data = np.array(self.SliceX.image_data, dtype=uint8)
+		pass
+		# ImageData = vtk.vtkImageData()
+		# self.createImageDataFromNumpy(ImageData, self.SliceZ.image_data, "Z") 
+		
+		# ResliceMapper = vtk.vtkImageResliceMapper() 
+		# ResliceMapper.SetInputData(ImageData)
 
-		planeSource = vtk.vtkPlane()
+		# imageSlice = vtk.vtkImageSlice() 
+		# imageSlice.SetMapper(ResliceMapper)
 
-		planeSource.SetOrigin(0.0,0.0,self.SetZAxisValues)
-		planeSource.SetNormal(0.0,0.0,1.0)
+		# self.Slices[2] = imageSlice
 
-		#create cutter
-		cutter=vtk.vtkCutter()
-		cutter.SetCutFunction(planeSource)
-		cutter.SetInputConnection(self.Templatedmc.GetOutputPort())
-		cutter.Update()
-		cutterMapper=vtk.vtkPolyDataMapper()
-		cutterMapper.SetInputConnection(cutter.GetOutputPort())
-		cutterMapper.ScalarVisibilityOn()
-
-		#create plane actor
-		planeActor=vtk.vtkActor()
-		planeActor.GetProperty().SetColor(1.0,1,0)
-		planeActor.GetProperty().SetLineWidth(2)
-		planeActor.SetMapper(cutterMapper)
-
-		self.Slices[2] = planeActor
-
-		self.renderer.AddViewProp(planeActor)
-		self.renderWin.GetInteractor().Render()
-
+		# self.renderer.AddViewProp(imageSlice)
+		# self.renderWin.GetInteractor().Render()
 
 	def removeParcels(self):
 		if self.Parcel:
