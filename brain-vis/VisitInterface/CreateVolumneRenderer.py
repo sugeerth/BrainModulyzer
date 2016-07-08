@@ -524,15 +524,15 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 	# def CreateColorImage(self, vtkImageData, NumpyData):
 
 	def setThreeSliceX(self, sliceX):
-		self.SetXAxisValues = float(sliceX)
+		self.SetXAxisValues = sliceX
 		self.addSliceX()
 
 	def setThreeSliceY(self, sliceY):
-		self.SetYAxisValues = float(sliceY)
+		self.SetYAxisValues = sliceY
 		self.addSliceY()
 
 	def setThreeSliceZ(self, sliceZ):
-		self.SetZAxisValues = float(sliceZ)
+		self.SetZAxisValues = sliceZ
 		self.addSliceZ()
 
 	def createImageDataFromNumpy(self,ImageData, NumpyImage,SliceP):
@@ -588,37 +588,25 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		
 		ImageData = vtk.vtkImageData()
 		self.createImageDataFromNumpy(ImageData, self.SliceX.TemplateImageData, "X") 
+		x, y  = np.shape(self.SliceX.TemplateImageData)
 
-		# ResliceMap = vtk.vtkImageReslice()
-		# transform = vtk.vtkTransform()
-		# transform.Translate(self.SetXAxisValues,0.0,0.0)
-		# ResliceMap.SetResliceTransform(transform)
-		# ResliceMap.SetInputData(ImageData)
+		bwLut = vtk.vtkLookupTable()
+		bwLut.SetTableRange (0, 2000)
+		bwLut.SetSaturationRange (0, 0)
+		bwLut.SetHueRange (0, 0)
+		bwLut.SetValueRange (0, 1) 
+		bwLut.Build()
 
-		# ResliceMap.SetResliceAxesDirectionCosines(0.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,0.0);
-		# ResliceMap.Update()
+		sagittalColors = vtk.vtkImageMapToColors()
+		sagittalColors.SetInputData(ImageData) 
+		sagittalColors.SetLookupTable(bwLut) 
+		sagittalColors.Update() 
+		sagittal = vtk.vtkImageActor()
+		sagittal.GetMapper().SetInputConnection(sagittalColors.GetOutputPort())
+		sagittal.SetDisplayExtent(0,y-1,0,x-1,int(self.SetXAxisValues-1),int(self.SetXAxisValues-1)) 
 
-		# actor = vtk.vtkImageActor()
-		# actor.SetInput(ResliceMap.GetOutputPort());
-
-		ResliceMapper = vtk.vtkImageResliceMapper()
-		ResliceMapper.SetInputData(ImageData)
-
-		imageSlice = vtk.vtkImageSlice() 
-		imageSlice.SetMapper(ResliceMapper)
-		imageSlice
-		imageSlice.SetOrigin(0,10,0)
-
-		print imageSlice.GetOrigin()
-		print imageSlice.GetPosition()
-
-		# imageSlice.SetOrigin(self.SetXAxisValues,0.0,0.0) 
-		# imageSlice.SetNormal(1.0,0.0,0.0)
-
-		self.Slices[0] = imageSlice
-
-		self.renderer.AddViewProp(imageSlice)
-		# self.renderer.AddViewProp(planeSource)
+		self.Slices[0] = sagittal
+		self.renderer.AddViewProp(sagittal)
 		self.renderWin.GetInteractor().Render()
 
 	def addSliceY(self):
