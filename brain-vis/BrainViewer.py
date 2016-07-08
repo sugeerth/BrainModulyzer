@@ -121,16 +121,15 @@ slice_views[0] = SliceViewer(template_data, parcelation_data, 0, correlationTabl
 viewersLayout1.addWidget(slice_views[0])
 viewersLayout1.setContentsMargins(0,0,0,0)
 
-
-
 slice_views[1] = SliceViewer(template_data, parcelation_data, 1, correlationTable, colorTable, selectedColor)
 viewersLayout1.addWidget(slice_views[1])
 viewersLayout1.setContentsMargins(0,0,0,0)
 
-
 slice_views[2] = SliceViewer(template_data, parcelation_data, 2, correlationTable, colorTable, selectedColor)
 viewersLayout2.addWidget(slice_views[2])
 viewersLayout2.setContentsMargins(0,0,0,0)
+
+print "Setting the IsoSurfaces"
 
 VolumneRenderer = VolumneRendererWindow(parcelation_filename, template_filename, correlationTable,selectedColor,colorTable, slice_views[0],slice_views[1],slice_views[2])
 slice_views[0].sliceChanged.connect(VolumneRenderer.setThreeSliceX)

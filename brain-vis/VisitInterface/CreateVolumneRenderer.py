@@ -9,6 +9,7 @@ import nibabel as nib
 import numpy as np
 import csv
 import math
+import tempfile
 import pprint
 import sys
 import PySide
@@ -214,15 +215,71 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 	def ColorParcelationPoints(self,x,y,z):
 		self.Parcelation
 
+
+	"""
+	Checks the Pixel Dimensions of the data, if it is found anything other than 1,1,1
+	A new dataset is derived and then we run renderer the into the volume renderer
+	"""
+	def CheckForPixDimensions(self, Parcelation, Template):
+		self.ParcelationDataNewFilename = os.environ['PYTHONPATH'].split(os.pathsep)
+		head, tail = os.path.split(self.parcelation_filename)
+		# self.ParcelationDataNewFilename[0]=os.path.join(self.ParcelationDataNewFilename[0],"DerivedDatasets")
+		self.ParcelationDataNewFilename[0]=os.path.join(self.ParcelationDataNewFilename[0],tail)
+
+		self.TemplateDataNewFilename = os.environ['PYTHONPATH'].split(os.pathsep)
+		head, tail = os.path.split(self.template_filename)
+		# self.TemplateDataNewFilename[0]=os.path.join(self.TemplateDataNewFilename[0],"DerivedDatasets")
+		self.TemplateDataNewFilename[0]=os.path.join(self.TemplateDataNewFilename[0],tail)
+
+		if os.path.isfile(self.TemplateDataNewFilename[0]):
+			self.parcelation_filename = self.ParcelationDataNewFilename[0]
+			self.template_filename = self.TemplateDataNewFilename[0]
+			print "     SUCCESS! New Format File is already present"
+		else:
+			img1 = nib.load(Parcelation)
+			hdr1 = img1.header
+
+			img2 = nib.load(Template)
+			hdr2 = img2.header
+			print "Sorry the dimensions currently do not match, generating new pixel values"
+			print "Checking for the dimensions and saving the file on the image"
+			a1 = hdr1['pixdim'][1:4]
+			a2 = hdr2['pixdim'][1:4]
+			C1 = np.array((1,1,1))
+
+			if not(all(a1 == C1)) or not(all(a2 == C1)): 
+				hdr1['pixdim'] = [1,1,1,1,0,0,0,0]
+				hdr2['pixdim'] = [1,1,1,1,0,0,0,0]
+			else: 
+				return
+
+			# img1.to_filename("asdas.nii.gz")
+			# img2.to_filename("template.nii.gz")
+
+			nib.save(img1, self.ParcelationDataNewFilename[0])
+			nib.save(img2, self.TemplateDataNewFilename[0])
+
+			self.parcelation_filename = self.ParcelationDataNewFilename[0]
+			self.template_filename = self.TemplateDataNewFilename[0]
+
+
 	def setDataset(self): 
+		self.CheckForPixDimensions(self.parcelation_filename, self.template_filename)
+
 		self.ParcelationReader = vtk.vtkNIFTIImageReader()
 		self.ParcelationReader.SetFileName(self.parcelation_filename)
+		# self.ParcelationReader.SetDataSpacing(1, 1, 1)
+		# print self.ParcelationReader
+
 		self.ParcelationNumpy = nib.load(self.parcelation_filename).get_data().astype(np.uint8)
+
 		self.ParcelationReader.Update()
 
 		self.TemplateReader = vtk.vtkNIFTIImageReader()
 		self.TemplateReader.SetFileName(self.template_filename)
-		self.TemplateMapToColors = vtk.vtkImageMapToColors()
+		# self.TemplateReader.SetDataSpacing(1, 1, 1)
+		# print self.TemplateReader
+
 		self.TemplateNumpy = nib.load(self.template_filename).get_data().astype(np.uint8)
 		self.TemplateReader.Update()
 
@@ -232,23 +289,14 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.Templatedmc =vtk.vtkDiscreteMarchingCubes()
 		self.dmc =vtk.vtkDiscreteMarchingCubes()
 
-		self.Template = vtk.vtkPolyData()
-
-		self.appendFilter = vtk.vtkAppendPolyData()
-		self.cleanFilter = vtk.vtkCleanPolyData()
-
-		self.mapper = vtk.vtkPolyDataMapper()
 		self.TemplateMapper = vtk.vtkPolyDataMapper()
-
 		self.mapper2 = vtk.vtkPolyDataMapper()
-
 		self.outline = vtk.vtkOutlineFilter()
 
 		self.TemplateActor = vtk.vtkActor()
 		self.OutlineActor = vtk.vtkActor()
 
 		self.renderer = vtk.vtkRenderer()
-
 		self.renderer.SetBackground(1, 1, 1)
 
 		self.renderWin = vtk.vtkRenderWindow()
@@ -257,19 +305,12 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.axes2 = vtk.vtkCubeAxesActor2D()
 		self.axes3 = vtk.vtkCubeAxesActor2D()
 
-		self.nc = vtk.vtkNamedColors()
-
-		self.lut = vtk.vtkLookupTable()
-		self.lut.SetNumberOfTableValues(self.nRegions)
-		self.lut.Build()
-
 		self.colorData = vtk.vtkUnsignedCharArray()
 		self.colorData.SetName('colors') # Any name will work here.
 		self.colorData.SetNumberOfComponents(3)
 
 		self.TextProperty = vtk.vtkTextProperty()
 		self.TextProperty.SetColor(0,0,0)
-		# self.TextProperty.ShadowOn()
 		self.TextProperty.SetFontSize(100)
 
 		self.axesActor = vtk.vtkAnnotatedCubeActor()
@@ -278,11 +319,7 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.renderInteractor = QVTKRenderWindowInteractor(self,rw=self.renderWin)
 		self.BoxLayoutView.addWidget(self.renderInteractor)
 
-		self.points = vtk.vtkPoints()
-		self.triangles = vtk.vtkCellArray()
-
 		self.picker = vtk.vtkCellPicker()
-
 		self.template_data = None
 
 	def RegionSelectedIn(self, Id):
@@ -293,44 +330,44 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 	def RenderData(self):
 		self.DefineTemplateDataToBeMapped()
 		self.DefineParcelationDataToBeMapped()
-		self.setColors()
+		# self.setColors()
 		self.AppendDatasets()
 		self.SetActorsAndOutline()
 		self.SetRenderer()
 		self.AddAxisActor()
 		self.SetAxisValues()
 
-	def MakeLUT(self,tableSize):
-		'''
-		Make a lookup table from a set of named colors.
-		:param: tableSize - The table size
-		:return: The lookup table.
-		'''
-		regionId = 0
-		region_colors = [ self.colorTable.getColor(self.correlationTable.value(regionId, i)) for i in range(self.nRegions) ]
-		region_colors[regionId] = self.selectedColor
+	# def MakeLUT(self,tableSize):
+	# 	'''
+	# 	Make a lookup table from a set of named colors.
+	# 	:param: tableSize - The table size
+	# 	:return: The lookup table.
+	# 	'''
+	# 	regionId = 0
+	# 	region_colors = [self.colorTable.getColor(self.correlationTable.value(regionId, i)) for i in range(self.nRegions) ]
+	# 	region_colors[regionId] = self.selectedColor
 
-		index = 0 
-		for index in range(tableSize):
-			data = region_colors[index]
-			r= float(data[0])/255
-			g=float(data[1])/255
-			b=float(data[2])/255
-			a=float(data[3])/255
-			self.lut.SetTableValue(index,(r,g,b,a))
-			index+=1
+	# 	index = 0 
+	# 	for index in range(tableSize):
+	# 		data = region_colors[index]
+	# 		r= float(data[0])/255
+	# 		g=float(data[1])/255
+	# 		b=float(data[2])/255
+	# 		a=float(data[3])/255
+	# 		self.lut.SetTableValue(index,(r,g,b,a))
+	# 		index+=1
 
-	def MakeCellData(self,tableSize, lut, colors):
-		for i in range(0,tableSize):
-			rgb = [0.0,0.0,0.0]
-			lut.GetColor(float(i)/(tableSize-1),rgb)
-			ucrgb = list(map(int, [x * 255 for x in rgb]))
-			colors.InsertNextTuple3(ucrgb[0], ucrgb[1], ucrgb[2])
-			s = '['+ ', '.join(['{:0.6f}'.format(x) for x in rgb]) + ']'
+	# def MakeCellData(self,tableSize, lut, colors):
+	# 	for i in range(0,tableSize):
+	# 		rgb = [0.0,0.0,0.0]
+	# 		lut.GetColor(float(i)/(tableSize-1),rgb)
+	# 		ucrgb = list(map(int, [x * 255 for x in rgb]))
+	# 		colors.InsertNextTuple3(ucrgb[0], ucrgb[1], ucrgb[2])
+	# 		s = '['+ ', '.join(['{:0.6f}'.format(x) for x in rgb]) + ']'
 
-	def setColors(self):
-		self.MakeLUT(self.nRegions)
-		self.MakeCellData(self.nRegions,self.lut,self.colorData)
+	# def setColors(self):
+	# 	self.MakeLUT(self.nRegions)
+	# 	# self.MakeCellData(self.nRegions,self.lut,self.colorData)
 
 	def SetAxisValues(self):
 		self.axes2.SetInputConnection(self.Templatedmc.GetOutputPort())
@@ -368,6 +405,7 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.PixX = self.ParcelationReader.GetNIFTIHeader().GetPixDim(1)
 		self.PixY = self.ParcelationReader.GetNIFTIHeader().GetPixDim(2)
 		self.PixZ = self.ParcelationReader.GetNIFTIHeader().GetPixDim(3)
+
 		# Getting the style object to invoke here because we get the real Pix dimensions
 		self.style = MouseInteractorHighLightActor(self,self.selectedColor[:3], self.PixX, self.PixY,self.PixZ)
 		# self.style.locationRegionSelected.connect(self.locationRegionSelectedIn)		
@@ -486,30 +524,26 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 	# def CreateColorImage(self, vtkImageData, NumpyData):
 
 	def setThreeSliceX(self, sliceX):
-		self.SetXAxisValues = float(sliceX)*self.PixX
+		self.SetXAxisValues = float(sliceX)
 		self.addSliceX()
 
 	def setThreeSliceY(self, sliceY):
-		self.SetYAxisValues = float(sliceY)*self.PixY
+		self.SetYAxisValues = float(sliceY)
 		self.addSliceY()
 
 	def setThreeSliceZ(self, sliceZ):
-		self.SetZAxisValues = float(sliceZ)*self.PixX
+		self.SetZAxisValues = float(sliceZ)
 		self.addSliceZ()
 
 	def createImageDataFromNumpy(self,ImageData, NumpyImage,SliceP):
 		x, y  = np.shape(NumpyImage)
 
-		X = int(x*self.PixX)
-		Y = int(y*self.PixY)
-		print X,Y
-
 		if SliceP == "X":
-			ImageData.SetDimensions(Y,X,1)
+			ImageData.SetDimensions(x,y,1)
 		elif SliceP == "Y":
-			ImageData.SetDimensions(X,1,Y)
+			ImageData.SetDimensions(x,1,y)
 		elif SliceP == "Z":
-			ImageData.SetDimensions(X,Y,1)
+			ImageData.SetDimensions(1,x,y)
 
 		if vtk.VTK_MAJOR_VERSION <= 5: 
 			ImageData.SetDataScalarTypeToUnsignedChar()
@@ -519,90 +553,134 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 			ImageData.AllocateScalars(vtk.VTK_UNSIGNED_CHAR,3)
 
 		dim = ImageData.GetDimensions()
-
 		i = j = 0
-		for i in np.arange(0,dim[2],self.PixX):
-			for j in np.arange(0,dim[1],self.PixY):
-				i = int(i)
-				j = int(j)
-				print i,j
+		for i in np.arange(0,dim[0]-1):
+			for j in np.arange(0,dim[1]-1):
+				R = (NumpyImage[i,j] & 0xff0000) >> 16
+				G = (NumpyImage[i,j] & 0xff00) >> 8
+				B = NumpyImage[i,j] & 0xff
+				# print R,G,B
+				i = i
+				j = j
 				if SliceP == "X":
-					ImageData.SetScalarComponentFromDouble(j,i,0,0,0)
-					ImageData.SetScalarComponentFromDouble(j,i,0,1,0)
-					ImageData.SetScalarComponentFromDouble(j,i,0,2,255)
+					ImageData.SetScalarComponentFromDouble(i,j,0,0,R)
+					ImageData.SetScalarComponentFromDouble(i,j,0,1,G)
+					ImageData.SetScalarComponentFromDouble(i,j,0,2,B)
 				elif SliceP == "Y":
-					ImageData.SetScalarComponentFromDouble(j,0,i,0,255)
-					ImageData.SetScalarComponentFromDouble(j,0,i,1,0)
-					ImageData.SetScalarComponentFromDouble(j,0,i,2,255)
+					ImageData.SetScalarComponentFromDouble(i,0,j,0,R)
+					ImageData.SetScalarComponentFromDouble(i,0,j,1,G)
+					ImageData.SetScalarComponentFromDouble(i,0,j,2,B)
 				elif SliceP == "Z":
-					ImageData.SetScalarComponentFromDouble(i,j,0,0,255)
-					ImageData.SetScalarComponentFromDouble(i,j,0,1,0)
-					ImageData.SetScalarComponentFromDouble(i,j,0,2,255)
+					ImageData.SetScalarComponentFromDouble(0,i,j,0,R)
+					ImageData.SetScalarComponentFromDouble(0,i,j,1,G)
+					ImageData.SetScalarComponentFromDouble(0,i,j,2,B)
 
 	def addSliceX(self):
 		if not(self.toggleThreeSlicesFlag): 
 			return
+
+		if not(self.Slices[0]== None):
+			self.renderer.RemoveActor(self.Slices[1])
+			self.Slices[0] = None
+
 		# create source
-		self.SliceX.image_data = self.SliceX.image_data
+		self.SliceX.TemplateImageData = self.SliceX.TemplateImageData
 		
-		planeSource = vtk.vtkPlane()
-
-		planeSource.SetOrigin(0.0,self.SetYAxisValues,0.0)
-		planeSource.SetNormal(0.0,1.0,0.0)
-
 		ImageData = vtk.vtkImageData()
-		self.createImageDataFromNumpy(ImageData, self.SliceX.image_data, "X") 
-		
-		ResliceMapper = vtk.vtkImageResliceMapper() 
+		self.createImageDataFromNumpy(ImageData, self.SliceX.TemplateImageData, "X") 
+
+		# ResliceMap = vtk.vtkImageReslice()
+		# transform = vtk.vtkTransform()
+		# transform.Translate(self.SetXAxisValues,0.0,0.0)
+		# ResliceMap.SetResliceTransform(transform)
+		# ResliceMap.SetInputData(ImageData)
+
+		# ResliceMap.SetResliceAxesDirectionCosines(0.0,0.0,1.0,0.0,1.0,0.0,1.0,0.0,0.0);
+		# ResliceMap.Update()
+
+		# actor = vtk.vtkImageActor()
+		# actor.SetInput(ResliceMap.GetOutputPort());
+
+		ResliceMapper = vtk.vtkImageResliceMapper()
 		ResliceMapper.SetInputData(ImageData)
 
 		imageSlice = vtk.vtkImageSlice() 
 		imageSlice.SetMapper(ResliceMapper)
+		imageSlice
+		imageSlice.SetOrigin(0,10,0)
+
+		print imageSlice.GetOrigin()
+		print imageSlice.GetPosition()
+
+		# imageSlice.SetOrigin(self.SetXAxisValues,0.0,0.0) 
+		# imageSlice.SetNormal(1.0,0.0,0.0)
 
 		self.Slices[0] = imageSlice
 
 		self.renderer.AddViewProp(imageSlice)
+		# self.renderer.AddViewProp(planeSource)
 		self.renderWin.GetInteractor().Render()
 
 	def addSliceY(self):
 		if not(self.toggleThreeSlicesFlag): 
 			return
 
-		pass
+		if not(self.Slices[1]== None):
+			self.renderer.RemoveActor(self.Slices[1])
+			self.Slices[1] = None
 
-		# ImageData = vtk.vtkImageData()
-		# self.createImageDataFromNumpy(ImageData, self.SliceY.image_data, "Y") 
+		# planeSource = vtk.vtkPlane()
+
+		# planeSource.SetOrigin(0.0,self.SetYAxisValues,0.0)
+		# planeSource.SetNormal(0.0,1.0,0.0)
+
+		ImageData = vtk.vtkImageData()
+		self.createImageDataFromNumpy(ImageData, self.SliceY.TemplateImageData, "Y") 
 		
-		# ResliceMapper = vtk.vtkImageResliceMapper() 
-		# ResliceMapper.SetInputData(ImageData)
+		ResliceMapper = vtk.vtkImageResliceMapper() 
+		ResliceMapper.SetInputData(ImageData)
 
-		# imageSlice = vtk.vtkImageSlice() 
-		# imageSlice.SetMapper(ResliceMapper)
+		imageSlice = vtk.vtkImageSlice() 
+		imageSlice.SetMapper(ResliceMapper)
+		imageSlice.SetOrigin(0.0,self.SetYAxisValues,0.0)
+		# imageSlice.SetNormal(0.0,1.0,0.0)
 
-		# self.Slices[1] = imageSlice
+		self.Slices[1] = imageSlice
 
-		# self.renderer.AddViewProp(imageSlice)
-		# self.renderWin.GetInteractor().Render()
+		self.renderer.AddViewProp(imageSlice)
+		# self.renderer.AddViewProp(planeSource)
+		self.renderWin.GetInteractor().Render()
 
 
 	def addSliceZ(self):
 		if not(self.toggleThreeSlicesFlag): 
 			return
 
-		pass
-		# ImageData = vtk.vtkImageData()
-		# self.createImageDataFromNumpy(ImageData, self.SliceZ.image_data, "Z") 
+		if not(self.Slices[2]== None):
+			self.renderer.RemoveActor(self.Slices[1])
+			self.Slices[2] = None
+
+		# planeSource = vtk.vtkPlane()
+
+		# planeSource.SetOrigin(0.0,0.0,self.SetZAxisValues)
+		# planeSource.SetNormal(0.0,0.0,1.0)
+
+		ImageData = vtk.vtkImageData()
+		self.createImageDataFromNumpy(ImageData, self.SliceZ.TemplateImageData, "Z") 
 		
-		# ResliceMapper = vtk.vtkImageResliceMapper() 
-		# ResliceMapper.SetInputData(ImageData)
+		ResliceMapper = vtk.vtkImageResliceMapper() 
+		ResliceMapper.SetInputData(ImageData)
 
-		# imageSlice = vtk.vtkImageSlice() 
-		# imageSlice.SetMapper(ResliceMapper)
+		imageSlice = vtk.vtkImageSlice() 
+		imageSlice.SetMapper(ResliceMapper)
+		imageSlice.SetOrigin(0.0,0.0,self.SetZAxisValues) 
+		# imageSlice.SetNormal(0.0,0.0,1.0)
 
-		# self.Slices[2] = imageSlice
+		self.Slices[2] = imageSlice
 
-		# self.renderer.AddViewProp(imageSlice)
-		# self.renderWin.GetInteractor().Render()
+		self.renderer.AddViewProp(imageSlice)
+		# self.renderer.AddViewProp(planeSource)
+		self.renderWin.GetInteractor().Render()
 
 	def removeParcels(self):
 		if self.Parcel:
@@ -661,7 +739,7 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 			y = float(self.Centroid[i][1])* self.PixY 
 			z = float(self.Centroid[i][2])* self.PixZ 
 			
-			radius = 5
+			radius = 12
 
 			source.SetRadius(radius)
 			source.SetCenter(x,y,z)

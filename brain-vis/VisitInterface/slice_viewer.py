@@ -82,6 +82,8 @@ class SliceViewer(QtGui.QWidget):
     def updateSliceLabel(self):
         image_slice = self.extractSlice(self.template)
         image_data = (255 << 24 | image_slice << 16 | image_slice << 8 | image_slice)
+        self.TemplateImageData = image_data
+
         # print image_data
         parcelation_slice = self.extractSlice(self.parcelation)
         indices = np.flatnonzero(parcelation_slice)
@@ -90,7 +92,6 @@ class SliceViewer(QtGui.QWidget):
             image_data.flat[idx] = self.clut[parcelation_slice.flat[idx]-1]
 
         image_data = np.array(image_data[:, ::-1], order='F')
-        self.image_data = image_data
         image = QtGui.QImage(image_data, image_data.shape[0], image_data.shape[1], QtGui.QImage.Format_ARGB32)
         # if self.scaleFactor > 1:
         image = image.scaled(self.scaleFactor*image.width(), self.scaleFactor*image.height())
