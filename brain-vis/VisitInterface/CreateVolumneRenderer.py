@@ -518,8 +518,8 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 
 	def addSlices(self):
 		self.addSliceX()
-		self.addSliceY()
-		self.addSliceZ()
+		# self.addSliceY()
+		# self.addSliceZ()
 
 	# def CreateColorImage(self, vtkImageData, NumpyData):
 
@@ -529,11 +529,11 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 
 	def setThreeSliceY(self, sliceY):
 		self.SetYAxisValues = sliceY
-		self.addSliceY()
+		# self.addSliceY()
 
 	def setThreeSliceZ(self, sliceZ):
 		self.SetZAxisValues = sliceZ
-		self.addSliceZ()
+		# self.addSliceZ()
 
 	def createImageDataFromNumpy(self,ImageData, NumpyImage,SliceP):
 		x, y  = np.shape(NumpyImage)
@@ -583,30 +583,18 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 			self.renderer.RemoveActor(self.Slices[1])
 			self.Slices[0] = None
 
-		# create source
-		self.SliceX.TemplateImageData = self.SliceX.TemplateImageData
-		
 		ImageData = vtk.vtkImageData()
-		self.createImageDataFromNumpy(ImageData, self.SliceX.TemplateImageData, "X") 
-		x, y  = np.shape(self.SliceX.TemplateImageData)
+		self.createImageDataFromNumpy(ImageData, self.SliceX.TemplateImageData, "Y") 
+		
+		ResliceMapper = vtk.vtkImageResliceMapper()
+		ResliceMapper.SetInputData(ImageData)
 
-		bwLut = vtk.vtkLookupTable()
-		bwLut.SetTableRange (0, 2000)
-		bwLut.SetSaturationRange (0, 0)
-		bwLut.SetHueRange (0, 0)
-		bwLut.SetValueRange (0, 1) 
-		bwLut.Build()
+		imageSlice = vtk.vtkImageSlice() 
+		imageSlice.SetMapper(ResliceMapper)
 
-		sagittalColors = vtk.vtkImageMapToColors()
-		sagittalColors.SetInputData(ImageData) 
-		sagittalColors.SetLookupTable(bwLut) 
-		sagittalColors.Update() 
-		sagittal = vtk.vtkImageActor()
-		sagittal.GetMapper().SetInputConnection(sagittalColors.GetOutputPort())
-		sagittal.SetDisplayExtent(0,y-1,0,x-1,int(self.SetXAxisValues-1),int(self.SetXAxisValues-1)) 
+		self.Slices[0] = imageSlice
 
-		self.Slices[0] = sagittal
-		self.renderer.AddViewProp(sagittal)
+		self.renderer.AddViewProp(imageSlice)
 		self.renderWin.GetInteractor().Render()
 
 	def addSliceY(self):
@@ -617,28 +605,21 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 			self.renderer.RemoveActor(self.Slices[1])
 			self.Slices[1] = None
 
-		# planeSource = vtk.vtkPlane()
-
-		# planeSource.SetOrigin(0.0,self.SetYAxisValues,0.0)
-		# planeSource.SetNormal(0.0,1.0,0.0)
-
-		ImageData = vtk.vtkImageData()
-		self.createImageDataFromNumpy(ImageData, self.SliceY.TemplateImageData, "Y") 
+		self.SliceX.TemplateImageData = self.SliceX.TemplateImageData
 		
-		ResliceMapper = vtk.vtkImageResliceMapper() 
+		ImageData = vtk.vtkImageData()
+		self.createImageDataFromNumpy(ImageData, self.SliceX.TemplateImageData, "X") 
+
+		ResliceMapper = vtk.vtkImageResliceMapper()
 		ResliceMapper.SetInputData(ImageData)
 
 		imageSlice = vtk.vtkImageSlice() 
 		imageSlice.SetMapper(ResliceMapper)
-		imageSlice.SetOrigin(0.0,self.SetYAxisValues,0.0)
-		# imageSlice.SetNormal(0.0,1.0,0.0)
 
 		self.Slices[1] = imageSlice
 
 		self.renderer.AddViewProp(imageSlice)
-		# self.renderer.AddViewProp(planeSource)
 		self.renderWin.GetInteractor().Render()
-
 
 	def addSliceZ(self):
 		if not(self.toggleThreeSlicesFlag): 
@@ -648,11 +629,6 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 			self.renderer.RemoveActor(self.Slices[1])
 			self.Slices[2] = None
 
-		# planeSource = vtk.vtkPlane()
-
-		# planeSource.SetOrigin(0.0,0.0,self.SetZAxisValues)
-		# planeSource.SetNormal(0.0,0.0,1.0)
-
 		ImageData = vtk.vtkImageData()
 		self.createImageDataFromNumpy(ImageData, self.SliceZ.TemplateImageData, "Z") 
 		
@@ -661,13 +637,10 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 
 		imageSlice = vtk.vtkImageSlice() 
 		imageSlice.SetMapper(ResliceMapper)
-		imageSlice.SetOrigin(0.0,0.0,self.SetZAxisValues) 
-		# imageSlice.SetNormal(0.0,0.0,1.0)
 
 		self.Slices[2] = imageSlice
 
 		self.renderer.AddViewProp(imageSlice)
-		# self.renderer.AddViewProp(planeSource)
 		self.renderWin.GetInteractor().Render()
 
 	def removeParcels(self):
