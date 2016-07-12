@@ -743,7 +743,16 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 			y = float(self.Centroid[i][1])* self.PixY 
 			z = float(self.Centroid[i][2])* self.PixZ 
 			
-			radius = 12
+			if self.MapMetrics:
+				Size = eval('self.widget.'+self.widget.nodeSizeFactor+'[i]')
+				radius*= Size 
+				if radius < 5: 
+					radius = 5  
+				else:
+					radius*= Size 
+			else: 
+				radius = 5
+
 
 			source.SetRadius(radius)
 			source.SetCenter(x,y,z)
@@ -848,10 +857,10 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 			region_colors[regionId] = self.selectedColor
 			self.setRegionColors(region_colors)	
 
-	# def MapGraphMetrics(self):
-	# 	self.MapMetrics = not(self.MapMetrics)
-	# 	self.addSpheres()
-	# 	self.UpdateRenderer()
+	def MapGraphMetrics(self):
+		self.MapMetrics = not(self.MapMetrics)
+		self.addSpheres()
+		self.UpdateRenderer()
 
 	def Community(self, Flag):
 		self.communityMode = Flag

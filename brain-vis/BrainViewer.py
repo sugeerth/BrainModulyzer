@@ -304,11 +304,11 @@ toggleBrainSurfaceButton = QtGui.QPushButton("Brain Surface")
 
 # Another Feature Online 
 
-# MapMetrics = QtGui.QPushButton("Graph Metrics")
-# MapMetrics.clicked.connect(VolumneRenderer.MapGraphMetrics)
+MapMetrics = QtGui.QPushButton("Graph Metrics")
+MapMetrics.clicked.connect(VolumneRenderer.MapGraphMetrics)
 
-# visitControlsLayout.addWidget(MapMetrics)
-# visitControlsLayout.setContentsMargins(0,0,0,0)
+visitControlsLayout.addWidget(MapMetrics)
+visitControlsLayout.setContentsMargins(0,0,0,0)
 
 visitControlsLayout.addWidget(toggleBrainSurfaceButton)
 visitControlsLayout.setContentsMargins(0,0,0,0)
