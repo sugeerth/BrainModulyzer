@@ -747,9 +747,7 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 
 			if self.MapMetrics:
 				Size = eval('self.widget.'+self.widget.nodeSizeFactor+'[i]')
-				print radius
 				radius*= Size
-				print radius 
 				if radius < 5: 
 					radius = 5  
 				elif radius > 10: 

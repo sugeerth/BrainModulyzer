@@ -213,7 +213,6 @@ BoxTable.setContentsMargins(0, 0, 0, 0)
 
 BoxTableWidget.setLayout(BoxTable)
 
-
 if CorrelationTableShowFlag:
     BoxTableWidget.show()
     # pass
@@ -259,12 +258,26 @@ buttonGroup = QtGui.QButtonGroup()
 buttonGroup.setExclusive(True)
 buttonGroup.buttonClicked[int].connect(buttonGroupClicked)
 
+# Another Feature Online 
+MapMetrics = QtGui.QCheckBox("Show/Hide Graph Metrics")
+MapMetrics.toggle()
+MapMetrics.hide()
+MapMetrics.stateChanged.connect(VolumneRenderer.MapGraphMetrics)
+
+def setCentroidOn():
+    MapMetrics.show()
+
+def setCentroidOff():
+    MapMetrics.hide()
+
 r0=QtGui.QRadioButton("Centroids")
 r1=QtGui.QRadioButton("Regions")
 r1.setChecked(True)
 # Define regions 
 r0.clicked.connect(VolumneRenderer.setCentroidMode)
+r0.clicked.connect(setCentroidOn)
 r1.clicked.connect(VolumneRenderer.setRegionMode)
+r1.clicked.connect(setCentroidOff)
 
 buttonGroup.addButton(r0)
 buttonGroup.addButton(r1)
@@ -296,16 +309,14 @@ visitControlsLayout = QtGui.QHBoxLayout()
 visitViewerLayout.addLayout(visitControlsLayout)
 visitViewerLayout.setContentsMargins(0,0,0,0)
 
-toggleThreeSliceButton = QtGui.QPushButton("Slices")
+toggleThreeSliceButton = QtGui.QCheckBox("Show/Hide Slices")
+toggleThreeSliceButton.toggle()
 visitControlsLayout.addWidget(toggleThreeSliceButton)
 
-toggleThreeSliceButton.clicked.connect(VolumneRenderer.toggleThreeSlice)
-toggleBrainSurfaceButton = QtGui.QPushButton("Brain Surface")
+toggleThreeSliceButton.stateChanged.connect(VolumneRenderer.toggleThreeSlice)
+toggleBrainSurfaceButton = QtGui.QCheckBox("Show/Hide Brain Surface")
+toggleBrainSurfaceButton.toggle()
 
-# Another Feature Online 
-
-MapMetrics = QtGui.QPushButton("Graph Metrics")
-MapMetrics.clicked.connect(VolumneRenderer.MapGraphMetrics)
 
 visitControlsLayout.addWidget(MapMetrics)
 visitControlsLayout.setContentsMargins(0,0,0,0)
@@ -313,7 +324,7 @@ visitControlsLayout.setContentsMargins(0,0,0,0)
 visitControlsLayout.addWidget(toggleBrainSurfaceButton)
 visitControlsLayout.setContentsMargins(0,0,0,0)
 
-toggleBrainSurfaceButton.clicked.connect(VolumneRenderer.toggleBrainSurface)
+toggleBrainSurfaceButton.stateChanged.connect(VolumneRenderer.toggleBrainSurface)
 # pickButton = QtGui.QPushButton("Pick Region")
 
 # visitControlsLayout.addWidget(pickButton)
