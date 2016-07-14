@@ -742,17 +742,22 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 			x = float(self.Centroid[i][0])* self.PixX 
 			y = float(self.Centroid[i][1])* self.PixY 
 			z = float(self.Centroid[i][2])* self.PixZ 
-			
+		
+			radius = 10
+
 			if self.MapMetrics:
 				Size = eval('self.widget.'+self.widget.nodeSizeFactor+'[i]')
-				radius*= Size 
+				print radius
+				radius*= Size
+				print radius 
 				if radius < 5: 
 					radius = 5  
+				elif radius > 10: 
+					radius = 10  
 				else:
 					radius*= Size 
 			else: 
 				radius = 5
-
 
 			source.SetRadius(radius)
 			source.SetCenter(x,y,z)
@@ -776,6 +781,8 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 			actor.GetProperty().SetSpecularColor(1.0,1.0,1.0)
 			self.SphereActors.append(actor)
 			self.renderer.AddViewProp(actor)
+		self.renderWin.GetInteractor().Render()
+
 
 	def UpdateSpheres(self, Visibility):
 		for i in range(self.nRegions):
