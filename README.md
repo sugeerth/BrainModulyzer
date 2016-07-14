@@ -16,7 +16,6 @@ centroid depiction via a sphere Fig. C.
 
 ### Required dependencies ###
  
-    Visit (Based on your distribution build visit from this build scirpt--- )
     PySide 
     networkx 
     nibabel  
