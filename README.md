@@ -33,20 +33,30 @@ centroid depiction via a sphere Fig. C.
 ### Installation Procedure ###
 
 To install all the libraries for the python script to run
+
+
 1) Install all the source files from the requirements folder in the same order
+
 	pip install numpy==1.11.0
+
 	pip install decorator>=3.4.0
+
 	pip install networkx==1.11
+
 	pip install nibabel==2.0.2
+
 	pip install pydot3==1.0.8
+
 	pip install python-louvain==0.4
+
 	pip install pygraphviz==1.3.1
+
 	pip install PyVTK==0.5.18
 
 ------
 These are the links of the setup files, the links might have changed be wary of it
 ------
-	https://sourceforge.net/projects/numpy/files/NumPy/1.11.0/numpy-1.11.0.tar.gz/download
+	[![ScreenShot](https://sourceforge.net/projects/numpy/files/NumPy/1.11.0/numpy-1.11.0.tar.gz/download)](https://sourceforge.net/projects/numpy/files/NumPy/1.11.0/numpy-1.11.0.tar.gz/download)`
 	https://pypi.python.org/packages/68/04/621a0f896544814ce6c6a0e6bc01d19fc41d245d4515a2e4cf9e07a45a12/decorator-4.0.9.tar.gz#md5=f12c5651ccd707e12a0abaa4f76cd69a
 	https://pypi.python.org/packages/c2/93/dbb41b03cf7c878a7409c8e92226531f840a423c9309ea534873a83c9192/networkx-1.11.tar.gz#md5=6ef584a879e9163013e9a762e1cf7cd1
 	git clone git://github.com/nipy/nibabel.git
