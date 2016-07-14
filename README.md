@@ -23,6 +23,7 @@ centroid depiction via a sphere Fig. C.
     numpy 
     pygraphviz   
     communtiy
+    PyVTK
     
 ################################
 
