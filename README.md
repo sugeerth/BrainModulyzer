@@ -54,7 +54,7 @@ To install all the libraries for the python script to run
 	pip install PyVTK==0.5.18
 
 
-These are the links of the setup files, the links might have changed be aware of it
+The links might have changed be aware of it
 
 	[Numpy](https://sourceforge.net/projects/numpy/files/NumPy/1.11.0/numpy-1.11.0.tar.gz/download)`
 	[Decorator](https://pypi.python.org/packages/68/04/621a0f896544814ce6c6a0e6bc01d19fc41d245d4515a2e4cf9e07a45a12/decorator-4.0.9.tar.gz#md5=f12c5651ccd707e12a0abaa4f76cd69a)
