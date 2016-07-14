@@ -53,9 +53,9 @@ To install all the libraries for the python script to run
 
 	pip install PyVTK==0.5.18
 
-------
+
 These are the links of the setup files, the links might have changed be aware of it
-------
+
 	[Numpy](https://sourceforge.net/projects/numpy/files/NumPy/1.11.0/numpy-1.11.0.tar.gz/download)`
 	[Decorator](https://pypi.python.org/packages/68/04/621a0f896544814ce6c6a0e6bc01d19fc41d245d4515a2e4cf9e07a45a12/decorator-4.0.9.tar.gz#md5=f12c5651ccd707e12a0abaa4f76cd69a)
 	[Networkx](https://pypi.python.org/packages/c2/93/dbb41b03cf7c878a7409c8e92226531f840a423c9309ea534873a83c9192/networkx-1.11.tar.gz#md5=6ef584a879e9163013e9a762e1cf7cd1)
@@ -87,9 +87,18 @@ BrainViewerDataPaths.py -- path for the dataset
 RunMainProject.py -- path for running the applications with visit python backend
 ################################
 
-In the following figure, A) the community graph highlights the subcommunities associated with the community selected in the dendrogram view. B) Configuration options provide various choices for interactivity, such as toggling hovering/clicking, choosing graph layout and varying the opacity of highlighted nodes. C) The brain region graph displays highlighted nodes associated with selected sub communities.
-D) The dendrogram view displays the hierarchy of communities. The communities that do that not have any edges emanating from them are grayed out. E) A table view
-lists important graph properties of the graph shown in Fig. C.
+In the following figure, 
+
+A) the community graph highlights the subcommunities associated with the community selected in the dendrogram view. 
+
+B) Configuration options provide various choices for interactivity, such as toggling hovering/clicking, choosing graph layout and varying the opacity of highlighted nodes. 
+
+C) The brain region graph displays highlighted nodes associated with selected sub communities.
+
+D) The dendrogram view displays the hierarchy of communities. The communities that do that not have any edges emanating from them are grayed out.
+
+E) A table view lists important graph properties of the graph shown in Fig. C.
+
 [![ScreenShot](http://s32.postimg.org/7zro1qnrp/Visual_Tool_Page_1.jpg)]()
 
 
