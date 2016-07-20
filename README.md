@@ -12,7 +12,7 @@ The following image shows the results of community detection with respect to ana
 membership. Parcellated brain regions can be shown as outlines in Fig. A or
 centroid depiction via a sphere Fig. C.
 
-<!--![ScreenShot](http://s32.postimg.org/blbh7yllh/Anatomical_Diagram_Page_1.jpg)-->
+![ScreenShot](http://s32.postimg.org/blbh7yllh/Anatomical_Diagram_Page_1.jpg)
 
 ### Required dependencies ###
  
