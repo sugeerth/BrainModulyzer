@@ -27,7 +27,6 @@ class QuantData(QtCore.QObject):
 		self.BrainRegions = data.RegionName[0]
 		self.data_list = []
 		self.header = ['Regions', 'Centrality','Participation','Betweenness']
-
 		for i in range(widget.counter-1):
 			self.data_list.append((self.BrainRegions[i],"{0:.2f}".format(widget.Centrality[i]),"{0:.2f}".format(widget.ParticipationCoefficient[i]),"{0:.2f}".format(widget.Betweeness[i])))
 	

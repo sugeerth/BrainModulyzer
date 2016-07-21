@@ -31,8 +31,6 @@ except:
 # from VisitInterface.visit_interface import GetColor
 
 from GraphDataStructure import GraphVisualization
-
-
 from DendogramModule.dendogram import dendogram, DendoNode
 from CommunityFiles.communityDetectionEngine import communityDetectionEngine 
 

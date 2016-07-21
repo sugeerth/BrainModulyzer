@@ -173,6 +173,11 @@ widget.ThresholdChange.connect(quantData.ThresholdChange)
 
 quantTableObject = quantTable(quantData,widget)
 quantData.DataChange.connect(quantTableObject.setTableModel)
+quantTableObject.DataSelected.connect(VolumneRenderer.colorRelativeToRegion)
+quantTableObject.DataSelected.connect(Tab_1_CorrelationTable.selectRegion)
+quantTableObject.DataSelected.connect(Tab_2_CorrelationTable.selectRegion)
+quantTableObject.DataSelected.connect(widget.NodeSelected)
+
 Tab_1_CorrelationTable.selectedRegionChanged.connect(quantTableObject.setRegions)
 VolumneRenderer.widget = widget
 
@@ -299,6 +304,8 @@ for sv in slice_views:
         
     widget.CommunityColor.connect(sv.setRegionColors)
     widget.CommunityMode.connect(sv.Community)
+    quantTableObject.DataSelected.connect(sv.colorRelativeToRegion)
+
 
 visitViewerLayout.addWidget(VolumneRenderer)
 visitViewerLayout.setContentsMargins(0,0,0,0)

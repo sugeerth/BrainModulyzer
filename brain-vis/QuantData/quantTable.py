@@ -1,5 +1,6 @@
 import operator
 from PySide.QtCore import *
+import PySide
 from PySide.QtGui import *
 # Coding style idea taken from https://www.daniweb.com/software-development/python/code/447834/applying-pysides-qabstracttablemodel
 
@@ -10,13 +11,14 @@ You can sort things based on the alphabhetical order
 and make the classes more eaily available 
 """
 class quantTable(QWidget):
+    DataSelected = PySide.QtCore.Signal(int)
+
     def __init__(self, quantData,widget, *args):
         QWidget.__init__(self, *args)
         self.quantData=quantData
         self.table_view = None
         self.table_model = None
         self.Brain_Regions = widget.correlationTable().RegionName[0]
-
 
         self.setGeometry(0, 0, 279, 289)
         self.font = QFont("Courier New", 14)
@@ -34,8 +36,14 @@ class quantTable(QWidget):
         del self.table_view
 
         self.table_model = MyTableModel(self, self.quantData.data_list,self.quantData.header)
+
         self.table_view = QTableView()
+        self.table_view.setSelectionBehavior(PySide.QtGui.QAbstractItemView.SelectRows)
+        self.table_view.setSelectionMode(PySide.QtGui.QAbstractItemView.SingleSelection)
+
+        self.table_view.clicked.connect(self.onClicked)
         # self.model =  QtGui.QStandardItemModel(rows, columns, self.table_view)
+
         self.table_view.setModel(self.table_model)
         self.table_view.setFont(self.font)
 
@@ -53,15 +61,31 @@ class quantTable(QWidget):
         self.setLayout(self.layout)
         self.setContentsMargins(0, 0, 0, 0)
 
+    def onClicked(self,index):
+        item = self.table_model.mylist[index.row()]
+        ID = item[0]
+        for i, data  in enumerate(self.Brain_Regions): 
+            if data == ID: 
+                self.DataSelected.emit(i)
+                return
+
     def setRegions(self, id): 
-        pass
-        # print "This has to be selected",id
-        # name = Brain_Regions[id]
-        # self.table_view.selectRow(id)
+        name = self.Brain_Regions[id]
+        counter = 0
+        for i in self.table_model.mylist:
+            if i[0] == name:
+                break 
+            counter = counter+1
+        self.table_view.selectRow(counter)
 
     def setCommunityRegions(self, community): 
-        pass
+        print community
         # print "This community has to be selected",community
+
+    def cell_was_clicked(self, row, column):
+        print("Row %d and Column %d was clicked" % (row, column))
+        item = self.table_view.itemAt(row, column)
+        self.ID = item.text()
 
     def setData(self,list2):
         self.table_model.setData(list2)
