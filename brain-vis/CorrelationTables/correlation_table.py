@@ -17,7 +17,7 @@ class CorrelationTable(object):
         self.RegionName = []
         
         with open(filename, 'rb') as csvfile:
-            reader = csv.reader(csvfile, delimiter=' ', quotechar='\'')
+            reader = csv.reader(csvfile, delimiter=',', quotechar='\'')
             self.header = reader.next()
             self.RegionName.append((self.header))
             self.data=np.array([map(float, line) for line in reader])

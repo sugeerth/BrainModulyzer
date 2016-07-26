@@ -15,46 +15,34 @@ centroid depiction via a sphere Fig. C.
 <!--![ScreenShot](http://s32.postimg.org/blbh7yllh/Anatomical_Diagram_Page_1.jpg)-->
 
 ### Required dependencies ###
- 
-    PySide 
-    networkx 
-    nibabel  
-    numpy 
-    pygraphviz   
-    communtiy
-    PyVTK
-    
-################################
+    numpy
+    networkx
+    nibabel
+    pydot
+    community
+    pygraphviz
+    vtk
+    PySide
+    decorator
 
-
-################################
- 
 
 ### Installation Procedure ###
 
 To install all the libraries for the python script to run
 
-
 1) Install all the source files from the requirements folder in the same order
 
-	pip install numpy==1.11.0
+	sudo pip install numpy==1.11.0
+	sudo pip install networkx==1.11
+	sudo pip install nibabel==2.0.2
+	sudo pip install pydot3==1.0.8
+	sudo pip install python-louvain==0.5
+	sudo pip install pygraphviz==1.3.1
+	sudo pip install vtk (if the version bundled with pip does not include the vtkNiftiImageReader function, you must install a version that does)	
+	sudo pip install qt-sdk; sudo pip install PySide
+	sudo pip install decorator>=3.4.0
 
-	pip install decorator>=3.4.0
-
-	pip install networkx==1.11
-
-	pip install nibabel==2.0.2
-
-	pip install pydot3==1.0.8
-
-	pip install python-louvain==0.4
-
-	pip install pygraphviz==1.3.1
-
-	pip install PyVTK==0.5.18
-
-
-The links might have changed be aware of it
+Links to source code for libraries in case the libraries bundled with your distribution are not the right versions. The links might have changed so be aware of it:
 
 	[Numpy](https://sourceforge.net/projects/numpy/files/NumPy/1.11.0/numpy-1.11.0.tar.gz/download)`
 	[Decorator](https://pypi.python.org/packages/68/04/621a0f896544814ce6c6a0e6bc01d19fc41d245d4515a2e4cf9e07a45a12/decorator-4.0.9.tar.gz#md5=f12c5651ccd707e12a0abaa4f76cd69a)
@@ -63,16 +51,19 @@ The links might have changed be aware of it
 	[Louvain](https://pypi.python.org/packages/5d/81/497a95ba9d79d5bf04f9318256d1c0102329dd6a77b9d1e4dd84871e1089/python-louvain-0.5.tar.gz)
 	[PyDot](https://pypi.python.org/pypi/pydot3/1.0.8)
 	[PyGraphViz](https://pypi.python.org/packages/98/bb/a32e33f7665b921c926209305dde66fe41003a4ad934b10efb7c1211a419/pygraphviz-1.3.1.tar.gz#md5=7f690295dfe77edaa9e552d09d98d279)
+	Note: If after installing, "import pygraphviz" returns an error, then uninstall and reinstall using: 	pip install pygraphviz --install-option="--include-path=/usr/local/include/graphviz" --install-option="--library-path=/usr/local/lib/graphviz/" (https://github.com/pygraphviz/pygraphviz/issues/72)
 	[VTK and PyVTK](http://kazenotaiyo.blogspot.com/2010/06/installing-vtk-in-ubuntu-and-making.html)
 
 	and then, type python and paste these commands
 		import numpy
 		import networkx
 		import nibabel
-		import pydot3
-		import python-louvain 
+		import pydot
+		import community 
 		import pygraphviz
 		import vtk
+		import PySide
+		import decorator
 	If none of them returns an error then you are set
 
 2)	Configure the data paths in BrainViewerDataPaths.py 

@@ -3,7 +3,6 @@ from vtk.util import numpy_support
 import os
 import numpy
 
-import vtk
 from numpy import *
 import nibabel as nib
 import numpy as np
@@ -135,7 +134,7 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		source.SetCenter(0, 0, 0)
 		source.SetRadius(5.0)
 
-		self.FinalRenderView() 
+		#self.FinalRenderView() 
 		self.show()
 
 	def setCentreFilename(self):
@@ -145,7 +144,8 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		which is very much dataset specific 
 		"""
 
-		self.CentrePath = os.environ['PYTHONPATH'].split(os.pathsep)
+		#self.CentrePath = os.environ['PYTHONPATH'].split(os.pathsep)
+		self.CentrePath = '/data/mridata/jdeng/tools/modulyzer/brain-vis'.split(os.pathsep)
 		head, tail = os.path.split(self.parcelation_filename)
 		tail = tail.replace(".","") 
 		CenterFile = '%s%s'% (str(tail),str('CentreFile.csv'))
@@ -667,7 +667,7 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.renderWin.GetInteractor().Render()
 
 	def updateSliceZ(self):
-		if not(self.toggleThreeSlicesFlag): 
+		if not(self.toggleThreeSlicesFlag):
 			return
 
 		if not(self.Slices[2]== None):
@@ -703,7 +703,7 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 	def addParcels(self):
 		self.removeParcels()
 		self.Parcel = []
-		for i in range(self.nRegions):
+		for i in range(1, self.nRegions):
 			dmc =vtk.vtkDiscreteMarchingCubes()
 			dmc.SetInputConnection(self.ParcelationReader.GetOutputPort())
 			dmc.GenerateValues(i,i,i)
@@ -736,7 +736,7 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 	def addSpheres(self):
 		self.removeSpheres()
 		self.SphereActors = []
-		for i in range(self.nRegions):
+		for i in range(1, self.nRegions):
 			source = vtk.vtkSphereSource()
 			# random position and radius
 			x = float(self.Centroid[i][0])* self.PixX 
@@ -783,8 +783,9 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 
 
 	def UpdateSpheres(self, Visibility):
-		for i in range(self.nRegions):
+		for i in range(self.nRegions-1):
 			if self.SphereActors:
+				#import pdb; pdb.set_trace()
 				actor = self.SphereActors[i]
 				if not(Visibility): 
 					actor.GetProperty().SetOpacity(0)
@@ -804,7 +805,7 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.renderWin.GetInteractor().Render()
 
 	def UpdateParcels(self,Visibility):
-		for i in range(self.nRegions):
+		for i in range(self.nRegions-1):
 			if self.Parcel:
 				actor = self.Parcel[i]
 				if not(Visibility): 
