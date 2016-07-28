@@ -14,6 +14,10 @@ matrix_filename = '/PATH_TO_YOUR_CORRELATION_MATRIX_FILE'
 template_filename = '/PATH_TO_YOUR_TEMPLATE_FILE'
 parcelation_filename = '/PATH_TO_YOUR_PARCELATION_FILE'
 
+matrix_filename = '/PATH_TO_YOUR_CORRELATION_MATRIX_FILE'
+template_filename = '/PATH_TO_YOUR_TEMPLATE_FILE'
+parcelation_filename = '/PATH_TO_YOUR_PARCELATION_FILE'
+
 #set the flag data around here for convenience, if you want to switch on or off 
 # the other windows whenever you want
 GraphWindowShowFlag = True

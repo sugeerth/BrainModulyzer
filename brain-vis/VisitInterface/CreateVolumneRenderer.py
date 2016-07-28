@@ -9,6 +9,7 @@ import nibabel as nib
 import numpy as np
 import csv
 import math
+import sys
 import tempfile
 import pprint
 import sys
@@ -145,7 +146,7 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		which is very much dataset specific 
 		"""
 
-		self.CentrePath = os.environ['PYTHONPATH'].split(os.pathsep)
+		self.CentrePath = sys.path[0].split(os.pathsep)
 		head, tail = os.path.split(self.parcelation_filename)
 		tail = tail.replace(".","") 
 		CenterFile = '%s%s'% (str(tail),str('CentreFile.csv'))

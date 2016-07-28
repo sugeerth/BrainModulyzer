@@ -6,6 +6,7 @@ from PySide import QtCore, QtGui
 from sys import platform as _platform
 import weakref
 import cProfile
+import sys
 import os
 import pickle
 
@@ -15,7 +16,7 @@ class LayoutInit(QtGui.QWidget):
     def __init__(self,widget,quantTable,Ui,dataSetLoader,screenshot,matrix_filename,template_filename,parcelation_filename):
         super(LayoutInit,self).__init__()
 
-        self.directory_path =os.environ['PYTHONPATH'].split(os.pathsep)
+        self.directory_path =sys.path[0].split(os.pathsep)
         self.directory_path[0] += str('/Snapshots')
 
         self.matrix_filename=matrix_filename
