@@ -37,7 +37,8 @@ To install all the libraries for the python script to run
 	sudo pip install nibabel==2.0.2
 	sudo pip install pydot3==1.0.8
 	sudo pip install python-louvain==0.5
-	sudo pip install pygraphviz==1.3.1
+	Install Graphviz through the graphviz website--(http://www.graphviz.org)
+	sudo pip install pygraphviz==1.3.1 
 	sudo pip install vtk (if the version bundled with pip does not include the vtkNiftiImageReader function, you must install a version that does)	
 	sudo pip install qt-sdk; sudo pip install PySide
 	sudo pip install decorator>=3.4.0
