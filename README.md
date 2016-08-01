@@ -9,9 +9,9 @@ Please click to watch the overview video.
 # Brain Modulyzer #
 We present *Brain Modulyzer*, an interactive visual exploration tool for functional magnetic resonance imaging (fMRI) brain scans, aimed at analyzing the correlation between different brain regions when resting or when performing mental tasks. Brain Modulyzer combines multiple coordinated views---such as heat maps, node link diagrams and anatomical views---using brushing and linking to provide an anatomical context for brain connectivity data. Integrating methods from graph theory and analysis, e.g., community detection and derived graph measures, makes it possible to explore the modular and hierarchical organization of functional brain networks. Providing immediate feedback by displaying analysis results instantaneously while changing parameters gives neuroscientists a powerful means to comprehend complex brain structure more effectively and efficiently and supports forming hypotheses that can then be validated via statistical analysis.
 
-The following image shows the results of community detection with respect to anatomy. Each community is represented by a distinct color, and each region is colored according to its community
-membership. Parcellated brain regions can be shown as outlines in Fig. A or
-centroid depiction via a sphere Fig. C.
+<!--The following image shows the results of community detection with respect to anatomy. Each community is represented by a distinct color, and each region is colored according to its community-->
+<!--membership. Parcellated brain regions can be shown as outlines in Fig. A or-->
+<!--centroid depiction via a sphere Fig. C.-->
 
 <!--![ScreenShot](http://s32.postimg.org/blbh7yllh/Anatomical_Diagram_Page_1.jpg)-->
 
