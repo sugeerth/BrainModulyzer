@@ -37,17 +37,18 @@ To install all the libraries for the python script to run
 	sudo pip install networkx==1.11
 	sudo pip install nibabel==2.0.2
 	sudo pip install pydot3==1.0.8
-	sudo pip install python-louvain==0.5
-	Install Graphviz through the graphviz website--(http://www.graphviz.org)
+	sudo pip install community
+		Install Graphviz through the graphviz website--(http://www.graphviz.org)
 	sudo pip install pygraphviz==1.3.1 
-	sudo pip install vtk (if the version bundled with pip does not include the vtkNiftiImageReader function, you must install a version that does)	
 	sudo pip install qt-sdk; sudo pip install PySide
+	sudo pip install vtk (The vtk version should be above >5)	
+		sudo apt-get install libvtk5-dev python-vtk -- for linux
+		brew install vtk --with-qt -- for mac
 	sudo pip install decorator>=3.4.0
 
 Links to source code for libraries in case the libraries bundled with your distribution are not the right versions. The links might have changed so be aware of it:
 
-	[Numpy](https://sourceforge.net/projects/numpy/files/NumPy/1.11.0/numpy-1.11.0.tar.gz/download)`
-	[Decorator](https://pypi.python.org/packages/68/04/621a0f896544814ce6c6a0e6bc01d19fc41d245d4515a2e4cf9e07a45a12/decorator-4.0.9.tar.gz#md5=f12c5651ccd707e12a0abaa4f76cd69a)
+	[Numpy](https://sourceforge.net/projects/numpy/files/NumPy/1.11.0/numpy-1.11.0.tar.gz/download)
 	[Networkx](https://pypi.python.org/packages/c2/93/dbb41b03cf7c878a7409c8e92226531f840a423c9309ea534873a83c9192/networkx-1.11.tar.gz#md5=6ef584a879e9163013e9a762e1cf7cd1)
 	[Nibabel](http://nipy.org/nibabel/installation.html#installation) 
 	[Louvain](https://pypi.python.org/packages/5d/81/497a95ba9d79d5bf04f9318256d1c0102329dd6a77b9d1e4dd84871e1089/python-louvain-0.5.tar.gz)
