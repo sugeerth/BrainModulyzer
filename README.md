@@ -49,9 +49,7 @@ To install all the libraries for the python script to run
 	pip install decorator>=3.4.0
 
 **Source Code:**
-In case any of the pre-existing library installation does not work, please download and install the affected libraries from source.
-
-Links to source code for libraries. Sometimes the distributions from these commands are not the right versions. The links might have changed so be aware of it:
+In case any of the pre-existing library installation does not work, please download and install the affected libraries from source:
 
 [Numpy](https://sourceforge.net/projects/numpy/files/NumPy/1.11.0/numpy-1.11.0.tar.gz/download)
 
