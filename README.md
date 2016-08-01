@@ -92,6 +92,10 @@ Happy Analysis!
 
 **RunMainProject.py** -- path for running the applications with visit python backend
 
+##Running the tool 
+        modulyzerdir> export PYTHONPATH=${PYTHONPATH}:modulyzerdir
+
+        modulyzerdir> python RunMainProject.py
 
 In the following figure, 
 
