@@ -76,7 +76,7 @@ pip install pygraphviz --install-option="--include-path=/usr/local/include/graph
 		import vtk
 		import PySide
 		import decorator
-	If none of them returns an error then you are set
+	If none of them returns an error then all the libraries have been installed correctly
 
 2)	Configure the data paths in BrainViewerDataPaths.py 
 	and configure paths to run BrainViewer.py   
@@ -84,11 +84,11 @@ pip install pygraphviz --install-option="--include-path=/usr/local/include/graph
 
 Happy Analysis! 
 
-#### Major Files ####
-BrainViewerDataPaths.py -- path for the dataset
+####Major Files
+**BrainViewerDataPaths.py** -- path for the dataset
 
-RunMainProject.py -- path for running the applications with visit python backend
-################################
+**RunMainProject.py** -- path for running the applications with visit python backend
+
 
 In the following figure, 
     A) the community graph highlights the subcommunities associated with the community selected in the dendrogram view. 
