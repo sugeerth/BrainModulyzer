@@ -27,7 +27,6 @@ class CorrelationTable(object):
     Function for finding the absolute value of correlation values 
     """
     def FindAbsoluteValue(self):
-
         for i in range(len(self.data)):
             for j in range(len(self.data)):
                 self.data[i,j] = abs(self.data[i,j])
