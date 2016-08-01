@@ -67,7 +67,7 @@ pip install pygraphviz --install-option="--include-path=/usr/local/include/graph
 
 [VTK and PyVTK](http://www.it.uu.se/edu/course/homepage/vetvis/ht10/vtk/instructions_vtk_OSX.pdf) Same for mac or Linux
 
-	and then to check the successfull installation, type python in command prompt and paste these commands
+	and then to ensure the success of the installation, type python in command prompt and paste these commands
 		import numpy
 		import networkx
 		import nibabel
