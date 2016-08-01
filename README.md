@@ -31,7 +31,7 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 
 To install all the libraries for the python script to run
 
-1) Install all the source files from the requirements folder in the same order
+1) Install all the following libraries in the same order
 
 	sudo pip install numpy==1.11.0
 	sudo pip install networkx==1.11
