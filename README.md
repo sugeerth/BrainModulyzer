@@ -49,9 +49,9 @@ To install all the libraries for the python script to run
 	pip install decorator>=3.4.0
 
 **Source Code:**
-In case any of the pre-existing library installation does not work download the aformentioned libraries from source.
+In case any of the pre-existing library installation does not work, please download and install the aformentioned libraries from source.
 
-Links to source code for libraries in case the libraries bundled with your distribution are not the right versions. The links might have changed so be aware of it:
+Links to source code for libraries. Sometimes the distributions from these commands are not the right versions. The links might have changed so be aware of it:
 
 [Numpy](https://sourceforge.net/projects/numpy/files/NumPy/1.11.0/numpy-1.11.0.tar.gz/download)
 
@@ -69,7 +69,7 @@ pip install pygraphviz --install-option="--include-path=/usr/local/include/graph
 
 [VTK and PyVTK](http://www.it.uu.se/edu/course/homepage/vetvis/ht10/vtk/instructions_vtk_OSX.pdf) Same for mac or Linux
 
-	and then, type python and paste these commands
+	and then to check the successfull installation, type python in command prompt and paste these commands
 		import numpy
 		import networkx
 		import nibabel
