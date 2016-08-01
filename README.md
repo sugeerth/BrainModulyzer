@@ -38,7 +38,7 @@ To install all the libraries for the python script to run
 	pip install nibabel==2.0.2
 	pip install pydot3==1.0.8
 	pip install community
-		Install Graphviz through the graphviz website--(http://www.graphviz.org)
+		Install Graphviz through the graphviz website--(http://www.graphviz.org/Download_macos.php)
 	pip install pygraphviz==1.3.1 
 	pip install qt-sdk; pip install PySide
 	pip install vtk (The vtk version should be above >5)
