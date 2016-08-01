@@ -23,15 +23,23 @@ class CorrelationTable(object):
             self.data=np.array([map(float, line) for line in reader])
         i = 0
 
-        # self.WriteFakeData()
-
     """
     Function for finding the absolute value of correlation values 
     """
     def FindAbsoluteValue(self):
+
         for i in range(len(self.data)):
             for j in range(len(self.data)):
                 self.data[i,j] = abs(self.data[i,j])
+
+    # def WriteFakeData(self, data):
+    #     fakeData= np.random.rand(len(self.data),len(self.data))
+    #     np.savetxt("FinalCSVData.csv", fakeData, delimiter=",")
+
+    #     # for i in range(len(self.data)):
+    #     #     for j in range(len(self.data)):
+    #     #         self.data[i,j] = ran
+
 
     def value(self, i, j):
         return self.data[i, j]

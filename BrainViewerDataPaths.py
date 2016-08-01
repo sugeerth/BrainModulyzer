@@ -13,7 +13,7 @@ template_filename = '/PATH_TO_YOUR_TEMPLATE_FILE'
 parcelation_filename = '/PATH_TO_YOUR_PARCELATION_FILE'
 """
 
-matrix_filename = '/Users/sugeerthmurugesan/LBLProjects/TCBBDownload/TestDirectory/brain-vis-git/SampleData/SampleNodeMatrix.csv'
+matrix_filename = '/Users/sugeerthmurugesan/LBLProjects/TCBBDownload/TestDirectory/brain-vis-git/SampleData/FinalCSVData.csv'
 parcelation_filename = '/Users/sugeerthmurugesan/LBLProjects/TCBBDownload/TestDirectory/brain-vis-git/SampleData/allROIs.nii.gz'
 template_filename = '/Users/sugeerthmurugesan/LBLProjects/TCBBDownload/TestDirectory/brain-vis-git/SampleData/ch2better.nii.gz'
 
