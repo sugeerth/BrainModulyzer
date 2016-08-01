@@ -38,7 +38,7 @@ To install all the libraries for the python script to run
 	pip install nibabel==2.0.2
 	pip install pydot3==1.0.8
 	pip install community
-		Install Graphviz through the graphviz website--(http://www.graphviz.org/Download_macos.php)
+		Install Graphviz through the graphviz website--(http://www.graphviz.org/Download_macos.php )
 	pip install pygraphviz==1.3.1 
 	pip install qt-sdk; pip install PySide
 	pip install vtk (The vtk version should be above >5)
@@ -51,17 +51,17 @@ To install all the libraries for the python script to run
 **Source Code:**
 In case any of the pre-existing library installation does not work, please download and install the affected libraries from source:
 
-[Numpy](https://sourceforge.net/projects/numpy/files/NumPy/1.11.0/numpy-1.11.0.tar.gz/download)
+[Numpy](https://sourceforge.net/projects/numpy/files/NumPy/1.11.0/numpy-1.11.0.tar.gz/download )
 
-[Networkx](https://pypi.python.org/packages/c2/93/dbb41b03cf7c878a7409c8e92226531f840a423c9309ea534873a83c9192/networkx-1.11.tar.gz#md5=6ef584a879e9163013e9a762e1cf7cd1)
+[Networkx](https://pypi.python.org/packages/c2/93/dbb41b03cf7c878a7409c8e92226531f840a423c9309ea534873a83c9192/networkx-1.11.tar.gz#md5=6ef584a879e9163013e9a762e1cf7cd1 )
 
-[Nibabel](http://nipy.org/nibabel/installation.html#installation) 
+[Nibabel](http://nipy.org/nibabel/installation.html#installation ) 
 
-[Louvain](https://pypi.python.org/packages/5d/81/497a95ba9d79d5bf04f9318256d1c0102329dd6a77b9d1e4dd84871e1089/python-louvain-0.5.tar.gz)
+[Louvain](https://pypi.python.org/packages/5d/81/497a95ba9d79d5bf04f9318256d1c0102329dd6a77b9d1e4dd84871e1089/python-louvain-0.5.tar.gz )
 
-[PyDot](https://pypi.python.org/pypi/pydot3/1.0.8)
+[PyDot](https://pypi.python.org/pypi/pydot3/1.0.8 )
 
-[PyGraphViz](https://pypi.python.org/packages/98/bb/a32e33f7665b921c926209305dde66fe41003a4ad934b10efb7c1211a419/pygraphviz-1.3.1.tar.gz#md5=7f690295dfe77edaa9e552d09d98d279)
+[PyGraphViz](https://pypi.python.org/packages/98/bb/a32e33f7665b921c926209305dde66fe41003a4ad934b10efb7c1211a419/pygraphviz-1.3.1.tar.gz#md5=7f690295dfe77edaa9e552d09d98d279 )
 Note: If after installing, "import pygraphviz" returns an error, then uninstall and reinstall using: 	
 pip install pygraphviz --install-option="--include-path=/usr/local/include/graphviz" --install-option="--library-path=/usr/local/lib/graphviz/" (https://github.com/pygraphviz/pygraphviz/issues/72)
 
