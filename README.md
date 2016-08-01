@@ -48,6 +48,9 @@ To install all the libraries for the python script to run
 			brew install vtk --with-qt -- for mac
 	sudo pip install decorator>=3.4.0
 
+**Source Code:**
+In case any of the pre-existing library installation does not work download the aformentioned libraries from source.
+
 Links to source code for libraries in case the libraries bundled with your distribution are not the right versions. The links might have changed so be aware of it:
 
 [Numpy](https://sourceforge.net/projects/numpy/files/NumPy/1.11.0/numpy-1.11.0.tar.gz/download)
