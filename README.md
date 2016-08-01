@@ -45,7 +45,7 @@ To install all the libraries for the python script to run
 		for linux
 			sudo apt-get install libvtk5-dev python-vtk
 		for mac
-			brew install vtk --with-qt -- for mac
+			brew install vtk --with-qt
 	pip install decorator>=3.4.0
 
 **Source Code:**
