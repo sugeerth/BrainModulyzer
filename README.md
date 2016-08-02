@@ -40,7 +40,6 @@ To install all the libraries for the python script to run
 	pip install community
 		Install latest Graphviz through the graphviz website--(http://www.graphviz.org/Download_macos.php )
 	pip install pygraphviz==1.3.1 
-	pip install qt-sdk
 	pip install PySide
 	pip install vtk (The vtk version should be above >5)
 		for linux
@@ -78,10 +77,9 @@ pip install pygraphviz --install-option="--include-path=/usr/local/include/graph
 		import vtk
 		import PySide
 		import decorator
-	If none of them returns an error then all the libraries have been installed correctly
+	If none of the above returns an error then all the libraries have been installed correctly
 
-2)	Configure the data paths in BrainViewerDataPaths.py 
-	and configure paths to run BrainViewer.py   (Sample data is provided in the SampleData folder)
+2)	Configure the data paths in BrainViewerDataPaths.py and configure paths to run BrainViewer.py   (Sample data is provided in the SampleData folder)
 
 
 Happy Analysis! 
