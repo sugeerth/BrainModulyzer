@@ -38,9 +38,10 @@ To install all the libraries for the python script to run
 	pip install nibabel==2.0.2
 	pip install pydot3==1.0.8
 	pip install community
-		Install Graphviz through the graphviz website--(http://www.graphviz.org/Download_macos.php )
+		Install latest Graphviz through the graphviz website--(http://www.graphviz.org/Download_macos.php )
 	pip install pygraphviz==1.3.1 
-	pip install qt-sdk; pip install PySide
+	pip install qt-sdk
+	pip install PySide
 	pip install vtk (The vtk version should be above >5)
 		for linux
 			sudo apt-get install libvtk5-dev python-vtk
@@ -80,7 +81,7 @@ pip install pygraphviz --install-option="--include-path=/usr/local/include/graph
 	If none of them returns an error then all the libraries have been installed correctly
 
 2)	Configure the data paths in BrainViewerDataPaths.py 
-	and configure paths to run BrainViewer.py   
+	and configure paths to run BrainViewer.py   (Sample data is provided in the SampleData folder)
 
 
 Happy Analysis! 
