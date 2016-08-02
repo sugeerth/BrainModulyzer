@@ -52,7 +52,7 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 	pip install -U PySide
 	
 	
-	To install VTK: (The vtk version should be above >5)
+	To install VTK (vtk version > 5):
 		for linux
 			sudo apt-get install libvtk5-dev python-vtk
 		for mac
