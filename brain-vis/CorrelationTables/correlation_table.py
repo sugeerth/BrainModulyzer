@@ -31,15 +31,6 @@ class CorrelationTable(object):
             for j in range(len(self.data)):
                 self.data[i,j] = abs(self.data[i,j])
 
-    # def WriteFakeData(self, data):
-    #     fakeData= np.random.rand(len(self.data),len(self.data))
-    #     np.savetxt("FinalCSVData.csv", fakeData, delimiter=",")
-
-    #     # for i in range(len(self.data)):
-    #     #     for j in range(len(self.data)):
-    #     #         self.data[i,j] = ran
-
-
     def value(self, i, j):
         return self.data[i, j]
 
