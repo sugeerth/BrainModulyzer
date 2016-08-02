@@ -74,6 +74,8 @@ In case any of the pre-existing library installation does not work, please downl
 
 [PyDot](https://pypi.python.org/pypi/pydot3/1.0.8 )
 
+[PySide](https://pypi.python.org/pypi/PySide/1.2.4)
+
 [PyGraphViz](https://pypi.python.org/packages/98/bb/a32e33f7665b921c926209305dde66fe41003a4ad934b10efb7c1211a419/pygraphviz-1.3.1.tar.gz#md5=7f690295dfe77edaa9e552d09d98d279 )
 Note: If after installing, "import pygraphviz" returns an error, then uninstall and reinstall using: 	
 pip install pygraphviz --install-option="--include-path=/usr/local/include/graphviz" --install-option="--library-path=/usr/local/lib/graphviz/" (https://github.com/pygraphviz/pygraphviz/issues/72)
