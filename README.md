@@ -38,7 +38,7 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 	pip install community
 	
 	
-	TO install Graphviz:
+	To install Graphviz:
 		Install latest Graphviz version through the graphviz website--(http://www.graphviz.org/Download_macos.php )
 		pip install pygraphviz==1.3.1 
 	
