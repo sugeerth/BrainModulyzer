@@ -56,7 +56,7 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 		for linux
 			sudo apt-get install libvtk5-dev python-vtk
 		for mac
-			brew install vtk --with-qt
+			brew install homebrew/science/vtk
 			
 			
 	pip install decorator>=3.4.0
@@ -82,16 +82,18 @@ pip install pygraphviz --install-option="--include-path=/usr/local/include/graph
 
 [VTK and PyVTK](http://www.it.uu.se/edu/course/homepage/vetvis/ht10/vtk/instructions_vtk_OSX.pdf) 
 
-2)	To ensure the success of the installation packages above, type python in command prompt and paste these commands
-		import numpy
-		import networkx
-		import nibabel
-		import pydot
-		import community 
-		import pygraphviz
-		import vtk
-		import PySide
-		import decorator
+2)   To ensure the success of the installation packages above, type python in command prompt and paste these commands
+
+    import numpy
+    import networkx
+    import nibabel
+    import pydot
+    import community 
+    import pygraphviz
+    import vtk
+    import PySide
+    import decorator
+	   
 	If none of the above returns an error then all the libraries have been installed correctly
 
 3)	Configure the data paths in BrainViewerDataPaths.py and configure paths to run BrainViewer.py   (sample data is provided in the SampleData folder)
