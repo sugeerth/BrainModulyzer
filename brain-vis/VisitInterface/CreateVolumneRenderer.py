@@ -271,7 +271,7 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		# self.ParcelationReader.SetDataSpacing(1, 1, 1)
 		# print self.ParcelationReader
 
-		self.ParcelationNumpy = nib.load(self.parcelation_filename).get_data().astype(np.uint8)
+		# self.ParcelationNumpy = nib.load(self.parcelation_filename).get_data().astype(np.uint8)
 
 		self.ParcelationReader.Update()
 
@@ -280,7 +280,7 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		# self.TemplateReader.SetDataSpacing(1, 1, 1)
 		# print self.TemplateReader
 
-		self.TemplateNumpy = nib.load(self.template_filename).get_data().astype(np.uint8)
+		# self.TemplateNumpy = nib.load(self.template_filename).get_data().astype(np.uint8)
 		self.TemplateReader.Update()
 
 		self.ParcelationNumpy = []
