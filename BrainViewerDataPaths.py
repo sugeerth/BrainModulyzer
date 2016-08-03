@@ -14,8 +14,15 @@ parcelation_filename = '/PATH_TO_YOUR_PARCELATION_FILE'
 """
 
 matrix_filename = '/Users/sugeerthmurugesan/LBLProjects/TCBBDownload/TestDirectory/brain-vis-git/SampleData/FinalCSVData.csv'
+
+# parcelation_filename = '/Users/sugeerthmurugesan/LBLProjects/TCBBDownload/TestDirectory/brain-vis-git/SampleData/MNI152_T1_2mm_brain.nii.gz'
 parcelation_filename = '/Users/sugeerthmurugesan/LBLProjects/TCBBDownload/TestDirectory/brain-vis-git/SampleData/allROIs.nii.gz'
+# parcelation_filename = '/Users/sugeerthmurugesan/Desktop/nipy-templates-0.2/templates/ICBM152/1mm/T1_brain.nii.gz'
+
+
+# template_filename = '/Users/sugeerthmurugesan/LBLProjects/TCBBDownload/TestDirectory/brain-vis-git/SampleData/MNI152_T1_2mmc_brain.nii.gz'
 template_filename = '/Users/sugeerthmurugesan/LBLProjects/TCBBDownload/TestDirectory/brain-vis-git/SampleData/ch2better.nii.gz'
+# template_filename = '/Users/sugeerthmurugesan/Desktop/nipy-templates-0.2/templates/ICBM152/1mm/T1_brain.nii.gz'
 
 #set the flag data around here for convenience, if you want to switch on or off 
 # the other windows whenever you want

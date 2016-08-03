@@ -63,9 +63,23 @@ ElectrodeWindowShowFlag = False
 print "Files"
 execfile('BrainViewerDataPaths.py')
 
+
+template_data = nib.load(template_filename).get_data()
+print template_data.dtype
+if np.issubdtype(template_data.dtype, np.signedinteger):
+    print "perform signed to unsigned conversion"
+    # template_data =& 0xffffffff
+    template_data = np.uint32(template_data)
+else: 
+    template_data = template_data.astype(np.uint32)
+
 print "Reading NII files."
-template_data = nib.load(template_filename).get_data().astype(np.uint32)
+# template_data = numpy.uint32( numpy.int16(template_data))
+# template_data = nib.load(template_filename).get_data().astype(np.uint32)
 parcelation_data = nib.load(parcelation_filename).get_data()
+
+print template_data.dtype
+print parcelation_data.dtype
 
 print "Setting up the correlation table display."
 correlationTable = CorrelationTable(matrix_filename)
@@ -264,7 +278,7 @@ buttonGroup.setExclusive(True)
 buttonGroup.buttonClicked[int].connect(buttonGroupClicked)
 
 # Another Feature Online 
-MapMetrics = QtGui.QCheckBox("Show/Hide Graph Metrics")
+MapMetrics = QtGui.QCheckBox("Map Graph Metrics")
 MapMetrics.toggle()
 MapMetrics.hide()
 MapMetrics.stateChanged.connect(VolumneRenderer.MapGraphMetrics)
@@ -316,12 +330,12 @@ visitControlsLayout = QtGui.QHBoxLayout()
 visitViewerLayout.addLayout(visitControlsLayout)
 visitViewerLayout.setContentsMargins(0,0,0,0)
 
-toggleThreeSliceButton = QtGui.QCheckBox("Show/Hide Slices")
+toggleThreeSliceButton = QtGui.QCheckBox("Show Slices")
 toggleThreeSliceButton.toggle()
 visitControlsLayout.addWidget(toggleThreeSliceButton)
 
 toggleThreeSliceButton.stateChanged.connect(VolumneRenderer.toggleThreeSlice)
-toggleBrainSurfaceButton = QtGui.QCheckBox("Show/Hide Brain Surface")
+toggleBrainSurfaceButton = QtGui.QCheckBox("Show Brain Surface")
 toggleBrainSurfaceButton.toggle()
 
 

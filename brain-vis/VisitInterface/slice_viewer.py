@@ -38,6 +38,7 @@ class SliceViewer(QtGui.QWidget):
 
         numColors = self.parcelation.max()
         self.clut = np.zeros(numColors, dtype=np.uint32)
+
         for i in range(numColors):
             r, g, b = colorsys.hls_to_rgb(float(i) / float(numColors), 0.5, 1.0)
             self.clut[i] = (255 << 24 | int(255*r) << 16 | int(255*g) << 8 | int(255*b))
@@ -56,40 +57,27 @@ class SliceViewer(QtGui.QWidget):
         self.updateSliceLabel()
         slice_view_layout.addWidget(self.label)
 
-    # """
-    # wheel Events Changes   
-    # """    
-    # def wheelEvent(self, event):
-    #     self.scaleView(math.pow(2.0, -event.delta() / 1040.0))
-    # """
-    # Scale things based on wheel events
-    # """
-    # def scaleView(self, scaleFactor):
-    #     factor = self.matrix().scale(scaleFactor, scaleFactor).mapRect(QtCore.QRectF(0, 0, 5, 5)).width()
-    #     if factor < 0.07 or factor > 100:
-    #         return
-    #     self.scale(scaleFactor, scaleFactor)
-    #     del factor
-
     def extractSlice(self, volData):
+        scale = 255.0 / volData.max()
         if self.axis == 0:
-            return volData[self.displayedSlice, :, :]
+            return (volData[self.displayedSlice, :, :] * scale).astype('uint32')
         elif self.axis == 1:
-            return volData[:, self.displayedSlice, :]
+            return (volData[:, self.displayedSlice, :] * scale).astype('uint32')
         elif self.axis == 2:
-            return volData[:, :, self.displayedSlice]
+            return (volData[:, :, self.displayedSlice] * scale).astype('uint32')
 
     def updateSliceLabel(self):
         image_slice = self.extractSlice(self.template)
         image_data = (255 << 24 | image_slice << 16 | image_slice << 8 | image_slice)
+
         self.TemplateImageData = image_data
 
         # print image_data
         parcelation_slice = self.extractSlice(self.parcelation)
         indices = np.flatnonzero(parcelation_slice)
 
-        for idx in indices:
-            image_data.flat[idx] = self.clut[parcelation_slice.flat[idx]-1]
+        # for idx in indices:
+        #     image_data.flat[idx] = self.clut[parcelation_slice.flat[idx]-1]
 
         image_data = np.array(image_data[:, ::-1], order='F')
         image = QtGui.QImage(image_data, image_data.shape[0], image_data.shape[1], QtGui.QImage.Format_ARGB32)
@@ -146,10 +134,8 @@ class SliceViewer(QtGui.QWidget):
             x /= self.scaleFactor
             y /= self.scaleFactor
 
-        # Dont understand what this does
         parcelation_slice = self.extractSlice(self.parcelation)[:, ::-1]
         
-        # Dont understand what this does
         if x < parcelation_slice.shape[0] and y < parcelation_slice.shape[1]:
             newId = parcelation_slice[x, y]
 
