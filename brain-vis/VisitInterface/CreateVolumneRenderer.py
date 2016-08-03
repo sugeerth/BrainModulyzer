@@ -45,8 +45,6 @@ class MouseInteractorHighLightActor(vtk.vtkInteractorStyleTrackballCamera):
 		Idea is to compare the xyz locations with the numpy parcels to get the 
 		selected Id 
 		"""
-
-
 		# If something was selected
 		if self.NewPickedActor:
 			# If we picked something before, reset its property
@@ -55,9 +53,9 @@ class MouseInteractorHighLightActor(vtk.vtkInteractorStyleTrackballCamera):
 			# Save the property of the picked TemplateActor so that we can
 			# restore it next time
 			self.LastPickedProperty.DeepCopy(self.NewPickedActor.GetProperty())
+			
 			# Highlight the picked TemplateActor by changing its properties
 			# self.NewPickedActor.GetProperty().SetColor(self.selectedColor)
-			
 
 			bounds= self.NewPickedActor.GetBounds()  
 			if self.VolumneRendererWindow.setCentroidModeFlag: 
@@ -76,8 +74,6 @@ class MouseInteractorHighLightActor(vtk.vtkInteractorStyleTrackballCamera):
 							break
 						index +=1
 					self.VolumneRendererWindow.RegionSelectedIn(index-1)
-			# self.NewPickedActor.GetProperty().SetDiffuse(1.0)
-			# self.NewPickedActor.GetProperty().SetSpecular(0.0)
 			# save the last picked TemplateActor
 			self.LastPickedActor = self.NewPickedActor
  
@@ -496,11 +492,7 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 
 	def setThreeSliceZ(self, sliceZ):
 		# The value should be negative!
-
 		x,y,z = self.TemplateNumpy.shape
-		# print z
-		# print self.SetZAxisValues 
-
 		self.SetZAxisValues = sliceZ
 		self.updateSliceZ()
 
@@ -607,8 +599,8 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.map2 = vtk.vtkImageSliceMapper()
 		self.map2.BorderOn()
 		self.map2.SliceAtFocalPointOff()
-		self.map2.SetOrientationToY()
 		self.map2.SliceFacesCameraOff()
+		self.map2.SetOrientationToY()
 		self.map2.SetInputConnection(self.TemplateReader.GetOutputPort())
 		self.map2.SetSliceAtFocalPoint(0)
 
@@ -652,8 +644,8 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.map3 = vtk.vtkImageSliceMapper()
 		self.map3.BorderOn()
 		self.map3.SliceAtFocalPointOff()
-		self.map3.SetOrientationToZ()
 		self.map3.SliceFacesCameraOff()
+		self.map3.SetOrientationToZ()
 		self.map3.SetInputConnection(self.TemplateReader.GetOutputPort())
 		self.map3.SetSliceNumber(0)
 
@@ -820,10 +812,10 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 				g= 0.1
 			actor.GetProperty().SetColor(r, g, b)
 			actor.GetProperty().SetOpacity(1)
-			# actor.GetProperty().SetDiffuse(.8)
-			# actor.GetProperty().SetSpecular(.5)
+			actor.GetProperty().SetDiffuse(.8)
+			actor.GetProperty().SetSpecular(.5)
 			actor.GetProperty().SetSpecularColor(1.0,1.0,1.0)
-			# actor.GetProperty().SetSpecularPower(30.0)
+			actor.GetProperty().SetSpecularPower(30.0)
 
 		self.renderWin.GetInteractor().Render()
 
@@ -845,10 +837,6 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 	def	toggleThreeSlice(self):
 		self.toggleThreeSlicesFlag = not(self.toggleThreeSlicesFlag)
 		self.UpdateRenderer()
-
-	# def	EnablePicking(self):
-	# 	self.PickingFlag = not(self.PickingFlag)
-	# 	self.UpdateRenderer()
 
 	def setRegionColors(self,region_colors):
 		assert len(region_colors) == self.nRegions

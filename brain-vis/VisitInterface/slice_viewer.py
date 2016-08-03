@@ -29,7 +29,6 @@ class SliceViewer(QtGui.QWidget):
         self.CommunityMode = False
         self.displayedSlice = 0
         self.QImage = []
-        # FIX  with the scale factor it was 350 earlier 
         scalefactor = 350
         self.scaleFactor = int(math.ceil(scalefactor / self.parcelation.shape[0]))
 
@@ -78,13 +77,11 @@ class SliceViewer(QtGui.QWidget):
         parcelation_slice = self.extractParcelationSlice(self.parcelation)
         indices = np.flatnonzero(parcelation_slice)
 
-        # for idx in indices:
-        #     image_data.flat[idx] = self.clut[parcelation_slice.flat[idx]-1]
+        for idx in indices:
+            image_data.flat[idx] = self.clut[parcelation_slice.flat[idx]-1]
 
         image_data = np.array(image_data[:, ::-1], order='F')
-
         image = QtGui.QImage(image_data, image_data.shape[0], image_data.shape[1], QtGui.QImage.Format_ARGB32)
-        # if self.scaleFactor > 1:
         image = image.scaled(self.scaleFactor*image.width(), self.scaleFactor*image.height())
         self.label.setPixmap(QtGui.QPixmap.fromImage(image))
 
@@ -93,14 +90,11 @@ class SliceViewer(QtGui.QWidget):
         self.updateSliceLabel()
 
     def handleSliderRelease(self):
-        # print "Getting invoked"
         self.sliceChanged.emit(self.displayedSlice)
 
     def colorRelativeToRegion(self, regionId):
-        # print "receiving in slice views",self.sender() 
 
         if not(self.CommunityMode): 
-        # start_time = time.time()
             for i in range(self.clut.shape[0]):
                 if(i == len(self.correlationTable.data)):
                     return
@@ -110,7 +104,6 @@ class SliceViewer(QtGui.QWidget):
                 else:
                     self.clut[i] = ColorToInt(self.selectedColor)
         self.updateSliceLabel()
-        # print("SliceViewer CorrelationTable --- %f seconds ---" % (time.time() - start_time))
 
     def Community(self, Flag):
         self.CommunityMode = Flag
@@ -120,8 +113,6 @@ class SliceViewer(QtGui.QWidget):
 
     def setRegionColors(self, colors):
         assert(len(colors) == self.clut.shape[0])
-        # self.CommunityMode = True
-        # print "I am getting called"
 
         for i in range(self.clut.shape[0]):
             self.clut[i] = ColorToInt(colors[i])
@@ -135,7 +126,7 @@ class SliceViewer(QtGui.QWidget):
             x /= self.scaleFactor
             y /= self.scaleFactor
 
-        parcelation_slice = self.extractSlice(self.parcelation)[:, ::-1]
+        parcelation_slice = self.extractParcelationSlice(self.parcelation)[:, ::-1]
         
         if x < parcelation_slice.shape[0] and y < parcelation_slice.shape[1]:
             newId = parcelation_slice[x, y]
@@ -144,8 +135,6 @@ class SliceViewer(QtGui.QWidget):
                 newId -= 1
                 if self.CommunityMode:
                     self.regionId = newId
-                    # self.colorRelativeToRegionCommunity(newId)
                 else: 
                     self.colorRelativeToRegion(newId)
-                # print "getting invoked"
                 self.regionSelected.emit(newId)

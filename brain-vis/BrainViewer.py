@@ -68,9 +68,6 @@ print "Reading NII files."
 template_data = nib.load(template_filename).get_data().astype(np.uint32)
 parcelation_data = nib.load(parcelation_filename).get_data().astype(np.uint32)
 
-print template_data.dtype
-print parcelation_data.dtype
-
 print "Setting up the correlation table display."
 correlationTable = CorrelationTable(matrix_filename)
 
@@ -136,10 +133,13 @@ viewersLayout2.setContentsMargins(0,0,0,0)
 print "Setting the IsoSurfaces"
 
 VolumneRenderer = VolumneRendererWindow(parcelation_filename, template_filename, correlationTable,selectedColor,colorTable, slice_views[0],slice_views[1],slice_views[2])
+
 slice_views[0].sliceChanged.connect(VolumneRenderer.setThreeSliceX)
 slice_views[0].regionSelected.connect(VolumneRenderer.colorRelativeToRegion)
+
 slice_views[1].sliceChanged.connect(VolumneRenderer.setThreeSliceY)
 slice_views[1].regionSelected.connect(VolumneRenderer.colorRelativeToRegion)
+
 slice_views[2].sliceChanged.connect(VolumneRenderer.setThreeSliceZ)
 slice_views[2].regionSelected.connect(VolumneRenderer.colorRelativeToRegion)
 
