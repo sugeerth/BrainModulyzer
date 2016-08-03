@@ -75,10 +75,6 @@ correlationTable = CorrelationTable(matrix_filename)
 colorTable = CreateColorTable(colorTableName)
 colorTable.setRange(correlationTable.valueRange())
 
-print "Setting up Volumne Renderer"
-# brainTemplatePlot = BrainTemplatePlot(template_data)
-# parcelationPlot = ParcelationPlot(parcelation_data, parcelation_filename, correlationTable, colorTable, selectedColor)
-
 print "Setting main GUI."
 Counter = len(correlationTable.data)
 DataColor = np.zeros(Counter+1)

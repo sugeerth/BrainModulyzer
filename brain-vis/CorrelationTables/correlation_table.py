@@ -221,13 +221,10 @@ class CorrelationTableDisplay(ParentCommunityDisplay):
         super(CorrelationTableDisplay, self).__init__(n, n)
         from collections import defaultdict
         start_time = time.time()
-        # print "CommunityCorrelationTableDisplay",counter 
         self.CommunityMode = False 
         self.MouseReleased = True
-        # self.setCacheMode(QtGui.QGraphicsView.CacheBackground)
         self.colorTable = colorTable
         self.sortedDict= defaultdict(list)
-        # self.counter = counter
         self.newWindowWidget = []
         self.Selectionmode = True
         self.GraphDataStructure = weakref.ref(GraphDataStructure)

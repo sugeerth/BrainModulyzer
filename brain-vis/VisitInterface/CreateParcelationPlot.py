@@ -20,11 +20,11 @@ from vtk.qt.QVTKRenderWindowInteractor import *
 
 class MouseInteractorHighLightActor(vtk.vtkInteractorStyleTrackballCamera):
 
-	def __init__(self,VolumneRendererWindow, selectedColor, PixX, PixY, PixZ):
+	def __init__(self,ParcelationPlotWindow, selectedColor, PixX, PixY, PixZ):
 		super(MouseInteractorHighLightActor, self).__init__()
 
 		self.selectedColor = selectedColor
-		self.VolumneRendererWindow = VolumneRendererWindow
+		self.ParcelationPlotWindow = ParcelationPlotWindow
 
 		self.AddObserver("LeftButtonPressEvent",self.leftButtonPressEvent)
 
@@ -58,22 +58,22 @@ class MouseInteractorHighLightActor(vtk.vtkInteractorStyleTrackballCamera):
 			# self.NewPickedActor.GetProperty().SetColor(self.selectedColor)
 
 			bounds= self.NewPickedActor.GetBounds()  
-			if self.VolumneRendererWindow.setCentroidModeFlag: 
-				if self.VolumneRendererWindow.SphereActors:
+			if self.ParcelationPlotWindow.setCentroidModeFlag: 
+				if self.ParcelationPlotWindow.SphereActors:
 					index = 0
-					for actor in self.VolumneRendererWindow.SphereActors:
+					for actor in self.ParcelationPlotWindow.SphereActors:
 						if actor == self.NewPickedActor:
 							break
 						index +=1
-					self.VolumneRendererWindow.RegionSelectedIn(index)
+					self.ParcelationPlotWindow.RegionSelectedIn(index)
 			else:
-				if self.VolumneRendererWindow.Parcel: 
+				if self.ParcelationPlotWindow.Parcel: 
 					index = 0
-					for actor in self.VolumneRendererWindow.Parcel:
+					for actor in self.ParcelationPlotWindow.Parcel:
 						if actor == self.NewPickedActor:
 							break
 						index +=1
-					self.VolumneRendererWindow.RegionSelectedIn(index-1)
+					self.ParcelationPlotWindow.RegionSelectedIn(index-1)
 			# save the last picked TemplateActor
 			self.LastPickedActor = self.NewPickedActor
  
@@ -85,11 +85,11 @@ def exitCheck(obj, event):
 	if obj.GetEventPending() != 0:
 		obj.SetAbortRender(1)
 
-class VolumneRendererWindow(PySide.QtGui.QWidget):
+class ParcelationPlotWindow(PySide.QtGui.QWidget):
 	regionSelected = QtCore.Signal(int)
 
 	def __init__(self,parcelation_filename, template_filename,correlationTable,selectedColor,colorTable,SliceX,SliceY,SliceZ):
-		super(VolumneRendererWindow,self).__init__()
+		super(ParcelationPlotWindow,self).__init__()
 
 		self.correlationTable = correlationTable
 
@@ -212,75 +212,21 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 	def ColorParcelationPoints(self,x,y,z):
 		self.Parcelation
 
-
-	# """
-	# Checks the Pixel Dimensions of the data, if it is found anything other than 1,1,1
-	# A new dataset is derived and then we run renderer the into the volume renderer
-	# """
-	# # def CheckForPixDimensions(self, Parcelation, Template):
-	# 	self.ParcelationDataNewFilename = os.environ['PYTHONPATH'].split(os.pathsep)
-	# 	head, tail = os.path.split(self.parcelation_filename)
-	# 	# self.ParcelationDataNewFilename[0]=os.path.join(self.ParcelationDataNewFilename[0],"DerivedDatasets")
-	# 	self.ParcelationDataNewFilename[0]=os.path.join(self.ParcelationDataNewFilename[0],tail)
-
-	# 	self.TemplateDataNewFilename = os.environ['PYTHONPATH'].split(os.pathsep)
-	# 	head, tail = os.path.split(self.template_filename)
-	# 	# self.TemplateDataNewFilename[0]=os.path.join(self.TemplateDataNewFilename[0],"DerivedDatasets")
-	# 	self.TemplateDataNewFilename[0]=os.path.join(self.TemplateDataNewFilename[0],tail)
-
-	# 	if os.path.isfile(self.TemplateDataNewFilename[0]):
-	# 		self.parcelation_filename = self.ParcelationDataNewFilename[0]
-	# 		self.template_filename = self.TemplateDataNewFilename[0]
-	# 		print "     SUCCESS! New Format File is already present"
-	# 	else:
-	# 		img1 = nib.load(Parcelation)
-	# 		hdr1 = img1.header
-
-	# 		img2 = nib.load(Template)
-	# 		hdr2 = img2.header
-	# 		print "Sorry the dimensions currently do not match, generating new pixel values"
-	# 		print "Checking for the dimensions and saving the file on the image"
-	# 		a1 = hdr1['pixdim'][1:4]
-	# 		a2 = hdr2['pixdim'][1:4]
-	# 		C1 = np.array((1,1,1))
-
-	# 		if not(all(a1 == C1)) or not(all(a2 == C1)): 
-	# 			hdr1['pixdim'] = [1,1,1,1,0,0,0,0]
-	# 			hdr2['pixdim'] = [1,1,1,1,0,0,0,0]
-	# 		else: 
-	# 			return
-
-	# 		# img1.to_filename("asdas.nii.gz")
-	# 		# img2.to_filename("template.nii.gz")
-
-	# 		nib.save(img1, self.ParcelationDataNewFilename[0])
-	# 		nib.save(img2, self.TemplateDataNewFilename[0])
-
-	# 		self.parcelation_filename = self.ParcelationDataNewFilename[0]
-	# 		self.template_filename = self.TemplateDataNewFilename[0]
-
 	def setDataset(self): 
-		# self.CheckForPixDimensions(self.parcelation_filename, self.template_filename)
-
 		if vtk.VTK_MAJOR_VERSION <= 5:
 			self.ParcelationReader = vtk.vtkNIFTIImageReader()
 		else:
 			self.ParcelationReader = vtk.vtkNIFTIImageReader()
 		self.ParcelationReader.SetFileName(self.parcelation_filename)
-		# self.ParcelationReader.SetDataSpacing(1, 1, 1)
-		# print self.ParcelationReader
 
 		self.ParcelationNumpy = nib.load(self.parcelation_filename).get_data().astype(np.uint8)
 		self.ParcelationReader.Update()
 
 		self.TemplateReader = vtk.vtkNIFTIImageReader()
 		self.TemplateReader.SetFileName(self.template_filename)
-		# self.TemplateReader.SetDataSpacing(1, 1, 1)
-		# print self.TemplateReader
 
 		self.TemplateNumpy = nib.load(self.template_filename).get_data().astype(np.uint8)
 		self.TemplateReader.Update()
-
 
 		self.Templatedmc =vtk.vtkDiscreteMarchingCubes()
 		self.dmc =vtk.vtkDiscreteMarchingCubes()
@@ -302,7 +248,7 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.axes3 = vtk.vtkCubeAxesActor2D()
 
 		self.colorData = vtk.vtkUnsignedCharArray()
-		self.colorData.SetName('colors') # Any name will work here.
+		self.colorData.SetName('colors') 
 		self.colorData.SetNumberOfComponents(3)
 
 		self.TextProperty = vtk.vtkTextProperty()
@@ -516,46 +462,6 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		self.SetZAxisValues = sliceZ
 		self.updateSliceZ()
 
-	# def createImageDataFromNumpy(self,ImageData, NumpyImage,SliceP):
-	# 	x, y  = np.shape(NumpyImage)
-
-	# 	if SliceP == "X":
-	# 		ImageData.SetDimensions(x,y,1)
-	# 	elif SliceP == "Y":
-	# 		ImageData.SetDimensions(x,1,y)
-	# 	elif SliceP == "Z":
-	# 		ImageData.SetDimensions(1,x,y)
-
-	# 	if vtk.VTK_MAJOR_VERSION <= 5: 
-	# 		ImageData.SetDataScalarTypeToUnsignedChar()
-	# 		ImageData.SetNumberOfComponents(3)
-	# 		ImageData.AllocateScalars()
-	# 	else: 
-	# 		ImageData.AllocateScalars(vtk.VTK_UNSIGNED_CHAR,3)
-
-	# 	dim = ImageData.GetDimensions()
-	# 	i = j = 0
-	# 	for i in np.arange(0,dim[0]-1):
-	# 		for j in np.arange(0,dim[1]-1):
-	# 			R = (NumpyImage[i,j] & 0xff0000) >> 16
-	# 			G = (NumpyImage[i,j] & 0xff00) >> 8
-	# 			B = NumpyImage[i,j] & 0xff
-	# 			# print R,G,B
-	# 			i = i
-	# 			j = j
-	# 			if SliceP == "X":
-	# 				ImageData.SetScalarComponentFromDouble(i,j,0,0,R)
-	# 				ImageData.SetScalarComponentFromDouble(i,j,0,1,G)
-	# 				ImageData.SetScalarComponentFromDouble(i,j,0,2,B)
-	# 			elif SliceP == "Y":
-	# 				ImageData.SetScalarComponentFromDouble(i,0,j,0,R)
-	# 				ImageData.SetScalarComponentFromDouble(i,0,j,1,G)
-	# 				ImageData.SetScalarComponentFromDouble(i,0,j,2,B)
-	# 			elif SliceP == "Z":
-	# 				ImageData.SetScalarComponentFromDouble(0,i,j,0,R)
-	# 				ImageData.SetScalarComponentFromDouble(0,i,j,1,G)
-	# 				ImageData.SetScalarComponentFromDouble(0,i,j,2,B)
-
 	def addSliceX(self):
 		if not(self.toggleThreeSlicesFlag): 
 			return
@@ -617,7 +523,6 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		if not(self.Slices[1]== None):
 			self.renderer.RemoveActor(self.Slices[1])
 			self.Slices[1] = None
-
 
 		self.vrange = self.TemplateReader.GetOutput().GetScalarRange()
 
@@ -760,10 +665,10 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 				g= 0.1
 
 			actor.GetProperty().SetColor(r,g,b)
-			# actor.GetProperty().SetDiffuse(.8)
-			# actor.GetProperty().SetSpecular(.5)
+			actor.GetProperty().SetDiffuse(.8)
+			actor.GetProperty().SetSpecular(.5)
 			actor.GetProperty().SetSpecularColor(1.0,1.0,1.0)
-			# actor.GetProperty().SetSpecularPower(30.0)
+			actor.GetProperty().SetSpecularPower(30.0)
 			self.Parcel.append(actor)
 			self.renderer.AddViewProp(actor)
 
