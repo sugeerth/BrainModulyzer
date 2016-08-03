@@ -272,7 +272,6 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 	def RenderData(self):
 		self.DefineTemplateDataToBeMapped()
 		self.DefineParcelationDataToBeMapped()
-		# self.setColors()
 		self.AppendDatasets()
 		self.SetActorsAndOutline()
 		self.SetRenderer()
@@ -430,10 +429,7 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 			self.style = None
 			self.renderInteractor.SetInteractorStyle(self.style)
 
-
-		# print self.renderer.GetActors().GetLastItem()
 		self.renderWin.GetInteractor().Render()
-
 
 	def UpdateSlices(self,Visibility):
 		for actor in self.Slices:
@@ -447,7 +443,6 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 		self.addSliceY()
 		self.addSliceZ()
 
-	# def CreateColorImage(self, vtkImageData, NumpyData):
 	def setThreeSliceX(self, sliceX):
 		self.SetXAxisValues = sliceX
 		self.updateSliceX()
