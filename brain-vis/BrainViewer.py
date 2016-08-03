@@ -63,20 +63,10 @@ ElectrodeWindowShowFlag = False
 print "Files"
 execfile('BrainViewerDataPaths.py')
 
-
-template_data = nib.load(template_filename).get_data()
-print template_data.dtype
-if np.issubdtype(template_data.dtype, np.signedinteger):
-    print "perform signed to unsigned conversion"
-    # template_data =& 0xffffffff
-    template_data = np.uint32(template_data)
-else: 
-    template_data = template_data.astype(np.uint32)
-
 print "Reading NII files."
 # template_data = numpy.uint32( numpy.int16(template_data))
-# template_data = nib.load(template_filename).get_data().astype(np.uint32)
-parcelation_data = nib.load(parcelation_filename).get_data()
+template_data = nib.load(template_filename).get_data().astype(np.uint32)
+parcelation_data = nib.load(parcelation_filename).get_data().astype(np.uint32)
 
 print template_data.dtype
 print parcelation_data.dtype

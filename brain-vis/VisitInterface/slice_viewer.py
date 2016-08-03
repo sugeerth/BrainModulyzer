@@ -30,10 +30,7 @@ class SliceViewer(QtGui.QWidget):
         self.displayedSlice = 0
         self.QImage = []
         # FIX  with the scale factor it was 350 earlier 
-        if len(self.correlationTable.data) > 100: 
-            scalefactor = 350 
-        else: 
-            scalefactor = 350
+        scalefactor = 350
         self.scaleFactor = int(math.ceil(scalefactor / self.parcelation.shape[0]))
 
         numColors = self.parcelation.max()
@@ -66,20 +63,26 @@ class SliceViewer(QtGui.QWidget):
         elif self.axis == 2:
             return (volData[:, :, self.displayedSlice] * scale).astype('uint32')
 
+    def extractParcelationSlice(self, volData):
+        if self.axis == 0:
+            return volData[self.displayedSlice, :, :]
+        elif self.axis == 1:
+            return volData[:, self.displayedSlice, :]
+        elif self.axis == 2:
+            return volData[:, :, self.displayedSlice]
+
     def updateSliceLabel(self):
         image_slice = self.extractSlice(self.template)
         image_data = (255 << 24 | image_slice << 16 | image_slice << 8 | image_slice)
-
         self.TemplateImageData = image_data
-
-        # print image_data
-        parcelation_slice = self.extractSlice(self.parcelation)
+        parcelation_slice = self.extractParcelationSlice(self.parcelation)
         indices = np.flatnonzero(parcelation_slice)
 
         # for idx in indices:
         #     image_data.flat[idx] = self.clut[parcelation_slice.flat[idx]-1]
 
         image_data = np.array(image_data[:, ::-1], order='F')
+
         image = QtGui.QImage(image_data, image_data.shape[0], image_data.shape[1], QtGui.QImage.Format_ARGB32)
         # if self.scaleFactor > 1:
         image = image.scaled(self.scaleFactor*image.width(), self.scaleFactor*image.height())
@@ -111,7 +114,6 @@ class SliceViewer(QtGui.QWidget):
 
     def Community(self, Flag):
         self.CommunityMode = Flag
-        # print self.CommunityMode, "in slice" 
         self.updateSliceLabel()
         if not(Flag):
             self.colorRelativeToRegion(0)
@@ -126,7 +128,6 @@ class SliceViewer(QtGui.QWidget):
         self.updateSliceLabel()
 
     def mousePressEvent(self, event):
-
         pos = self.label.mapFromParent(event.pos())
         x, y = pos.x(), pos.y()
         
