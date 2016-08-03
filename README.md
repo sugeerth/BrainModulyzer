@@ -35,7 +35,7 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 	pip install networkx==1.11
 	pip install nibabel==2.0.2
 	pip install pydot3==1.0.8
-	pip install community
+	pip install python-louvain
 	
 	
 	To install Graphviz:
