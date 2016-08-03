@@ -57,9 +57,11 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 		for linux
 			sudo apt-get install libvtk7-dev python-vtk
 		for mac
-			brew install homebrew/science/vtk
-		Installing this might be tricky as the versions bundled with python-vtk are older versions. 
-		If this does not work download VTK from source and install using cmake. 
+			sudo brew install vtk --python
+			
+			Please make sure the brew libraries are linked to the system python--if they are not, run the following:
+			mkdir -p /Users/smuru/Library/Python/2.7/lib/python/site-packages
+  			echo 'import site; site.addsitedir("/usr/local/lib/python2.7/site-packages")' >> /Users/smuru/Library/Python/2.7/lib/python/site-packages/homebrew.pth
 			
 	sudo pip install decorator>=3.4.0
 
