@@ -31,25 +31,25 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 
 1) Install all of the following libraries in the order below:
 
-	pip install numpy==1.11.0
-	pip install networkx==1.11
-	pip install nibabel==2.0.2
-	pip install pydot3==1.0.8
-	pip install python-louvain
+	sudo pip install numpy==1.11.0
+	sudo pip install networkx==1.11
+	sudo pip install nibabel==2.0.2
+	sudo pip install pydot3==1.0.8
+	sudo pip install python-louvain
 	
 	
 	To install Graphviz:
 		Install latest Graphviz version through the graphviz website--(http://www.graphviz.org/Download_macos.php )
-		pip install pygraphviz==1.3.1 
+		sudo pip install pygraphviz==1.3.1 
 	
 	
 	To install QT:
 		for linux
-			pip install qt-sdk
+			sudo apt-get install qt-sdk
 		for mac
 			brew install qt
 		
-	pip install -U PySide
+	sudo pip install -U PySide
 	
 	
 	To install VTK (vtk version > 5):
@@ -61,7 +61,7 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 		Installing this might be tricky as the versions bundled with python-vtk are older versions. 
 		If this does not work download VTK from source and install using cmake. 
 			
-	pip install decorator>=3.4.0
+	sudo pip install decorator>=3.4.0
 
 **Source Code:**
 In case any of the pre-existing library installation does not work, please download and install the affected libraries from source:
