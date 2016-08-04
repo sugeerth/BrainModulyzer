@@ -55,7 +55,9 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 	To install VTK (vtk version > 5):
 
 		for linux
-			sudo apt-get install libvtk7-dev python-vtk
+			sudo apt-get upgrade 
+			sudo apt-get update
+			sudo apt-get install libvtk6-dev libvtk6-qt-dev python-vtk6
 		for mac
 			sudo brew install vtk --python
 			
