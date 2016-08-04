@@ -17,15 +17,10 @@ import community as cm
 import numpy as np
 import networkx as nx
 
-# from Dendogram.dendogram import dendogram, DendoNode
-
 from GraphInterface.DendogramModule.dendogram import dendogram, DendoNode
-
 from GraphInterface.GraphicsItems.Edge import Edge
 from GraphInterface.GraphicsItems.Node import Node
 
-# from GraphView.Edge import Edge 
-# from GraphView.Node import Node
 """
 Generates a summary graph for analysis 
 """
@@ -65,7 +60,6 @@ class CommunityWidget(QtGui.QGraphicsView):
 
         self.communityPos = nx.nx_pydot.graphviz_layout(self.induced_graph,prog='fdp',args='-Gsep=.25,-GK=20-Eweight=2')
         # self.communityPos = nx.spring_layout(self.induced_graph,pos=self.Pos,weight='weight',scale=450)
-
         for node in self.induced_graph.nodes():
             i = i + 1
             node_value=Node(self.Graph,i,self.correlationTableObject,True)
@@ -74,15 +68,17 @@ class CommunityWidget(QtGui.QGraphicsView):
             x,y=self.communityPos[node]
             node_value.setPos(x,y)
             node_value.PutColor(self.clut[i-1])
-        k =0 
+        k =0
         for i,j in self.induced_graph.edges():
+                Weight = self.induced_graph[i][j]['weight'] 
+                Edge_Value = 1+(float(Weight-self.Min1)/(self.Max1 - self.Min1))*5
                 scene.addItem(Edge(self.Graph,self.NodeIds[i],self.NodeIds[j],k, i,j,self.Max,((self.Matrix[j,i]-self.Min1)/(self.Max1 - self.Min1))*5,True))
                 k = k + 1 
 
         self.setSceneRect(self.Scene_to_be_updated.itemsBoundingRect())
         self.setScene(self.Scene_to_be_updated)
         self.fitInView(self.Scene_to_be_updated.itemsBoundingRect(),QtCore.Qt.KeepAspectRatio)
-        self.scaleView(math.pow(2.0, -500 / 1040.0))
+        self.scaleView(math.pow(2.5, -900 / 1040.0))
 
         self.nodes = [item for item in scene.items() if isinstance(item, Node)]
         self.edges = [item for item in scene.items() if isinstance(item, Edge)]
@@ -192,9 +188,9 @@ class communityDetectionEngine(QtCore.QObject):
             if not(self.Graphwidget.ColorNodesBasedOnCorrelation): 
                     self.Graphwidget.ColorNodesBasedOnCorrelation = False 
                     if not(self.Graphwidget.level == -1):
-                        self.ChangeCommunityColor(self.Graphwidget.level-1)
+                        self.ChangeCommunityColorAndInstantiateHierarchy(self.Graphwidget.level-1)
                     else: 
-                        self.ChangeCommunityColor()
+                        self.ChangeCommunityColorAndInstantiateHierarchy()
         else:
             if Layout != "circo":
                 pos=nx.nx_pydot.graphviz_layout(self.g,prog=Layout,args='-Gsep=.25,-GK=20-Eweight=2')
@@ -210,16 +206,16 @@ class communityDetectionEngine(QtCore.QObject):
             if not(self.Graphwidget.ColorNodesBasedOnCorrelation): 
                 self.Graphwidget.ColorNodesBasedOnCorrelation = False 
                 if not(self.Graphwidget.level == -1):
-                    self.ChangeCommunityColor(self.Graphwidget.level-1)
+                    self.ChangeCommunityColorAndInstantiateHierarchy(self.Graphwidget.level-1)
                 else: 
-                    self.ChangeCommunityColor()
+                    self.ChangeCommunityColorAndInstantiateHierarchy()
         self.pos = pos
         return pos,Factor
 
     """
     Threshold changes events are called to this function  
     """
-    def ChangeCommunityColor(self, level = -1):
+    def ChangeCommunityColorAndInstantiateHierarchy(self, level = -1):
         self.g =  self.Graphwidget.Graph_data().DrawHighlightedGraph(self.Graphwidget.EdgeSliderValue)
         self.ColorNodesBasedOnCorrelation = False 
         self.partition=cm.best_partition(self.g)
@@ -236,7 +232,9 @@ class communityDetectionEngine(QtCore.QObject):
         # Matrix Before calculating the correlation strength
         # finding out the lower half values of the matrix, can discard other values as computationally intensive
 
-        self.Find_InterModular_Edge_correlativity()
+        # self.Find_InterModular_Edge_correlativity()
+        self.Matrix = nx.to_numpy_matrix(self.induced_graph)
+        
         # Triggering a new window with the same color
         # If the Gray out option is clicked then gray out the nodes without the colors 
         self.ColorForCommunities(len(set(self.partition.values())))
@@ -252,6 +250,7 @@ class communityDetectionEngine(QtCore.QObject):
                 if node.counter-1 in list_nodes:
                     node.PutColor(self.clut[count])
             count = count + 1
+
         for node in nodes1: 
             node.allnodesupdate()
             break
@@ -286,6 +285,7 @@ class communityDetectionEngine(QtCore.QObject):
 
             self.communityObject = community
             self.dendogramObject = Dendogram
+
             self.Graphwidget.hbox.setContentsMargins(0, 0, 0, 0)
             self.Graphwidget.wid.setContentsMargins(0, 0, 0, 0)
 

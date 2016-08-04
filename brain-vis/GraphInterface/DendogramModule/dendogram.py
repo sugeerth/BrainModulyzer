@@ -571,7 +571,7 @@ class dendogram(QtGui.QGraphicsView):
 		self.setSceneRect(self.Scene_to_be_updated.itemsBoundingRect())
 		self.setScene(self.Scene_to_be_updated)
 		self.fitInView(self.Scene_to_be_updated.itemsBoundingRect(),QtCore.Qt.KeepAspectRatio)
-		self.scaleView(math.pow(2.0, -900/ 1040.0))
+		self.scaleView(math.pow(2.5, -900/ 1040.0))
 
 	def wheelEvent(self, event):
 		self.scaleView(math.pow(2.0, -event.delta() / 1040.0))

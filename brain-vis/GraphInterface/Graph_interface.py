@@ -213,14 +213,14 @@ class GraphWidget(QtGui.QGraphicsView):
     def changeGrayOutNodes(self,state):
         self.grayOutNodes = not(self.grayOutNodes)
         if not(self.level == -1):
-            self.communityDetectionEngine.ChangeCommunityColor(self.level-1)
+            self.communityDetectionEngine.ChangeCommunityColorAndInstantiateHierarchy(self.level-1)
         else: 
-            self.communityDetectionEngine.ChangeCommunityColor()
+            self.communityDetectionEngine.ChangeCommunityColorAndInstantiateHierarchy()
 
     def changeDendoGramLevel(self,level):
         self.level = level-1
         self.Ui.communityLevelLineEdit.setText(str(self.level))
-        self.communityDetectionEngine.ChangeCommunityColor(self.level)
+        self.communityDetectionEngine.ChangeCommunityColorAndInstantiateHierarchy(self.level)
 
     """
     Changes in Line Edit for Community Level Slider
@@ -259,9 +259,9 @@ class GraphWidget(QtGui.QGraphicsView):
             self.wid.show()
             self.ColorNodesBasedOnCorrelation = False 
             if not(self.level == -1):
-                self.communityDetectionEngine.ChangeCommunityColor(self.level-1)
+                self.communityDetectionEngine.ChangeCommunityColorAndInstantiateHierarchy(self.level-1)
             else: 
-                self.communityDetectionEngine.ChangeCommunityColor()
+                self.communityDetectionEngine.ChangeCommunityColorAndInstantiateHierarchy()
             self.CommunityMode.emit(True)
             self.CommunityColor.emit(self.communityDetectionEngine.ColorToBeSentToVisit)
             self.resizeTheWholeGraphWidget(False) 
@@ -522,9 +522,9 @@ class GraphWidget(QtGui.QGraphicsView):
                 pass
             else:
                 if not(self.level == -1):
-                    self.communityDetectionEngine.ChangeCommunityColor(self.level-1)
+                    self.communityDetectionEngine.ChangeCommunityColorAndInstantiateHierarchy(self.level-1)
                 else: 
-                    self.communityDetectionEngine.ChangeCommunityColor()
+                    self.communityDetectionEngine.ChangeCommunityColorAndInstantiateHierarchy()
             self.CommunityColor.emit(self.communityDetectionEngine.ColorToBeSentToVisit)
         
         self.UpdateThresholdDegree()

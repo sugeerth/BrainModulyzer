@@ -31,6 +31,7 @@ class MouseInteractorHighLightActor(vtk.vtkInteractorStyleTrackballCamera):
 		self.PixX = PixX
 		self.PixY = PixY
 		self.PixZ = PixZ
+		
 		self.LastPickedActor = None
 		self.LastPickedProperty = vtk.vtkProperty()
 
@@ -93,7 +94,9 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 
 		self.correlationTable = correlationTable
 
-		self.nRegions = len(self.correlationTable.header)
+		self.nRegions = len(self.correlationTable.data)
+		print self.nRegions
+
 		self.selectedColor = selectedColor
 
 		self.widget = None
@@ -204,6 +207,7 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 		self.SetXAxisValues = 0 
 		self.SetYAxisValues = 0 
 		self.SetZAxisValues = 0 
+
 		#PixelDimensions Spacing
 		self.PixX = 0
 		self.PixY = 0
@@ -664,6 +668,7 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 	def addSpheres(self):
 		self.removeSpheres()
 		self.SphereActors = []
+		# print self.nRegions
 		for i in range(self.nRegions):
 			source = vtk.vtkSphereSource()
 			# random position and radius
