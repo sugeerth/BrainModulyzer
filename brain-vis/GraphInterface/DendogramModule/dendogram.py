@@ -147,6 +147,7 @@ class DendoNode(QtGui.QGraphicsItem):
 		self.setFlag(QtGui.QGraphicsItem.ItemSendsGeometryChanges)
 		self.setCacheMode(self.DeviceCoordinateCache)
 		self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable)
+        self.setFlag(QtGui.QGraphicsItem.ItemIgnoresTransformations)   
 		self.setFlag(QtGui.QGraphicsItem.ItemUsesExtendedStyleOption)
 		self.setFlag(QtGui.QGraphicsItem.ItemSendsGeometryChanges)
 
