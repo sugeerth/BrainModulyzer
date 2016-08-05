@@ -214,6 +214,61 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 		self.PixZ = 0
 
 	def setDataset(self): 
+		# self.ParcelationNumpy = nib.load(self.parcelation_filename).get_data().astype(np.uint32)
+		# self.TemplateNumpy = nib.load(self.template_filename).get_data().astype(np.uint32)
+
+		# img1 = nib.load(self.parcelation_filename)
+		# img2 = nib.load(self.template_filename)
+		
+		# hdr1 = img1.header
+		# hdr2 = img2.header
+
+		# a1 = hdr1['pixdim'][1:4]
+		# a2 = hdr2['pixdim'][1:4]
+
+		# self.ParcelationNumpy.shape
+
+		# self.PixX = 1
+		# self.PixY = 1
+		# self.PixZ = 1
+
+		# # print self.PixZ, self.PixY,self.PixX
+
+		# # if vtk.VTK_MAJOR_VERSION <= 5:
+		# # self.ParcelationReader = vtk.vtkNIFTIImageReader()
+		# self.ParcelationReader = vtk.vtkImageImport()
+		# # self.ParcelationNumpy = self.ParcelationNumpy
+		# self.StrParcelationNumpy = str(self.ParcelationNumpy)
+
+		# self.ParcelationReader.SetImportVoidPointer(self.StrParcelationNumpy, len(self.StrParcelationNumpy) * 32)
+		# self.ParcelationReader.SetDataScalarTypeToInt()
+
+		# # self.ParcelationReader.SetNumberOfComponents(3)
+		# # self.ParcelationReader.AllocateScalars()
+
+		# print np.shape(self.ParcelationNumpy)
+		# x,y,z = np.shape(self.ParcelationNumpy)
+		# self.ParcelationReader.SetDataExtent(0,x-1,0,y-1,0,z-1)
+		# self.ParcelationReader.SetWholeExtent(0,x-1,0,y-1,0,z-1)
+		
+		# # else:
+		# # 	self.ParcelationReader = vtk.vtkNIFTIImageReader()
+		# # 	self.ParcelationReader.SetFileName(self.parcelation_filename)
+		# # 	self.ParcelationReader.Update()
+
+		# # if vtk.VTK_MAJOR_VERSION <= 5:
+		# # self.TemplateReader = vtk.vtkNIFTIImageReader()
+		# self.TemplateReader = vtk.vtkImageImport()
+		# self.StrTemplateNumpy = str(self.TemplateNumpy)
+		# self.TemplateReader.CopyImportVoidPointer(self.StrTemplateNumpy, len(self.StrTemplateNumpy)*32)
+		# self.TemplateReader.SetDataScalarTypeToInt()
+		# # self.TemplateReader.SetNumberOfComponents(3)
+		# # self.TemplateReader.AllocateScalars()
+
+		# x,y,z = np.shape(self.TemplateNumpy)
+		# self.TemplateReader.SetDataExtent(0,x-1,0,y-1,0,z-1)
+		# self.TemplateReader.SetWholeExtent(0,x-1,0,y-1,0,z-1)
+
 		self.ParcelationReader = vtk.vtkNIFTIImageReader()
 		self.ParcelationReader.SetFileName(self.parcelation_filename)
 
@@ -321,9 +376,9 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 		self.template_data = self.Templatedmc.GetOutput()
 
 	def DefineParcelationDataToBeMapped(self):
-		self.PixX = self.ParcelationReader.GetNIFTIHeader().GetPixDim(1)
-		self.PixY = self.ParcelationReader.GetNIFTIHeader().GetPixDim(2)
-		self.PixZ = self.ParcelationReader.GetNIFTIHeader().GetPixDim(3)
+		# self.PixX = self.ParcelationReader.GetNIFTIHeader().GetPixDim(1)
+		# self.PixY = self.ParcelationReader.GetNIFTIHeader().GetPixDim(2)
+		# self.PixZ = self.ParcelationReader.GetNIFTIHeader().GetPixDim(3)
 
 		# Getting the style object to invoke here because we get the real Pix dimensions
 		self.style = MouseInteractorHighLightActor(self,self.selectedColor[:3], self.PixX, self.PixY,self.PixZ)
@@ -668,7 +723,8 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 	def addSpheres(self):
 		self.removeSpheres()
 		self.SphereActors = []
-		# print self.nRegions
+		print self.nRegions
+		print self.Centroid
 		for i in range(self.nRegions):
 			source = vtk.vtkSphereSource()
 			# random position and radius
