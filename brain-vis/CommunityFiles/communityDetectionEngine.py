@@ -180,7 +180,7 @@ class communityDetectionEngine(QtCore.QObject):
             elif (Layout == "random") or (Layout == "shell") or (Layout == "neato"):
                 neewPos=eval('nx.'+Layout+'_layout(self.g)')
                 pos=neewPos
-                Factor = 1000
+                Factor = 2000
             else: 
                 neewPos=eval('nx.'+Layout+'_layout(self.g,scale=1000)')
                 pos=neewPos
@@ -196,13 +196,13 @@ class communityDetectionEngine(QtCore.QObject):
                 pos=nx.nx_pydot.graphviz_layout(self.g,prog=Layout,args='-Gsep=.25,-GK=20-Eweight=2')
                 Factor = 0.7 + self.counter/100
                 if Layout == 'sfdp':
-                    Factor = 10
+                    Factor = 1
             else:
                 print "Before Circo" 
                 pos=nx.nx_pydot.graphviz_layout(self.g,prog=Layout)
                 print "After Circo" 
+                Factor = 0.7
 
-                Factor = 0.8
             if not(self.Graphwidget.ColorNodesBasedOnCorrelation): 
                 self.Graphwidget.ColorNodesBasedOnCorrelation = False 
                 if not(self.Graphwidget.level == -1):
