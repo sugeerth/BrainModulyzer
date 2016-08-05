@@ -20,15 +20,9 @@ class CorrelationTable(object):
         with open(filename, 'rb') as csvfile:
             reader = csv.reader(csvfile, delimiter=',', quotechar='\'')
             self.header = reader.next()
-            self.header = self.header[0:103]
             self.RegionName.append((self.header))
             self.data=np.array([map(float, line) for line in reader])
 
-            NewData = self.data[0:103,0:103]
-            pprint.pprint(NewData)
-            self.data = copy.deepcopy(NewData)
-
-        i = 0
 
         print len(self.header), "Value"
     """

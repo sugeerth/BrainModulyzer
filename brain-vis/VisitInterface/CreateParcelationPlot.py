@@ -61,7 +61,7 @@ class MouseInteractorHighLightActor(vtk.vtkInteractorStyleTrackballCamera):
 			bounds= self.NewPickedActor.GetBounds()  
 			if self.ParcelationPlotWindow.setCentroidModeFlag: 
 				if self.ParcelationPlotWindow.SphereActors:
-					index = 0
+					index = 1
 					for actor in self.ParcelationPlotWindow.SphereActors:
 						if actor == self.NewPickedActor:
 							break
@@ -74,7 +74,7 @@ class MouseInteractorHighLightActor(vtk.vtkInteractorStyleTrackballCamera):
 						if actor == self.NewPickedActor:
 							break
 						index +=1
-					self.ParcelationPlotWindow.RegionSelectedIn(index-1)
+					self.ParcelationPlotWindow.RegionSelectedIn(index)
 			# save the last picked TemplateActor
 			self.LastPickedActor = self.NewPickedActor
  
@@ -93,10 +93,7 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 		super(ParcelationPlotWindow,self).__init__()
 
 		self.correlationTable = correlationTable
-
 		self.nRegions = len(self.correlationTable.data)
-		print self.nRegions
-
 		self.selectedColor = selectedColor
 
 		self.widget = None
@@ -208,31 +205,22 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 		self.SetYAxisValues = 0 
 		self.SetZAxisValues = 0 
 
-		#PixelDimensions Spacing
-		self.PixX = 0
-		self.PixY = 0
-		self.PixZ = 0
-
 	def setDataset(self): 
-		# self.ParcelationNumpy = nib.load(self.parcelation_filename).get_data().astype(np.uint32)
-		# self.TemplateNumpy = nib.load(self.template_filename).get_data().astype(np.uint32)
+		self.ParcelationNumpy = nib.load(self.parcelation_filename).get_data().astype(np.uint32)
+		self.TemplateNumpy = nib.load(self.template_filename).get_data().astype(np.uint32)
 
-		# img1 = nib.load(self.parcelation_filename)
-		# img2 = nib.load(self.template_filename)
+		img1 = nib.load(self.parcelation_filename)
+		img2 = nib.load(self.template_filename)
 		
-		# hdr1 = img1.header
-		# hdr2 = img2.header
+		hdr1 = img1.header
+		hdr2 = img2.header
 
-		# a1 = hdr1['pixdim'][1:4]
-		# a2 = hdr2['pixdim'][1:4]
+		a1 = hdr1['pixdim'][1:4]
+		a2 = hdr2['pixdim'][1:4]
 
-		# self.ParcelationNumpy.shape
-
-		# self.PixX = 1
-		# self.PixY = 1
-		# self.PixZ = 1
-
-		# # print self.PixZ, self.PixY,self.PixX
+		self.PixX = float(a1[0])
+		self.PixY = float(a1[1])
+		self.PixZ = float(a1[2])
 
 		# # if vtk.VTK_MAJOR_VERSION <= 5:
 		# # self.ParcelationReader = vtk.vtkNIFTIImageReader()
@@ -376,10 +364,6 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 		self.template_data = self.Templatedmc.GetOutput()
 
 	def DefineParcelationDataToBeMapped(self):
-		# self.PixX = self.ParcelationReader.GetNIFTIHeader().GetPixDim(1)
-		# self.PixY = self.ParcelationReader.GetNIFTIHeader().GetPixDim(2)
-		# self.PixZ = self.ParcelationReader.GetNIFTIHeader().GetPixDim(3)
-
 		# Getting the style object to invoke here because we get the real Pix dimensions
 		self.style = MouseInteractorHighLightActor(self,self.selectedColor[:3], self.PixX, self.PixY,self.PixZ)
 		# self.style.locationRegionSelected.connect(self.locationRegionSelectedIn)		
@@ -413,7 +397,7 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 		self.TemplateActor.GetProperty().SetColor(1.0, 1.0, 1.0)
 		self.TemplateActor.PickableOff()
 
-		self.TemplateActor.GetProperty().SetOpacity(0.16)
+		self.TemplateActor.GetProperty().SetOpacity(0.1)
 
 		self.renderer.AddViewProp(self.OutlineActor)
 		self.renderInteractor.SetRenderWindow(self.renderWin)
@@ -682,7 +666,7 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 	def addParcels(self):
 		self.removeParcels()
 		self.Parcel = []
-		for i in range(self.nRegions):
+		for i in range(1,self.nRegions):
 			dmc =vtk.vtkDiscreteMarchingCubes()
 			if vtk.VTK_MAJOR_VERSION <= 5:
 				dmc.SetInput(self.ParcelationReader.GetOutput())
@@ -723,15 +707,12 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 	def addSpheres(self):
 		self.removeSpheres()
 		self.SphereActors = []
-		print self.nRegions
-		print self.Centroid
-		for i in range(self.nRegions-1):
+		for i in range(1,self.nRegions):
 			source = vtk.vtkSphereSource()
 			# random position and radius
 			x = float(self.Centroid[i][0])* self.PixX 
 			y = float(self.Centroid[i][1])* self.PixY 
 			z = float(self.Centroid[i][2])* self.PixZ 
-		
 			radius = 10
 
 			if self.MapMetrics:
@@ -776,9 +757,9 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 
 
 	def UpdateSpheres(self, Visibility):
-		for i in range(self.nRegions-1):
+		for i in range(1,self.nRegions):
 			if self.SphereActors:
-				actor = self.SphereActors[i]
+				actor = self.SphereActors[i-1]
 				if not(Visibility): 
 					actor.GetProperty().SetOpacity(0)
 					continue
@@ -797,9 +778,9 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 		self.renderWin.GetInteractor().Render()
 
 	def UpdateParcels(self,Visibility):
-		for i in range(self.nRegions):
+		for i in range(1,self.nRegions):
 			if self.Parcel:
-				actor = self.Parcel[i]
+				actor = self.Parcel[i-1]
 				if not(Visibility): 
 					actor.GetProperty().SetOpacity(0)
 					continue
