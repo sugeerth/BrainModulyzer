@@ -466,27 +466,30 @@ class GraphWidget(QtGui.QGraphicsView):
             node.setAcceptHoverEvents(self.hoverRender)
             node.update()
 
-        if self.communityDetectionEngine.communityObject:
-            nodes = [item for item in self.communityDetectionEngine.communityObject.scene().items() if isinstance(item, Node)]
-            for node in nodes:
-                node.setAcceptHoverEvents(self.hoverRender)
-                node.update()
+        try: 
+            if self.communityDetectionEngine.communityObject:
+                nodes = [item for item in self.communityDetectionEngine.communityObject.scene().items() if isinstance(item, Node)]
+                for node in nodes:
+                    node.setAcceptHoverEvents(self.hoverRender)
+                    node.update()
 
-            edges = [item for item in self.communityDetectionEngine.communityObject.scene().items() if isinstance(item, Edge)]
-            for edge in edges:
-                edge.setAcceptHoverEvents(self.hoverRender)
-                edge.update()
+                edges = [item for item in self.communityDetectionEngine.communityObject.scene().items() if isinstance(item, Edge)]
+                for edge in edges:
+                    edge.setAcceptHoverEvents(self.hoverRender)
+                    edge.update()
 
-            DendoNodes = [item for item in self.communityDetectionEngine.dendogramObject.scene.items() if isinstance(item, DendoNode)]
-            AllEdges = [item for item in self.communityDetectionEngine.dendogramObject.scene.items() if isinstance(item, Edge)]
-            
-            for node in DendoNodes:
-                node.setAcceptHoverEvents(self.hoverRender)
-                node.update()
+                DendoNodes = [item for item in self.communityDetectionEngine.dendogramObject.scene.items() if isinstance(item, DendoNode)]
+                AllEdges = [item for item in self.communityDetectionEngine.dendogramObject.scene.items() if isinstance(item, Edge)]
+                
+                for node in DendoNodes:
+                    node.setAcceptHoverEvents(self.hoverRender)
+                    node.update()
 
-            for edge in AllEdges:
-                edge.setAcceptHoverEvents(self.hoverRender)
-                edge.update()
+                for edge in AllEdges:
+                    edge.setAcceptHoverEvents(self.hoverRender)
+                    edge.update()
+        except AttributeError:
+            pass
 
     """
     Changes transparency in the graph
