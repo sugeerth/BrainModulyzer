@@ -23,8 +23,6 @@ class CorrelationTable(object):
             self.RegionName.append((self.header))
             self.data=np.array([map(float, line) for line in reader])
 
-
-        print len(self.header), "Value"
     """
     Function for finding the absolute value of correlation values 
     """
