@@ -76,8 +76,8 @@ class SliceViewer(QtGui.QWidget):
         parcelation_slice = self.extractParcelationSlice(self.parcelation)
         indices = np.flatnonzero(parcelation_slice)
 
-        # for idx in indices:
-        #     image_data.flat[idx] = self.clut[parcelation_slice.flat[idx]-1]
+        for idx in indices:
+            image_data.flat[idx] = self.clut[parcelation_slice.flat[idx]-1]
 
         image_data = np.array(image_data[:, ::-1], order='F')
         image = QtGui.QImage(image_data, image_data.shape[0], image_data.shape[1], QtGui.QImage.Format_ARGB32)

@@ -725,7 +725,7 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 		self.SphereActors = []
 		print self.nRegions
 		print self.Centroid
-		for i in range(self.nRegions):
+		for i in range(self.nRegions-1):
 			source = vtk.vtkSphereSource()
 			# random position and radius
 			x = float(self.Centroid[i][0])* self.PixX 
@@ -776,7 +776,7 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 
 
 	def UpdateSpheres(self, Visibility):
-		for i in range(self.nRegions):
+		for i in range(self.nRegions-1):
 			if self.SphereActors:
 				actor = self.SphereActors[i]
 				if not(Visibility): 

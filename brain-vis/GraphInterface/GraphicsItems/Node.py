@@ -45,6 +45,7 @@ class Node(QtGui.QGraphicsItem):
         self.First = True
         self.nodesize = 12
         self.degreeCentrality = 1.0
+
         # FIX ME switched off untill centre abbreviation is sorted out
         # self.Abbr = correlationTable.AbbrName
         self.Brain_Regions = correlationTable.RegionName[0]
@@ -60,6 +61,7 @@ class Node(QtGui.QGraphicsItem):
         self.WhitePaint= False
         self.newPos = QtCore.QPointF()
         self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable)
+        self.setFlag(QtGui.QGraphicsItem.ItemIgnoresTransformations)   
         self.setFlag(QtGui.QGraphicsItem.ItemUsesExtendedStyleOption)
         self.setFlag(QtGui.QGraphicsItem.ItemSendsGeometryChanges)
         if not(self.ForCommunities):
