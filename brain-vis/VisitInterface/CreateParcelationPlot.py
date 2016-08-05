@@ -207,8 +207,8 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 		self.SetZAxisValues = 0 
 
 	def setDataset(self): 
-		self.ParcelationNumpy = nib.load(self.parcelation_filename).get_data().astype(np.uint32)
-		self.TemplateNumpy = nib.load(self.template_filename).get_data().astype(np.uint32)
+		self.ParcelationNumpy = nib.load(self.parcelation_filename).get_data().astype(np.uint8)
+		self.TemplateNumpy = nib.load(self.template_filename).get_data().astype(np.uint8)
 
 		x,y,z = self.ParcelationNumpy.shape
 		img1 = nib.load(self.parcelation_filename)
@@ -225,29 +225,22 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 		self.PixZ = float(a1[2])
 
 		# # # if vtk.VTK_MAJOR_VERSION <= 5:
-		# self.ParcelationReader = vtk.vtkImageImport()
+		self.ParcelationReader = vtk.vtkImageImport()
 		# self.ParcelationVtkData = numpy_support.numpy_to_vtk(num_array=self.ParcelationNumpy.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
-		
-		# self.ParcelationReader.SetImportVoidPointer(self.ParcelationVtkData, )
+		self.ParcelationNumpy = str(self.ParcelationNumpy)
+		self.ParcelationReader.CopyImportVoidPointer(self.ParcelationNumpy, len(self.ParcelationNumpy))
+		self.ParcelationReader.SetDataScalarTypeToUnsignedChar()
 
-		# self.ParcelationReader.GetPointData().SetScalars(self.ParcelationVtkData)
-		# self.ParcelationReader.SetDataScalarTypeToFloat()
-
-		# self.ParcelationReader.SetDataExtent(0,x-1,0,y-1,0,z-1)
-		# self.ParcelationReader.SetWholeExtent(0,x-1,0,y-1,0,z-1)
-		# self.ParcelationReader.SetDataSpacing(self.PixX,self.PixY,self.PixZ)
-
-		# self.Reader = vtk.vtkNIFTIImageReader()
-		# self.Reader.SetFileName(self.parcelation_filename)
-		# print self.Reader
-		# print self.ParcelationReader
-		# self.ParcelationReader.Update()
+		self.ParcelationReader.SetDataExtent(0,x-1,0,y-1,0,z-1)
+		self.ParcelationReader.SetWholeExtent(0,x-1,0,y-1,0,z-1)
+		self.ParcelationReader.SetDataSpacing(self.PixX,self.PixY,self.PixZ)
+		self.ParcelationReader.Update()
 		
 
 		# # else:
-		self.ParcelationReader = vtk.vtkNIFTIImageReader()
-		self.ParcelationReader.SetFileName(self.parcelation_filename)
-		self.ParcelationReader.Update()
+		# self.ParcelationReader = vtk.vtkNIFTIImageReader()
+		# self.ParcelationReader.SetFileName(self.parcelation_filename)
+		# self.ParcelationReader.Update()
 
 		# # if vtk.VTK_MAJOR_VERSION <= 5:
 		# # self.TemplateReader = vtk.vtkNIFTIImageReader()
@@ -266,21 +259,22 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 		# self.ParcelationReader.SetFileName(self.parcelation_filename)
 
 
-		self.TemplateReader = vtk.vtkNIFTIImageReader()
-		self.TemplateReader.SetFileName(self.template_filename)
-		self.TemplateReader.Update()
+		# self.TemplateReader = vtk.vtkNIFTIImageReader()
+		# self.TemplateReader.SetFileName(self.template_filename)
+		# self.TemplateReader.Update()
 
 
 		# # if vtk.VTK_MAJOR_VERSION <= 5:
-		# self.TemplateReader = vtk.vtkImageImport()
+		self.TemplateReader = vtk.vtkImageImport()
 		# self.TemplateVtkData = numpy_support.numpy_to_vtk(num_array=self.TemplateNumpy.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
+		self.TemplateNumpy = str(self.TemplateNumpy)
 
-		# self.TemplateReader.SetImportVoidPointer(self.TemplateVtkData, self.TemplateNumpy.nbytes)
-		# self.TemplateReader.SetDataScalarTypeToFloat()
+		self.TemplateReader.CopyImportVoidPointer(self.TemplateNumpy, len(self.TemplateNumpy))
+		self.TemplateReader.SetDataScalarTypeToUnsignedChar()
 
-		# self.TemplateReader.SetDataExtent(0,x-1,0,y-1,0,z-1)
-		# self.TemplateReader.SetWholeExtent(0,x-1,0,y-1,0,z-1)
-		# self.TemplateReader.SetDataSpacing(self.PixX,self.PixY,self.PixZ)
+		self.TemplateReader.SetDataExtent(0,x-1,0,y-1,0,z-1)
+		self.TemplateReader.SetWholeExtent(0,x-1,0,y-1,0,z-1)
+		self.TemplateReader.SetDataSpacing(self.PixX,self.PixY,self.PixZ)
 
 		# self.TemplateReader.Update()
 		self.Templatedmc =vtk.vtkDiscreteMarchingCubes()
