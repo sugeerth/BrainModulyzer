@@ -33,7 +33,7 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 	
 
 	
-	#For macs switch to macports python for installation (as installation libraries are in macports):
+	#For mac switch to macports python for installation (as installation libraries are in macports):
 	sudo port install python27
 	port select --list python
 	sudo port select --set python python27
@@ -50,12 +50,11 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 	sudo pip install python-louvain
 	
 	To install Graphviz:
-		Install latest Graphviz version through the graphviz website--(http://www.graphviz.org/Download_macos.php)
+		**Install latest Graphviz** version through the graphviz website--(http://www.graphviz.org/Download_macos.php)
 		
 		for linux: 
 			sudo pip install pygraphviz==1.3.1 
 		for mac:
-			sudo port install graphviz
 			sudo pip install pygraphviz==1.3.1
 	
 	To install QT:
@@ -73,7 +72,7 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 			sudo apt-get install libvtk6-dev libvtk6-qt-dev python-vtk6
 		for mac
 			#port			
-			sudo port install vtk --python --examples
+			sudo port install vtk
 
 **Source Code:**
 In case any of the pre-existing library installation does not work, please download and install the affected libraries from source:
