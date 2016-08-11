@@ -52,15 +52,16 @@ Note: Tested on OS X 10.11.6 and Ubuntu 14.04
 	To install Graphviz:
 		**Install latest Graphviz** version through the graphviz website--(http://www.graphviz.org/Download_macos.php)
 		
-		for linux 
-			sudo pip install pygraphviz==1.3.1 
+		for linux
+			sudo apt-get install graphviz
+			sudo pip install pygraphviz==1.3.1 --install-option="--include-path=/usr/include/graphviz" --install-option="--library-path=/usr/lib/graphviz/"
 		for mac
 			sudo pip install pygraphviz==1.3.1
 	
 	To install QT:
 		for linux
-			sudo apt-get install qt-sdk
-			sudo pip install -U PySide
+			sudo apt-get install libqt4-dev
+			sudo easy_install -U PySide
 		for mac
 			sudo port install qt4-mac
 			sudo port install py27-pyside
@@ -68,8 +69,9 @@ Note: Tested on OS X 10.11.6 and Ubuntu 14.04
 	To install VTK (vtk version > 5):
 
 		for linux
+			sudo add-apt-repository ppa:elvstone/vtk7
 			sudo apt-get update
-			sudo apt-get install libvtk6-dev libvtk6-qt-dev python-vtk6
+			sudo apt-get install vtk7
 		for mac
 			#port			
 			sudo port install vtk
