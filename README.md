@@ -28,11 +28,10 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 
 
 ### Getting Started  ###
-
-1) Install all of the following libraries in the order below:
-	Note: Tested on OS X 10.11.6 and Ubuntu 14.04
+Note: Tested on OS X 10.11.6 and Ubuntu 14.04
 	
-
+1) Install all of the following libraries in the order below:
+	
 	
 	#For mac switch to macports python for installation (as installation libraries are in macports):
 	sudo port install python27
