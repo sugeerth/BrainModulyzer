@@ -46,7 +46,6 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 	sudo pip install numpy==1.11.0
 	sudo pip install networkx==1.11
 	sudo pip install nibabel==2.0.2
-	sudo pip install pydot3==1.0.8
 	sudo pip install pydotplus
 	sudo pip install python-louvain
 	
@@ -55,7 +54,7 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 		for linux: 
 			sudo pip install pygraphviz==1.3.1 
 		for mac:
-			sudo port install python-pygraphviz
+			sudo pip install pygraphviz==1.3.1
 	
 	To install QT:
 		for linux
