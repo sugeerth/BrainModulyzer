@@ -30,6 +30,7 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 ### Getting Started  ###
 
 1) Install all of the following libraries in the order below:
+	Note: Tested on OS X 10.11.6 and Ubuntu 14.04
 	
 
 	
@@ -38,10 +39,10 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 	port select --list python
 	sudo port select --set python python27
 		
-		#Set the pip for macports: 
-		sudo port install py27-pip
-		sudo port select --list pip 
-		sudo port select --set pip pip27
+	#For mac set the pip for macports: 
+	sudo port install py27-pip
+	sudo port select --list pip 
+	sudo port select --set pip pip27
 
 	sudo pip install numpy==1.11.0
 	sudo pip install networkx==1.11
