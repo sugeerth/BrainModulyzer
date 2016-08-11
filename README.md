@@ -33,13 +33,13 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 	
 
 	
-		#For macs switch to macports python for installation (as installation libraries are in macports)
-		sudo port install python27
-		port select --list python
-		sudo port select --set python python27
+	#For macs switch to macports python for installation (as installation libraries are in macports):
+	sudo port install python27
+	port select --list python
+	sudo port select --set python python27
 		
-		#Set the pip for macports 
-		sudo port install python-pip27
+		#Set the pip for macports: 
+		sudo port install py27-pip
 		sudo port select --list pip 
 		sudo port select --set pip pip27
 
