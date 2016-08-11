@@ -30,7 +30,10 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 ### Getting started  ###
 
 1) Install all of the following libraries in the order below:
-	#For macs switch to macports python for installation (as installation libraries are in macports)
+	
+
+	
+		#For macs switch to macports python for installation (as installation libraries are in macports)
 		sudo port install python27
 		port select --list python
 		sudo port select --set python python27
@@ -49,8 +52,10 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 	
 	To install Graphviz:
 		Install latest Graphviz version through the graphviz website--(http://www.graphviz.org/Download_macos.php )
-		sudo pip install pygraphviz==1.3.1 
-	
+		for linux: 
+			sudo pip install pygraphviz==1.3.1 
+		for mac:
+			sudo port install python-pygraphviz
 	
 	To install QT:
 		for linux
