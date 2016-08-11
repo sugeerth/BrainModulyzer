@@ -31,15 +31,20 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 
 1) Install all of the following libraries in the order below:
 	#For macs switch to macports python for installation (as installation libraries are in macports)
-
-	sudo port install python27
-	port select --list python
-	sudo port select --set python python27
+		sudo port install python27
+		port select --list python
+		sudo port select --set python python27
+		
+		#Set the pip for macports 
+		sudo port install python-pip27
+		sudo port select --list pip 
+		sudo port select --set pip pip27
 
 	sudo pip install numpy==1.11.0
 	sudo pip install networkx==1.11
 	sudo pip install nibabel==2.0.2
 	sudo pip install pydot3==1.0.8
+	sudo pip install pydotplus
 	sudo pip install python-louvain
 	
 	To install Graphviz:
@@ -58,20 +63,11 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 	To install VTK (vtk version > 5):
 
 		for linux
-			sudo apt-get upgrade 
 			sudo apt-get update
 			sudo apt-get install libvtk6-dev libvtk6-qt-dev python-vtk6
 		for mac
-			sudo port install vtk --qt --python --examples
 			#port			
 			sudo port install vtk --python --examples
-			
-			
-			Please make sure the brew libraries are linked to the system python--if they are not, run the following:
-			mkdir -p /Users/smuru/Library/Python/2.7/lib/python/site-packages
-  			echo 'import site; site.addsitedir("/usr/local/lib/python2.7/site-packages")' >> /Users/smuru/Library/Python/2.7/lib/python/site-packages/homebrew.pth
-			
-	sudo pip install decorator>=3.4.0
 
 **Source Code:**
 In case any of the pre-existing library installation does not work, please download and install the affected libraries from source:
