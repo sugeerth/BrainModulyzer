@@ -30,13 +30,17 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 ### Getting started  ###
 
 1) Install all of the following libraries in the order below:
+	#For macs switch to macports python for installation (as installation libraries are in macports)
+
+	sudo port install python27
+	port select --list python
+	sudo port select --set python python27
 
 	sudo pip install numpy==1.11.0
 	sudo pip install networkx==1.11
 	sudo pip install nibabel==2.0.2
 	sudo pip install pydot3==1.0.8
 	sudo pip install python-louvain
-	
 	
 	To install Graphviz:
 		Install latest Graphviz version through the graphviz website--(http://www.graphviz.org/Download_macos.php )
@@ -46,11 +50,10 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 	To install QT:
 		for linux
 			sudo apt-get install qt-sdk
+			sudo pip install -U PySide
 		for mac
-			brew install qt
-		
-	sudo pip install -U PySide
-	
+			sudo port install qt4-mac
+			sudo port install py27-pyside
 	
 	To install VTK (vtk version > 5):
 
@@ -59,8 +62,7 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 			sudo apt-get update
 			sudo apt-get install libvtk6-dev libvtk6-qt-dev python-vtk6
 		for mac
-			brew doctor
-			sudo brew install vtk --qt --python --examples
+			sudo port install vtk --qt --python --examples
 			
 			Please make sure the brew libraries are linked to the system python--if they are not, run the following:
 			mkdir -p /Users/smuru/Library/Python/2.7/lib/python/site-packages
