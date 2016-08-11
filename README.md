@@ -15,7 +15,7 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 
 <!--![ScreenShot](http://s32.postimg.org/blbh7yllh/Anatomical_Diagram_Page_1.jpg)-->
 
-### Required dependencies ###
+### Required Dependencies ###
     numpy
     networkx
     nibabel
@@ -27,7 +27,7 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
     decorator
 
 
-### Getting started  ###
+### Getting Started  ###
 
 1) Install all of the following libraries in the order below:
 	
@@ -117,7 +117,7 @@ Happy Analysis!
 **BrainViewerDataPaths.py** -- path for the dataset
 **RunMainProject.py** -- path for running the application
 
-##Running the tool 
+##Running the Tool 
         modulyzerdir> export PYTHONPATH=${PYTHONPATH}:modulyzerdir
         modulyzerdir> python RunMainProject.py
 
@@ -132,7 +132,7 @@ In the following figure,
 [![ScreenShot](http://s32.postimg.org/7zro1qnrp/Visual_Tool_Page_1.jpg)]()
 
 
-### Citation Infomration###
+### Citation Information###
 @ARTICLE{7466855, 
 author={S. Murugesan and K. Bouchard and J. A. Brown and B. Hamann and W. W. Seeley and A. Trujillo and G. H. Weber}, 
 journal={IEEE/ACM Transactions on Computational Biology and Bioinformatics}, 
