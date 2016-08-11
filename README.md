@@ -50,10 +50,12 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 	sudo pip install python-louvain
 	
 	To install Graphviz:
-		Install latest Graphviz version through the graphviz website--(http://www.graphviz.org/Download_macos.php )
+		Install latest Graphviz version through the graphviz website--(http://www.graphviz.org/Download_macos.php)
+		
 		for linux: 
 			sudo pip install pygraphviz==1.3.1 
 		for mac:
+			sudo port install graphviz
 			sudo pip install pygraphviz==1.3.1
 	
 	To install QT:
