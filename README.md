@@ -110,19 +110,17 @@ pip install pygraphviz --install-option="--include-path=/usr/local/include/graph
 	   
 	If none of the above returns an error then all the libraries have been installed correctly
 
-3)	Configure the data paths in BrainViewerDataPaths.py and configure paths to run BrainViewer.py   (sample data is provided in the SampleData folder)
+3)	Configure the data paths in BrainViewerDataPaths.py ( you can try as it is for sample data is provided in the SampleData folder)
 
 
 Happy Analysis! 
 
 ####Major Files
 **BrainViewerDataPaths.py** -- path for the dataset
-
-**RunMainProject.py** -- path for running the applications with visit python backend
+**RunMainProject.py** -- path for running the application
 
 ##Running the tool 
         modulyzerdir> export PYTHONPATH=${PYTHONPATH}:modulyzerdir
-
         modulyzerdir> python RunMainProject.py
 
 In the following figure, 
