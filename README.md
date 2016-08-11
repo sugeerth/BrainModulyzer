@@ -105,7 +105,6 @@ pip install pygraphviz --install-option="--include-path=/usr/local/include/graph
     import pygraphviz
     import vtk
     import PySide
-    import decorator
 	   
 	If none of the above returns an error then all the libraries have been installed correctly
 
