@@ -67,11 +67,20 @@ Note: Tested on OS X 10.11.6 and Ubuntu 14.04
 			sudo port install py27-pyside
 	
 	To install VTK (vtk version > 5):
-
 		for linux
-			sudo add-apt-repository ppa:elvstone/vtk7
-			sudo apt-get update
-			sudo apt-get install vtk7
+			#This is a bit tricky, follow this step by step, in the future this will become easier
+			#Download from source VTK-7.0.0
+			[VTK7](http://www.vtk.org/files/release/7.0/VTK-7.0.0.zip)
+			unzip VTK-7.0.0.zip
+			cd VTK-7.0.0
+			mkdir Build
+			cd Build 
+			ccmake .. (in GUI turn two flags BUILD_SHARED_LIBS ON and PYTHON_WRAPPING, press 'c' twice and when the config completes press 'g')
+			make -j 8
+			sudo make install
+			#Now all you have to do add paths in PYTHONPATHS
+			export PYTHONPATH=/PATH_TO_VTK-7.0.0/Build/lib/
+			export PYTHONPATH=$PYTHONPATH:/PATH_TO_VTK-7.0.0/Build/Wrapping/Python/
 		for mac
 			#port			
 			sudo port install vtk
@@ -110,7 +119,7 @@ pip install pygraphviz --install-option="--include-path=/usr/local/include/graph
 	   
 	If none of the above returns an error then all the libraries have been installed correctly
 
-3)	Configure the data paths in BrainViewerDataPaths.py ( you can try as it is for sample data is provided in the SampleData folder)
+3)	Configure the data paths in BrainViewerDataPaths.py (you can try as it is for sample data)
 
 
 Happy Analysis! 
