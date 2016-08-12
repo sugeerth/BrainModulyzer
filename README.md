@@ -119,7 +119,7 @@ pip install pygraphviz --install-option="--include-path=/usr/local/include/graph
 	   
 	If none of the above returns an error then all the libraries have been installed correctly
 
-3)	Configure the data paths in BrainViewerDataPaths.py ( you can try as it is for sample data is provided in the SampleData folder)
+3)	Configure the data paths in BrainViewerDataPaths.py (you can try as it is for sample data)
 
 
 Happy Analysis! 
