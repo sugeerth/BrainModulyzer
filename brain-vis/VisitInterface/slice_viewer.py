@@ -92,14 +92,15 @@ class SliceViewer(QtGui.QWidget):
         self.sliceChanged.emit(self.displayedSlice)
 
     def colorRelativeToRegion(self, regionId):
-        for i in range(self.clut.shape[0]):
-            if(i == len(self.correlationTable.data)):
-                return
-            if i != regionId:
-                t = self.correlationTable.value(regionId, i)
-                self.clut[i] = ColorToInt(self.colorTable.getColor(t))
-            else:
-                self.clut[i] = ColorToInt(self.selectedColor)
+        if not(self.CommunityMode): 
+            for i in range(self.clut.shape[0]):
+                if(i == len(self.correlationTable.data)):
+                    return
+                if i != regionId:
+                    t = self.correlationTable.value(regionId, i)
+                    self.clut[i] = ColorToInt(self.colorTable.getColor(t))
+                else:
+                    self.clut[i] = ColorToInt(self.selectedColor)
         self.updateSliceLabel()
 
     def Community(self, Flag):

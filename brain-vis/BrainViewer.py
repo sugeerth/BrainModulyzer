@@ -34,7 +34,6 @@ CorrelationTableDisplay, CommunityCorrelationTableDisplay
 from QuantData.quantTable import quantTable
 from QuantData.quantData import QuantData
 from VisitInterface.color_table import CreateColorTable
-# from VisitInterface.visit_interface import ParcelationPlot, BrainTemplatePlot
 from VisitInterface.slice_viewer import *
 from GraphInterface.Graph_interface import GraphWidget
 from GraphInterface.GraphDataStructure import GraphVisualization
@@ -75,7 +74,7 @@ correlationTable = CorrelationTable(matrix_filename)
 colorTable = CreateColorTable(colorTableName)
 colorTable.setRange(correlationTable.valueRange())
 
-print "Setting main GUI."
+print "Setting up main GUI."
 Counter = len(correlationTable.data)
 DataColor = np.zeros(Counter+1)
 
@@ -112,7 +111,7 @@ allViewersLayout.addLayout(viewersLayout2)
 allViewersLayout.setContentsMargins(0,0,0,0)
 
 
-print "Setting Slice Views"
+print "Setting up Slice Views"
 slice_views = [None, None, None]
 slice_views[0] = SliceViewer(template_data, parcelation_data, 0, correlationTable, colorTable, selectedColor)
 viewersLayout1.addWidget(slice_views[0])
@@ -126,7 +125,7 @@ slice_views[2] = SliceViewer(template_data, parcelation_data, 2, correlationTabl
 viewersLayout2.addWidget(slice_views[2])
 viewersLayout2.setContentsMargins(0,0,0,0)
 
-print "Setting the IsoSurfaces"
+print "Setting up the IsoSurfaces"
 
 ParcelationPlot = ParcelationPlotWindow(parcelation_filename, template_filename, correlationTable,selectedColor,colorTable, slice_views[0],slice_views[1],slice_views[2])
 
@@ -140,15 +139,15 @@ slice_views[2].sliceChanged.connect(ParcelationPlot.setThreeSliceZ)
 slice_views[2].regionSelected.connect(ParcelationPlot.colorRelativeToRegion)
 
 
-print "Setting Graph data GraphDataStructure"
+print "Setting up Graph data GraphDataStructure"
 Tab_2_AdjacencyMatrix = GraphVisualization(correlationTable.data)
 
-print "Setting CorrelationTable for communities"
+print "Setting up CorrelationTable for communities"
 Tab_2_CorrelationTable = CommunityCorrelationTableDisplay(correlationTable, colorTable,Tab_2_AdjacencyMatrix)
 Tab_2_CorrelationTable.selectedRegionChanged.connect(ParcelationPlot.colorRelativeToRegion)
 Tab_2_CorrelationTable.setMinimumSize(390, 460)
 
-print "Setting CorrelationTable"
+print "Setting up CorrelationTable"
 
 Tab_1_CorrelationTable = CorrelationTableDisplay(correlationTable, colorTable,Tab_2_AdjacencyMatrix)
 Tab_1_CorrelationTable.selectedRegionChanged.connect(ParcelationPlot.colorRelativeToRegion)
@@ -156,7 +155,7 @@ Tab_1_CorrelationTable.setMinimumSize(390, 460)
 Tab_2_CorrelationTable.show()
 
 
-print "Setting Graph Widget"
+print "Setting up Graph Widget"
 
 """ Controlling graph widgets  """
 widget = GraphWidget(Tab_2_AdjacencyMatrix,Tab_2_CorrelationTable,correlationTable,colorTable,selectedColor,BoxGraphWidget,BoxTableWidget,Offset,ui)
@@ -222,7 +221,7 @@ if CorrelationTableShowFlag:
     BoxTableWidget.show()
     # pass
 
-print "Setting Graph Layout_interface"
+print "Setting up Graph Layout_interface"
 
 Graph = QtGui.QHBoxLayout()
 Graph.setContentsMargins(0, 0, 0, 0)

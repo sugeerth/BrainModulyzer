@@ -37,10 +37,6 @@ template_filename = str(os.path.join(CURR, "ch2better.nii.gz"))
 # matrix_filename1 = '/Users/sugeerthmurugesan/LBLProjects/TCBBDownload/TestDirectory/brain-vis-git/SampleData/Dataset1/ch2better.nii.gz'
 # matrix_filename2 = os.path.join(CURR,'ch2better.nii.gz')
 
-# print type(matrix_filename1),type(matrix_filename2)
-# print template_filename ==matrix_filename2
-
-
 #set the flag data around here for convenience, if you want to switch on or off 
 # the other windows whenever you want
 GraphWindowShowFlag = True

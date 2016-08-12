@@ -292,7 +292,6 @@ class CorrelationTableDisplay(ParentCommunityDisplay):
     """ Logic for multiple selection of cells in the adjacency matrix"""
     def mouseReleaseEvent(self, e):
         super(CorrelationTableDisplay, self).mouseReleaseEvent(e)
-        # print "asd"
         if not(self.Selectionmode):
             regionIDS =  []
             for i in self.selectedItems():
@@ -369,8 +368,6 @@ class CorrelationTableDisplay(ParentCommunityDisplay):
     def selectRegion(self, regionId):
 
         # should be able to differentiate between the events that is being clicked on and the events the this class generates 
-        # print "receiving correlationtabledisplay end",self.sender() 
-
         self.isElementSorted = not(isinstance(self.sender(),CorrelationTableDisplay))
         
         """ Logic only when the system is in communtiy mode """
@@ -382,12 +379,6 @@ class CorrelationTableDisplay(ParentCommunityDisplay):
         else:
             self.selectRow(regionId)
             
-            # print "\nPutting the values in buffer\n"
-
-            # self.queue.put(str(regionId))
-
-
-
 """ Classes responsible for creating a new window in the community mode"""
 class CommunityCorrelationTableDisplay(ParentCommunityDisplay):
     selectedRegionChanged = QtCore.Signal(int)
@@ -470,7 +461,6 @@ class CommunityCorrelationTableDisplay(ParentCommunityDisplay):
     """Logic for selection of multiple cells and displaying selected cells into a new window"""
     def mouseReleaseEvent(self, e):
         super(CorrelationTableDisplay, self).mouseReleaseEvent(e)
-        # print "asd"
         if not(self.Selectionmode):
             regionIDS =  []
             for i in self.selectedItems():

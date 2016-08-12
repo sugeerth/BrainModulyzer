@@ -47,8 +47,6 @@ class LayoutInit(QtGui.QWidget):
         Ui.snapshot.clicked.connect(self.captureSnapshot)
         Ui.quantTable.addWidget(quantTable)
 
-        # self.screenshot.OkCancel.accepted.connect(self.changeParameters)
-        # self.screenshot.OkCancel.accepted.connect(self.exitDialogueBox)
 
         self.screenshot.listFiles.itemDoubleClicked.connect(self.changeParameters)
 
@@ -91,6 +89,7 @@ class LayoutInit(QtGui.QWidget):
         self.screenshot= screenshot
 
     def changeParameters(self, item=None):
+        
         print "Changes that can be made"
 
 
@@ -101,7 +100,6 @@ class LayoutInit(QtGui.QWidget):
         self.widget.setMinimumSize(400, 400)
         self.widget.slider_imple()
         # Enabling node slider for analysis 
-        # self.widget.NodeSlider()
         self.widget.lineEdit()
 
     def captureSnapshot(self):
@@ -127,13 +125,6 @@ class LayoutInit(QtGui.QWidget):
             Sanpshots["highlightEdges"] = self.widget.HighlightedId
             Sanpshots["communityGraphLevel"] = self.widget.level
             Sanpshots["datasetLoaded"] = (self.matrix_filename,self.template_filename,self.parcelation_filename)
-
-            # print "Correlation Mode:",self.widget.ColorNodesBasedOnCorrelation,"Node Mapping:",self.widget.nodeSizeFactor,\
-            # "Edge Thickness:",self.widget.nodeSizeFactor, "Only Edges:",self.widget.DisplayOnlyEdges,\
-            #  "Transparent Nodes:",self.widget.setTransp,"highlight edges:",self.widget.HighlightedId,\
-            #   "Comunity Graph Level:",self.widget.level,\
-            #  "Dataset Loaded:",self.matrix_filename,":",self.template_filename,":"\
-            #  ,self.parcelation_filename
 
             # Make a Directory 
             try:

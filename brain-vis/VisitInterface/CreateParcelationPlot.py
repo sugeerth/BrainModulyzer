@@ -135,6 +135,8 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 
 		self.FinalRenderView() 
 		self.show()
+		self.renderInteractor.Initialize()
+		
 
 	def setCentreFilename(self):
 		"""

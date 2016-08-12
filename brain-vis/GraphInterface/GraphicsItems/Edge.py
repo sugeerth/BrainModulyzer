@@ -160,7 +160,6 @@ class Edge(QtGui.QGraphicsItem):
         self.update()
 
     def Threshold(self,value):
-        # print "Threshold in Edge"
         self.EdgeThreshold = value
         self.update()
 

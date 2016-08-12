@@ -284,12 +284,6 @@ class DendoNode(QtGui.QGraphicsItem):
 			for i in NodesToBeHighlightedInCommunityGraph:
 				for j in NodesToBeHighlightedInCommunityGraph:
 					pass
-					# Highlighting edges Functionalites turned off for awhile
-					# bool1 = (self.graph().widget.partition[i.subNodes[0]]) == edge.sourceId and self.graph().widget.partition[j.subNodes[0]] == edge.destId 
-					# bool2 = (self.graph().widget.partition[i.subNodes[0]]) == edge.destId and self.graph().widget.partition[j.subNodes[0]] == edge.sourceId
-					# print bool1
-					# if bool1 or bool2: 
-						# edge.communityAlpha(True)
 					
 		self.graph().widget.communityGraphUpdate()
 
@@ -472,7 +466,6 @@ class dendogram(QtGui.QGraphicsView):
 						temp = self.Order[1][i]
 				except IndexError:
 						temp = i
-				print self.widget.level 
 				if self.widget.level == 1: 
 					node_value.PutColor(self.clut[temp])
 				else:

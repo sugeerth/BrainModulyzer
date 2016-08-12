@@ -80,7 +80,6 @@ class quantTable(QWidget):
 
     def setCommunityRegions(self, community): 
         print community
-        # print "This community has to be selected",community
 
     def cell_was_clicked(self, row, column):
         print("Row %d and Column %d was clicked" % (row, column))

@@ -198,9 +198,7 @@ class communityDetectionEngine(QtCore.QObject):
                 if Layout == 'sfdp':
                     Factor = 1
             else:
-                print "Before Circo" 
                 pos=nx.nx_pydot.graphviz_layout(self.g,prog=Layout)
-                print "After Circo" 
                 Factor = 0.7
 
             if not(self.Graphwidget.ColorNodesBasedOnCorrelation): 
