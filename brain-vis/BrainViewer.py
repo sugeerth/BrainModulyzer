@@ -324,7 +324,6 @@ toggleThreeSliceButton.stateChanged.connect(ParcelationPlot.toggleThreeSlice)
 toggleBrainSurfaceButton = QtGui.QCheckBox("Show Brain Surface")
 toggleBrainSurfaceButton.toggle()
 
-
 visitControlsLayout.addWidget(MapMetrics)
 visitControlsLayout.setContentsMargins(0,0,0,0)
 

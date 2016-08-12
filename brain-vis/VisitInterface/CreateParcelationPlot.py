@@ -119,9 +119,9 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 
 		self.frame = QtGui.QFrame()
 		self.BoxLayoutView = QtGui.QVBoxLayout()
-
 		self.BoxLayoutView.setContentsMargins(0, 0, 0, 0)
 		self.setLayout(self.BoxLayoutView)
+
 		self.setSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
 
 		self.setDataset()
@@ -224,18 +224,6 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 		self.PixY = float(a1[1])
 		self.PixZ = float(a1[2])
 
-		# # # # if vtk.VTK_MAJOR_VERSION <= 5:
-		# self.ParcelationReader = vtk.vtkImageImport()
-		# # self.ParcelationVtkData = numpy_support.numpy_to_vtk(num_array=self.ParcelationNumpy.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
-		# self.ParcelationNumpy = str(self.ParcelationNumpy)
-		# self.ParcelationReader.CopyImportVoidPointer(self.ParcelationNumpy, len(self.ParcelationNumpy))
-		# self.ParcelationReader.SetDataScalarTypeToUnsignedChar()
-
-		# self.ParcelationReader.SetDataExtent(0,x-1,0,y-1,0,z-1)
-		# self.ParcelationReader.SetWholeExtent(0,x-1,0,y-1,0,z-1)
-		# self.ParcelationReader.SetDataSpacing(self.PixX,self.PixY,self.PixZ)
-		# self.ParcelationReader.Update()
-
 		self.ParcelationReader = vtk.vtkNIFTIImageReader()
 		self.ParcelationReader.SetFileName(self.parcelation_filename)
 		self.ParcelationReader.Update()
@@ -244,19 +232,6 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 		self.TemplateReader.SetFileName(self.template_filename)
 		self.TemplateReader.Update()
 
-		# # # if vtk.VTK_MAJOR_VERSION <= 5:
-		# self.TemplateReader = vtk.vtkImageImport()
-		# # self.TemplateVtkData = numpy_support.numpy_to_vtk(num_array=self.TemplateNumpy.ravel(), deep=True, array_type=vtk.VTK_FLOAT)
-		# self.TemplateNumpy = str(self.TemplateNumpy)
-
-		# self.TemplateReader.CopyImportVoidPointer(self.TemplateNumpy, len(self.TemplateNumpy))
-		# self.TemplateReader.SetDataScalarTypeToUnsignedChar()
-
-		# self.TemplateReader.SetDataExtent(0,x-1,0,y-1,0,z-1)
-		# self.TemplateReader.SetWholeExtent(0,x-1,0,y-1,0,z-1)
-		# self.TemplateReader.SetDataSpacing(self.PixX,self.PixY,self.PixZ)
-
-		# self.TemplateReader.Update()
 		self.Templatedmc =vtk.vtkDiscreteMarchingCubes()
 		self.dmc =vtk.vtkDiscreteMarchingCubes()
 
@@ -272,6 +247,7 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 
 		self.renderWin = vtk.vtkRenderWindow()
 		self.renderWin.AddRenderer(self.renderer)
+		self.renderWin.AddObserver("AbortCheckEvent", exitCheck)
 
 		self.axes2 = vtk.vtkCubeAxesActor2D()
 		self.axes3 = vtk.vtkCubeAxesActor2D()
@@ -287,10 +263,9 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 		self.axesActor = vtk.vtkAnnotatedCubeActor()
 		self.axes = vtk.vtkOrientationMarkerWidget()
 
-		self.renderInteractor = QVTKRenderWindowInteractor(self,rw=self.renderWin)
+		self.renderInteractor = QVTKRenderWindowInteractor(self,rw=self.renderWin,w=110,h=100)
+		# self.renderInteractor.SetRenderWindow(self.renderWin)
 		self.BoxLayoutView.addWidget(self.renderInteractor)
-
-		self.picker = vtk.vtkCellPicker()
 		self.template_data = None
 
 	def RegionSelectedIn(self, Id):
@@ -335,10 +310,9 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 
 	def FinalRenderView(self):
 		# Tell the application to use the function as an exit check.
-		self.renderWin.AddObserver("AbortCheckEvent", exitCheck)
 		self.renderInteractor.Initialize()
 		self.renderWin.Render()
-		self.renderInteractor.Start()
+		# self.renderInteractor.Start()
 
 	def DefineTemplateDataToBeMapped(self):
 		if vtk.VTK_MAJOR_VERSION <= 5:

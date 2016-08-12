@@ -248,7 +248,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Highlight edges</string>
+    <string>Highlight Edges</string>
    </property>
    <property name="checked">
     <bool>true</bool>
@@ -290,7 +290,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Only edges</string>
+    <string>Only Edges</string>
    </property>
    <property name="checked">
     <bool>true</bool>
@@ -319,7 +319,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Preserve positons</string>
+    <string>Preserve Positons</string>
    </property>
    <property name="checked">
     <bool>true</bool>
@@ -351,7 +351,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>Transparent nodes</string>
+    <string>Transparent Nodes</string>
    </property>
    <property name="checked">
     <bool>true</bool>
