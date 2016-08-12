@@ -309,9 +309,10 @@ class ParcelationPlotWindow(PySide.QtGui.QWidget):
 		self.renderer.AddViewProp(self.axes3)
 
 	def FinalRenderView(self):
+		pass
 		# Tell the application to use the function as an exit check.
-		self.renderInteractor.Initialize()
-		self.renderWin.Render()
+		# self.renderInteractor.Initialize()
+		# self.renderWin.Render()
 		# self.renderInteractor.Start()
 
 	def DefineTemplateDataToBeMapped(self):
