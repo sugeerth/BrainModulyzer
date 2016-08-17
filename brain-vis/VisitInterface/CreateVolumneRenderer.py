@@ -351,7 +351,7 @@ class VolumneRendererWindow(PySide.QtGui.QWidget):
 		# Tell the application to use the function as an exit check.
 		self.renderWin.AddObserver("AbortCheckEvent", exitCheck)
 		self.renderInteractor.Initialize()
-		self.renderWin.Render()
+		self.renderWin.GetInteractor().Render()
 		self.renderInteractor.Start()
 
 	def DefineTemplateDataToBeMapped(self):
