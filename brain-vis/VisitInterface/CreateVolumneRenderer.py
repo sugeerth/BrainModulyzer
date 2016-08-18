@@ -21,7 +21,7 @@ from vtk.qt.QVTKRenderWindowInteractor import *
 class MouseInteractorHighLightActor(vtk.vtkInteractorStyleTrackballCamera):
 
 	def __init__(self,VolumneRendererWindow, selectedColor, PixX, PixY, PixZ):
-		super(MouseInteractorHighLightActor, self).__init__()
+		super(MouseInteractorHighLightActor, self).__init__(self)
 
 		self.selectedColor = selectedColor
 		self.VolumneRendererWindow = VolumneRendererWindow
