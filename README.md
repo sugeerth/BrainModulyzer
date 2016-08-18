@@ -83,7 +83,11 @@ Note: Tested on OS X 10.11.6 and Ubuntu 14.04
 			export PYTHONPATH=$PYTHONPATH:/PATH_TO_VTK-7.0.0/Build/Wrapping/Python/
 		for mac
 			#port			
-			sudo port install vtk
+			sudo port install vtk 
+			#make sure the installed vtk version is 7, you can do this by 
+			python
+			import vtk 
+			print vtk.VTK_MAJOR_VERSION
 
 **Source Code:**
 In case any of the pre-existing library installation does not work, please download and install the affected libraries from source:
