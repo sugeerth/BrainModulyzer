@@ -5,4 +5,4 @@ read commitMessage
 
 git commit -m "$commitMessage"
 
-git push origin 
+git push origin master 
