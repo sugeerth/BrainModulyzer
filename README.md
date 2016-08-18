@@ -83,7 +83,7 @@ Note: Tested on OS X 10.11.6 and Ubuntu 14.04
 			export PYTHONPATH=$PYTHONPATH:/PATH_TO_VTK-7.0.0/Build/Wrapping/Python/
 		for mac
 			#port			
-			sudo port install vtk 
+			sudo port install vtk @7.0.0
 			#make sure the installed vtk version is 7, you can do this by 
 			python
 			import vtk 
