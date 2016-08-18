@@ -149,16 +149,25 @@ In the following figure,
 
 ### Citation Information###
 @ARTICLE{7466855, 
+
 author={S. Murugesan and K. Bouchard and J. A. Brown and B. Hamann and W. W. Seeley and A. Trujillo and G. H. Weber}, 
+
 journal={IEEE/ACM Transactions on Computational Biology and Bioinformatics}, 
+
 title={Brain Modulyzer: Interactive Visual Analysis of Functional Brain Connectivity}, 
+
 year={2016}, 
+
 volume={PP}, 
+
 number={99}, 
+
 pages={1-1}, 
-keywords={Correlation;Data visualization;Layout;Network topology;Organizations;Three-dimensional displays;Visualization;Brain Imaging;Functional Magnetic Resonance Imaging (fMRI);Graph Visualization;Linked Views;Neuroinformatics}, 
+
 doi={10.1109/TCBB.2016.2564970}, 
+
 ISSN={1545-5963}, 
-month={},}
+
+}
 
 <!--![ScreenShot](http://s32.postimg.org/f3a3uyms5/Teaser_CGraph_View_Page_1.jpg)-->
