@@ -32,6 +32,7 @@ Note: Tested on OS X 10.11.6 and Ubuntu 14.04
 	
 1) Install all of the following libraries in the order below:
 	
+	Installation for MAC:
 	#For mac switch to macports python for installation (as installation libraries are in macports):
 	sudo port install python27
 	port select --list python
@@ -64,7 +65,7 @@ Note: Tested on OS X 10.11.6 and Ubuntu 14.04
 			import vtk 
 			print vtk.VTK_MAJOR_VERSION
 
-	For Linux: 
+	For installation in Linux: 
 		sudo pip install numpy==1.11.0
 		sudo pip install networkx==1.11
 		sudo pip install nibabel==2.0.2
