@@ -32,7 +32,6 @@ Note: Tested on OS X 10.11.6 and Ubuntu 14.04
 	
 1) Install all of the following libraries in the order below:
 	
-	
 	#For mac switch to macports python for installation (as installation libraries are in macports):
 	sudo port install python27
 	port select --list python
@@ -51,23 +50,35 @@ Note: Tested on OS X 10.11.6 and Ubuntu 14.04
 	
 	To install Graphviz:
 		**Install latest Graphviz** version through the graphviz website--(http://www.graphviz.org/Download_macos.php)
-		
-		for linux
-			sudo apt-get install graphviz
-			sudo pip install pygraphviz==1.3.1 --install-option="--include-path=/usr/include/graphviz" --install-option="--library-path=/usr/lib/graphviz/"
-		for mac
 			sudo pip install pygraphviz==1.3.1
 	
 	To install QT:
-		for linux
-			sudo apt-get install libqt4-dev
-			sudo easy_install -U PySide
-		for mac
 			sudo port install qt4-mac
 			sudo port install py27-pyside
 	
-	To install VTK (vtk version > 5):
-		for linux
+	To install VTK (vtk version > 6.2):
+			#port			
+			sudo port install vtk @7.0.0
+			#make sure the installed vtk version is 7, you can do this by 
+			python
+			import vtk 
+			print vtk.VTK_MAJOR_VERSION
+
+	For Linux: 
+		sudo pip install numpy==1.11.0
+		sudo pip install networkx==1.11
+		sudo pip install nibabel==2.0.2
+		sudo pip install pydotplus
+		sudo pip install python-louvain
+		To install Graphviz:
+		**Install latest Graphviz** version through the graphviz website--(http://www.graphviz.org/Download_macos.php)
+			sudo apt-get install graphviz
+			sudo pip install pygraphviz==1.3.1 --install-option="--include-path=/usr/include/graphviz" --install-option="--library-path=/usr/lib/graphviz/"
+		To install QT: 
+			sudo apt-get install libqt4-dev
+			sudo easy_install -U PySide
+
+		To install VTK:
 			#This is a bit tricky, follow this step by step, in the future this will become easier
 			#Download from source VTK-7.0.0
 			[VTK7](http://www.vtk.org/files/release/7.0/VTK-7.0.0.zip)
@@ -81,14 +92,6 @@ Note: Tested on OS X 10.11.6 and Ubuntu 14.04
 			#Now all you have to do add paths in PYTHONPATHS
 			export PYTHONPATH=/PATH_TO_VTK-7.0.0/Build/lib/
 			export PYTHONPATH=$PYTHONPATH:/PATH_TO_VTK-7.0.0/Build/Wrapping/Python/
-		for mac
-			#port			
-			sudo port install vtk @7.0.0
-			#make sure the installed vtk version is 7, you can do this by 
-			python
-			import vtk 
-			print vtk.VTK_MAJOR_VERSION
-
 **Source Code:**
 In case any of the pre-existing library installation does not work, please download and install the affected libraries from source:
 
