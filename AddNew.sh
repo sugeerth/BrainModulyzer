@@ -5,4 +5,4 @@ read commitMessage
 
 git commit -m "$commitMessage"
 
-git push 
+git push origin TimeVaryingData
