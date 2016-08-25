@@ -190,7 +190,6 @@ widget.regionSelected.connect(Tab_1_CorrelationTable.selectRegion)
 widget.CommunityColor.connect(ParcelationPlot.setRegionColors)
 widget.regionSelected.connect(Tab_2_CorrelationTable.selectRegion)
 widget.regionSelected.connect(quantTableObject.setRegions)
-
 widget.show()
 
 visitViewerLayout = QtGui.QVBoxLayout()
