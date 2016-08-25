@@ -180,7 +180,7 @@ quantTableObject.DataSelected.connect(widget.NodeSelected)
 Tab_1_CorrelationTable.selectedRegionChanged.connect(quantTableObject.setRegions)
 ParcelationPlot.widget = widget
 
-print "Setting Graph interface"
+print "Setting up Graph interface"
 
 Graph_Layout=LayoutInit(widget,quantTableObject,ui,dataSetLoader,screenshot,matrix_filename\
     ,template_filename,parcelation_filename)
