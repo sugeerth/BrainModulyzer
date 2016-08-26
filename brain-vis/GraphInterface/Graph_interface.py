@@ -34,9 +34,6 @@ from GraphDataStructure import GraphVisualization
 from DendogramModule.dendogram import dendogram, DendoNode
 from CommunityFiles.communityDetectionEngine import communityDetectionEngine 
 
-
-#from pycallgraph import PyCallGraph
-#from pycallgraph.output import GraphvizOutput
 from GraphicsItems.Edge import Edge 
 from GraphicsItems.Node import Node
 
@@ -56,6 +53,51 @@ If everthing works then well and good other wise contact me.
 
 The class is self contained with many self variables 
 """
+
+class UIGraphWidget(object):
+    def __init__(self,GraphWidget):
+        """
+        Loading Static files onto the repository
+        """ 
+        self.GraphWidget = GraphWidget
+
+    # def slider_imple(self):
+    #     """implementation of Edge threshold sliders"""
+    #     self.EdgeSliderForGraph = QtGui.QSlider(QtCore.Qt.Horizontal,self)
+    #     self.EdgeSliderForGraph.setTracking(False)
+    #     self.EdgeSliderForGraph.setRange(self.GraphWidget.Graph_data().data.min()*1000 ,  self.GraphWidget.Graph_data().data.max()* 1000)
+    #     self.EdgeSliderForGraph.setValue(self.EdgeSliderValue*1000)
+    #     self.EdgeSliderForGraph.setToolTip("Edge Weight: %0.2f" % (self.EdgeSliderValue))
+    #     self.interval=((0.1-5)/10)*(-1)
+    #     self.EdgeSliderForGraph.valueChanged[int].connect(self.ChangePropertiesOfGraph)
+    # """
+    # Lineedit for the threshold values
+    # """
+    # def lineEdit(self):
+    #     """Drawing the Line editor for the purpose of manualling entering the edge threshold"""
+    #     self.Lineditor = QtGui.QLineEdit()
+    #     self.Lineditor.setText(str(self.EdgeSliderValue))
+    #     self.Lineditor.returnPressed.connect(self.LineEditChanged)
+    #     self.EdgeWeight.connect(self.EdgeSliderForGraph.setValue)
+
+    # """
+    # Controls for visualization of general purpose controls
+    # """
+    # def LineEditChanged(self):
+    #     """Handling Line Edit changes"""
+    #     text = (self.Lineditor.text().encode('ascii','ignore')).replace(' ','')
+    #     value = float(text)*1000
+    #     self.EdgeWeight.emit(int(value))
+    # """
+    # Changes in Line Edit for Community Level Slider
+    # """
+    # def LevelLineEditChanged(self):
+    #     """Handling Line Edit changes"""
+    #     text = (self.Lineditor.text().encode('ascii','ignore')).replace(' ','')
+    #     value = int(text)
+    #     self.Ui.communityLevel.setTickPosition(value)
+    #     self.DendoGramDepth.emit(value)
+
 class GraphWidget(QtGui.QGraphicsView):
     
     regionSelected = QtCore.Signal(int)
@@ -90,6 +132,8 @@ class GraphWidget(QtGui.QGraphicsView):
         self.communityobject = None
         self.correlationTable = weakref.ref(correlationTable)
         self.correlationTableObject = self.correlationTable()
+        self.UIGraphWidget = UIGraphWidget(GraphWidget)
+
         self.partition =[]
         self.sortedValues = None
         self.communityPos = dict()
@@ -220,6 +264,13 @@ class GraphWidget(QtGui.QGraphicsView):
         self.level = level-1
         self.Ui.communityLevelLineEdit.setText(str(self.level))
         self.communityDetectionEngine.ChangeCommunityColorAndInstantiateHierarchy(self.level)
+
+    def lineEdit(self):
+        """Drawing the Line editor for the purpose of manualling entering the edge threshold"""
+        self.Lineditor = QtGui.QLineEdit()
+        self.Lineditor.setText(str(self.EdgeSliderValue))
+        self.Lineditor.returnPressed.connect(self.LineEditChanged)
+        self.EdgeWeight.connect(self.EdgeSliderForGraph.setValue)
 
     """
     Changes in Line Edit for Community Level Slider
@@ -562,15 +613,7 @@ class GraphWidget(QtGui.QGraphicsView):
         text = (self.Lineditor.text().encode('ascii','ignore')).replace(' ','')
         value = float(text)*1000
         self.EdgeWeight.emit(int(value))
-    """
-    Lineedit for the threshold values
-    """
-    def lineEdit(self):
-        """Drawing the Line editor for the purpose of manualling entering the edge threshold"""
-        self.Lineditor = QtGui.QLineEdit()
-        self.Lineditor.setText(str(self.EdgeSliderValue))
-        self.Lineditor.returnPressed.connect(self.LineEditChanged)
-        self.EdgeWeight.connect(self.EdgeSliderForGraph.setValue)
+
 
     """
     Colors for the Graph and Edges 

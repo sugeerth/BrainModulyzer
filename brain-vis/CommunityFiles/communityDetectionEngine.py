@@ -155,9 +155,7 @@ class communityDetectionEngine(QtCore.QObject):
         partitionArray = bct.modularity_louvain_und(GraphData)
         partition = dict()
         for i,data in enumerate(partitionArray[0]):
-            print i,data 
             partition[i] = int(data-1) 
-
         return partition
 
     """
@@ -172,6 +170,7 @@ class communityDetectionEngine(QtCore.QObject):
             induced_graph = cm.induced_graph(partition,self.g)
             if not(self.Graphwidget.level == -1): 
                 dendo=cm.generate_dendrogram(self.g)
+                
                 g = cm.partition_at_level(dendo,self.Graphwidget.level)
                 partition = g
             self.ColorForCommunities(len(set(partition.values())))

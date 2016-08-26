@@ -26,8 +26,6 @@ height = 800;
 
 Nodes = 21 
 Timestep = 205
-
-
 # SampleTimeVaryingGraphs = 'fc_mat_sliding_21_21_205.txt'
 
 class CommunityDataProcessing(object):
