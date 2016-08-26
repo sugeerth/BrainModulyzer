@@ -69,10 +69,9 @@ class CommunityDataProcessing(object):
 
 	def defineCommunities(self, CommunityGraph, data):
 		newdata = np.array(data)
-		partition1 = bct.modularity_louvain_und(newdata, hierarchy = True)
-		# partition2 = cm.best_partition(CommunityGraph)
-		print partition1, "---------------"
-		return partition1
+		partition = bct.modularity_louvain_und(newdata)
+		print partition, "---------------"
+		return partition
 
 class dataProcessing(object):
 	def __init__(self):
@@ -110,10 +109,6 @@ class dataProcessing(object):
 					counter = counter+1
 					i = 0
 		return arraylist
-
-	def NetworkXFileForAnalysis(self,Data):
-		GraphData = cm.best_partition(Data)
-		print GraphData
 
 	def GenerateCommunities(self,Data, Timestep): 
 		self.nodelist = [] 
