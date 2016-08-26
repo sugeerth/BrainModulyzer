@@ -34,7 +34,6 @@ class CommunityDataProcessing(object):
 		low_values_indices = None
 		ThresholdData = np.copy(NumpyGraphData[Timestep])
 		ThresholdData = nx.from_numpy_matrix(ThresholdData) 
-
 		return ThresholdData
 
 	def ModelNegativeGraph(self, NumpyGraphData, Timestep):
@@ -70,20 +69,6 @@ class CommunityDataProcessing(object):
 		partition=cm.best_partition(CommunityGraph)
 		return partition
 
-	def computeKmeans(self,Number_of_clusters,data, iterations = 100):
-		partition = dict()
-		nb_clusters = Number_of_clusters # this is the number of cluster the dataset is supposed to be partitioned into
-		distances = nx.to_numpy_matrix(data)
-
-		clusterid, error, nfound = Pycluster.kcluster(distances, nclusters= nb_clusters, npass=300)
-
-		uniq_ids = list(set(clusterid))
-		new_ids = [ uniq_ids.index(val) for val in clusterid]
-
-		for i,value in enumerate(new_ids):
-			partition[i] = value
-		return partition
-
 class dataProcessing(object):
 	def __init__(self):
 		"""
@@ -91,6 +76,9 @@ class dataProcessing(object):
 		"""
 		self.CommunityObject = CommunityDataProcessing()
 		self.MatRenderData = self.loadSyntheticDatasets(SampleTimeVaryingGraphs)
+		
+		for i in range(205):
+			self.GenerateCommunities(self.MatRenderData,i)
 
 	def loadSyntheticDatasets(self, EnronDatasets):	
 		"""
@@ -118,31 +106,21 @@ class dataProcessing(object):
 					i = 0
 		return arraylist
 
-	def loadMatFiles(self, SeizureGraph):
-		graphData=scipy.io.loadmat(SeizureGraph)
-		graphData = graphData['conData']
-		return graphData
-
-	def loadJSONFiles(self,KarateGraph):
-		with open(KarateGraph) as data_file:    
-			graphData = json.load(data_file)
-		return graphData
-
 	def NetworkXFileForAnalysis(self,Data):
 		GraphData = cm.best_partition(Data)
 		print GraphData
 
-	def formatEarlierConsensusMatrix(self,Data, Timestep): 
+	def GenerateCommunities(self,Data, Timestep): 
 		self.nodelist = [] 
 		self.edgelist = []
-		
+
 		width =600
 		height=600
 
-		GraphForCommunity = self.CommunityObject.ModelGraph(Data, Timestep) 
-		CommunityHashmap = self.CommunityObject.defineConsensusCommunities(EpilepsyName1, Timestep) 
-
+		GraphForCommunity = self.CommunityObject.ModelNegativeGraph(Data, Timestep) 
+		CommunityHashmap = self.CommunityObject.defineCommunities(GraphForCommunity) 
 		ThresholdData = nx.to_numpy_matrix(GraphForCommunity)
+		print CommunityHashmap
 
 	def returnDynamicData(self):
 		return self.RenderData
