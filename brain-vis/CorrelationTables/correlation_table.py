@@ -7,21 +7,138 @@ import time
 import math
 import copy
 from PySide import QtCore, QtGui
+import json
+from pprint import pprint
+import scipy.io
+import numpy as np
+import community as cm
+import pprint
+import os,sys
+from random import randint
+import networkx as nx
+import pydot 
+import bct
+import Pycluster
+import pickle 
+import pyparsing
+import numpy
+import csv
+
+"""
+This is the data that needs to be changed based on the format of the data
+"""
+weight = 0
+ThresholdValue = 0
+
+width = 1280,
+height = 800;
+
+Nodes = 21 
+Timestep = 205
+
+class CommunityDataProcessing(object):
+    def __init__(self):
+        self.communityData = None
+        self.timestepPartition = None
+
+    def ModelGraph(self, NumpyGraphData, Timestep):
+        low_values_indices = None
+        ThresholdData = np.copy(NumpyGraphData[Timestep])
+        ThresholdData = nx.from_numpy_matrix(ThresholdData) 
+        return ThresholdData
+
+    def get_Pos_Neg_Partition(self,Graph):
+        GraphData=nx.to_numpy_matrix(Graph)
+        partitionArray = bct.modularity_louvain_und(GraphData)
+        partition = dict()
+        for i,data in enumerate(partitionArray[0]): 
+            partition[i] = data 
+        return partition
+
+    def defineCommunities(self, CommunityGraph, data):
+        newdata = np.array(data)
+        partitionArray = bct.modularity_louvain_und(newdata)
+        partition = dict()
+        for i,data in enumerate(partitionArray[0]): 
+            partition[i] = data 
+        
+        # Method to get the associated hierarchy associated with the hierarchy 
+        # partitionHierarchyArray = bct.modularity_louvain_und(newdata, hierarchy = True)
+
+        # for i,data in enumerate(partitionArray[0]): 
+        #     partition[i] = data 
+
+        return partition
+
+class dataProcessing(object):
+    def __init__(self,filename):
+        """
+        Loading Static files onto the repository
+        """
+        self.CommunityObject = CommunityDataProcessing()
+        self.filename = filename
+        self.MatRenderData = self.loadSyntheticDatasets()
+        self.communityHashmap = dict()
+
+        for i in range(Timestep):
+            self.communityHashmap[i] = self.GenerateCommunities(self.MatRenderData,i)
+
+    def GenerateCommunities(self,Data, Timestep): 
+        GraphForCommunity = self.CommunityObject.ModelGraph(Data, Timestep) 
+        ThresholdData = nx.to_numpy_matrix(GraphForCommunity)
+        CommunityHashmap = self.CommunityObject.defineCommunities(GraphForCommunity,ThresholdData) 
+
+    def getCommunityData(self, Time):
+        return self.communityHashmap[Time]
+
+    def loadSyntheticDatasets(self): 
+        """
+        Loads the enron dataset into the datastructure to show 
+
+        graphData == 0--10 timesteps with nodes, edges and changes in graphs. 
+        Idea to find out how the community structure cahnges and what happens 
+        to the overall topology
+        """
+        with open(self.filename) as f: 
+            array=numpy.zeros((21,21))
+            i = 0 
+            counter = 0
+            arraylist = numpy.zeros((205,21,21),dtype=np.float64)
+            for line in f: 
+                line = line.strip()
+                data = np.array(map(float,line.split(' ')))
+                for k,data1 in enumerate(data):
+                    if counter== 0 and i == 1 and k ==0:
+                        savedValue = data1
+                    arraylist[counter][i][k] = np.float64(data1)
+                i = i+1 
+                if (i == 21):
+                    counter = counter+1
+                    i = 0
+        return arraylist
+
+    def returnDynamicData(self):
+        return self.RenderData
 
 
 """Class responsible for transferring data from files to self.data"""
 class CorrelationTable(object):
-    def __init__(self, filename,dataProcess=None):
+    def __init__(self, filename, dataProcess=None):
         self.header = None
         self.AbbrName = []
         self.data = []
         self.RegionName = []
-        
-        with open(filename, 'rb') as csvfile:
-            reader = csv.reader(csvfile, delimiter=',', quotechar='\'')
-            self.header = reader.next()
-            self.RegionName.append((self.header))
-            self.data=np.array([map(float, line) for line in reader])
+        self.dataProcess = dataProcessing(filename)
+                
+        self.data = self.dataProcess.MatRenderData[20] 
+        self.header = [str(i) for i in range(Nodes)]
+        self.RegionName.append(self.header)
+
+        # with open(filename, 'rb') as csvfile:
+        #     reader = csv.reader(csvfile, delimiter=',', quotechar='\'')
+        #     self.header = reader.next()
+        #     self.RegionName.append((self.header))
+        #     self.data=np.array([map(float, line) for line in reader])
 
     """
     Function for finding the absolute value of correlation values 

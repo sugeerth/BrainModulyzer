@@ -56,7 +56,6 @@ If everthing works then well and good other wise contact me.
 
 The class is self contained with many self variables 
 """
-
 class GraphWidget(QtGui.QGraphicsView):
     
     regionSelected = QtCore.Signal(int)

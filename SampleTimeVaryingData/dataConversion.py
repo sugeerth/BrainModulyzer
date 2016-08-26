@@ -24,7 +24,11 @@ ThresholdValue = 0
 width = 1280,
 height = 800;
 
-SampleTimeVaryingGraphs = 'fc_mat_sliding_21_21_205.txt'
+Nodes = 21 
+Timestep = 205
+
+
+# SampleTimeVaryingGraphs = 'fc_mat_sliding_21_21_205.txt'
 
 class CommunityDataProcessing(object):
 	def __init__(self):
@@ -43,12 +47,6 @@ class CommunityDataProcessing(object):
 		ThresholdData = nx.from_numpy_matrix(ThresholdData) 
 		return ThresholdData
 
-	def NetworkXKarateGraph(self,JsonData):
-		G = nx.DiGraph()
-		G.add_nodes_from(JsonData['nodes'])
-		G.add_edges_from(JsonData['edges'])
-		return G
-
 	def ThresholdMatrix(self, data):
 		for i in range(len(data)):
 			for j in range(len(data)):
@@ -56,16 +54,6 @@ class CommunityDataProcessing(object):
 					pass
 					# data[i,j] = 0
 		return data
-
-	"""
-	Computing the layout from the algorithm in python
-	"""
-	def definePositions(self, CommunityGraph, prog):
-		return nx.spring_layout(CommunityGraph)
-
-	def defineConsensusCommunities(self, EpilepsyName, Timestep):
-		self.timestepPartition = pickle.load(open(EpilepsyName))
-		return self.timestepPartition[Timestep]
 
 	def defineCommunities(self, CommunityGraph, data):
 		newdata = np.array(data)
@@ -111,12 +99,6 @@ class dataProcessing(object):
 		return arraylist
 
 	def GenerateCommunities(self,Data, Timestep): 
-		self.nodelist = [] 
-		self.edgelist = []
-
-		width =600
-		height=600
-
 		GraphForCommunity = self.CommunityObject.ModelNegativeGraph(Data, Timestep) 
 		ThresholdData = nx.to_numpy_matrix(GraphForCommunity)
 		CommunityHashmap = self.CommunityObject.defineCommunities(GraphForCommunity,ThresholdData) 

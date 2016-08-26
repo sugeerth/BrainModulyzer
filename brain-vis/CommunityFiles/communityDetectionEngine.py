@@ -5,7 +5,7 @@ import colorsys
 from collections import defaultdict
 from PySide import QtCore, QtGui
 from PySide.QtCore import *
-
+import bct
 import warnings
 warnings.filterwarnings("ignore")
 
@@ -150,6 +150,16 @@ class communityDetectionEngine(QtCore.QObject):
                 k=k+1
         return k
 
+    def get_Pos_Neg_Partition(self,Graph):
+        GraphData=np.array(nx.to_numpy_matrix(Graph))
+        partitionArray = bct.modularity_louvain_und(GraphData)
+        partition = dict()
+        for i,data in enumerate(partitionArray[0]):
+            print i,data 
+            partition[i] = int(data-1) 
+
+        return partition
+
     """
     Class called to calculate the graph Layout during community detection
     """
@@ -157,7 +167,7 @@ class communityDetectionEngine(QtCore.QObject):
         self.g = g 
 
         if not(self.Graphwidget.ColorNodesBasedOnCorrelation):
-            partition=cm.best_partition(self.g)
+            partition=self.get_Pos_Neg_Partition(self.g)
             size = float(len(set(partition.values())))
             induced_graph = cm.induced_graph(partition,self.g)
             if not(self.Graphwidget.level == -1): 
@@ -216,7 +226,7 @@ class communityDetectionEngine(QtCore.QObject):
     def ChangeCommunityColorAndInstantiateHierarchy(self, level = -1):
         self.g =  self.Graphwidget.Graph_data().DrawHighlightedGraph(self.Graphwidget.EdgeSliderValue)
         self.ColorNodesBasedOnCorrelation = False 
-        self.partition=cm.best_partition(self.g)
+        self.partition=self.get_Pos_Neg_Partition(self.g)
         self.induced_graph = cm.induced_graph(self.partition,self.g)
 
         if not(level == -1): 
@@ -379,14 +389,14 @@ class communityDetectionEngine(QtCore.QObject):
         end = int(self.correlationTable().data.max()*1000)
         g1 = self.Graphwidget.Graph_data().DrawHighlightedGraph(self.Graphwidget.EdgeSliderValue)
         # counter = 0.225
-        partition=cm.best_partition(g1)
+        partition=self.get_Pos_Neg_Partition(g1)
         Number_of_Communitie = len(set(partition.values()))
 
         for i in range(0,end):
             counter = float(i)/1000
             g1 =  self.Graphwidget.Graph_data().DrawHighlightedGraph(counter)
             try: 
-                partition=cm.best_partition(g1)
+                partition=self.get_Pos_Neg_Partition(g1)
                 modularity[i] = cm.modularity(partition, g1)
                 Number_of_Connected_Components[i] = nx.number_connected_components(g1)
                 Number_of_Communities[i] = len(set(partition.values()))
@@ -435,7 +445,7 @@ class communityDetectionEngine(QtCore.QObject):
         affiliation vector. This function uses the community affiliations as determined
         by the Louvain modularity algorithm (http://perso.crans.org/aynaud/communities/).
         """
-        partition = cm.best_partition(G)
+        partition = self.get_Pos_Neg_Partition(G)
         partition_list = []
         for count in range(len(partition)):
             partition_list.append(partition[count])
