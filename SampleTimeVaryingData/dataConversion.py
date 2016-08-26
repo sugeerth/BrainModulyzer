@@ -8,6 +8,7 @@ import os,sys
 from random import randint
 import networkx as nx
 import pydot 
+import bct
 import Pycluster
 import pickle 
 import pyparsing
@@ -51,8 +52,9 @@ class CommunityDataProcessing(object):
 	def ThresholdMatrix(self, data):
 		for i in range(len(data)):
 			for j in range(len(data)):
-				if data[i,j] <= 0: 
-					data[i,j] = 0
+				if data[i,j] <= 0:
+					pass
+					# data[i,j] = 0
 		return data
 
 	"""
@@ -65,9 +67,12 @@ class CommunityDataProcessing(object):
 		self.timestepPartition = pickle.load(open(EpilepsyName))
 		return self.timestepPartition[Timestep]
 
-	def defineCommunities(self, CommunityGraph):
-		partition=cm.best_partition(CommunityGraph)
-		return partition
+	def defineCommunities(self, CommunityGraph, data):
+		newdata = np.array(data)
+		partition1 = bct.modularity_louvain_und(newdata, hierarchy = True)
+		# partition2 = cm.best_partition(CommunityGraph)
+		print partition1, "---------------"
+		return partition1
 
 class dataProcessing(object):
 	def __init__(self):
@@ -118,8 +123,9 @@ class dataProcessing(object):
 		height=600
 
 		GraphForCommunity = self.CommunityObject.ModelNegativeGraph(Data, Timestep) 
-		CommunityHashmap = self.CommunityObject.defineCommunities(GraphForCommunity) 
 		ThresholdData = nx.to_numpy_matrix(GraphForCommunity)
+		CommunityHashmap = self.CommunityObject.defineCommunities(GraphForCommunity,ThresholdData) 
+
 		print CommunityHashmap
 
 	def returnDynamicData(self):
