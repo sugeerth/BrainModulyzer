@@ -47,6 +47,7 @@ Note: Tested on OS X 10.11.6 and Ubuntu 14.04
 	sudo pip install networkx==1.11
 	sudo pip install nibabel==2.0.2
 	sudo pip install pydotplus
+	sudo pip install bct
 	sudo pip install python-louvain
 	
 	To install Graphviz:
@@ -70,6 +71,7 @@ Note: Tested on OS X 10.11.6 and Ubuntu 14.04
 		sudo pip install networkx==1.11
 		sudo pip install nibabel==2.0.2
 		sudo pip install pydotplus
+		sudo pip install bct
 		sudo pip install python-louvain
 		To install Graphviz:
 		**Install latest Graphviz** version through the graphviz website--(http://www.graphviz.org/Download_macos.php)
