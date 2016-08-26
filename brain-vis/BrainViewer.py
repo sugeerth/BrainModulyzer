@@ -40,7 +40,7 @@ from GraphInterface.GraphDataStructure import GraphVisualization
 from General_Interface.Layout_interface import LayoutInit
 from UIFiles.ProcessUi import ProcessQuantTable
 from VisitInterface.CreateParcelationPlot import ParcelationPlotWindow
-from PathFiles import *
+from PathLookup.PathFiles import *
 
 """
 This is the main classless interface that talks to all other modules

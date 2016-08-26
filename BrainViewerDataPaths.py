@@ -30,7 +30,7 @@ CURR = os.path.join(CURR, "SampleData/"+str(DataSetValue)+"/")
 # parcelation_filename = '/Users/sugeerthmurugesan/LBLProjects/TCBBDownload/TestDirectory/brain-vis-git/SampleData/Dataset1/allROIs.nii.gz'
 # template_filename = '/Users/sugeerthmurugesan/LBLProjects/TCBBDownload/TestDirectory/brain-vis-git/SampleData/Dataset1/ch2better.nii.gz'
 
-matrix_filename = str(os.path.join(CURR,'FinalCSVData.csv'))
+matrix_filename = str(os.path.join(CURR,'Final27NodeCSVData.csv'))
 parcelation_filename = str(os.path.join(CURR, "allROIs.nii.gz"))
 template_filename = str(os.path.join(CURR, "ch2better.nii.gz"))
 
