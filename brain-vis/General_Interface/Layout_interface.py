@@ -30,6 +30,7 @@ class LayoutInit(QtGui.QWidget):
         self.dialogueConnect()
 
         Node_Label= QtGui.QLabel('Edge Weight Threshold')
+        Time_Label= QtGui.QLabel('Time')
         
         Ui.highlightEdges.stateChanged.connect(widget.changeHighlightedEdges)
         Ui.colorEdges.stateChanged.connect(widget.changeTitle)
@@ -60,6 +61,11 @@ class LayoutInit(QtGui.QWidget):
         self.horizontalLayout.addWidget(widget.EdgeSliderForGraph,0,1)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.addWidget(widget.Lineditor,0,101,0,102)
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+
+        self.horizontalLayout.addWidget(Time_Label,1,0)
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout.addWidget(widget.TimeSliderForGraph,1,1)
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
 
         hbox = QtGui.QVBoxLayout()
@@ -99,6 +105,7 @@ class LayoutInit(QtGui.QWidget):
     def widgetChanges(self):
         self.widget.setMinimumSize(400, 400)
         self.widget.slider_imple()
+        self.widget.time_slider_imple()
         # Enabling node slider for analysis 
         self.widget.lineEdit()
 

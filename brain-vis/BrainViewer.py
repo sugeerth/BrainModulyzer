@@ -140,7 +140,7 @@ slice_views[2].regionSelected.connect(ParcelationPlot.colorRelativeToRegion)
 
 
 print "Setting up Graph data GraphDataStructure"
-Tab_2_AdjacencyMatrix = GraphVisualization(correlationTable.data)
+Tab_2_AdjacencyMatrix = GraphVisualization(correlationTable)
 
 print "Setting up CorrelationTable for communities"
 Tab_2_CorrelationTable = CommunityCorrelationTableDisplay(correlationTable, colorTable,Tab_2_AdjacencyMatrix)

@@ -17,9 +17,10 @@ class GraphVisualization(QtGui.QWidget):
     """This class is responsible for GraphVisualization from the data given"""
     filename = ""
     regionSelected = QtCore.Signal(int)
-    def __init__(self,data):
+    def __init__(self,CorrelationTable):
         super(GraphVisualization, self).__init__()
-        self.data = data
+        self.data = CorrelationTable.data
+        self.CorrelationTable = CorrelationTable
         self.G = nx.from_numpy_matrix(self.data)  
         self.DrawHighlightedGraph()
 
@@ -33,6 +34,7 @@ class GraphVisualization(QtGui.QWidget):
     Identifies the minimum value of the entire matrix
     """
     def DrawHighlightedGraph(self,weight=None):
+        self.data = self.CorrelationTable.data
         if not(weight):
             weight = self.data.min()
 	self.Find_HighlightedEdges(weight)

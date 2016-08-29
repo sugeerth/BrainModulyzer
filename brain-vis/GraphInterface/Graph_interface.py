@@ -182,6 +182,8 @@ class GraphWidget(QtGui.QGraphicsView):
         self.setDragMode(QtGui.QGraphicsView.ScrollHandDrag)
         self.scaleView(2.0)
 
+
+        self.TimeSliderValue = 0.0
         self.NodeIds = []
 
         self.wid = QtGui.QWidget()
@@ -596,6 +598,53 @@ class GraphWidget(QtGui.QGraphicsView):
         self.interval=((0.1-5)/10)*(-1)
         self.EdgeSliderForGraph.valueChanged[int].connect(self.ChangePropertiesOfGraph)
 
+    def time_slider_imple(self):
+        """implementation of Edge threshold sliders"""
+        self.TimeSliderForGraph = QtGui.QSlider(QtCore.Qt.Horizontal,self)
+        self.TimeSliderForGraph.setTracking(False)
+        self.TimeSliderForGraph.setRange(0, 205)
+        self.TimeSliderForGraph.setValue(0)
+        self.TimeSliderForGraph.setToolTip("Time Domain: %0.2f" % (self.TimeSliderValue))
+        self.TimeSliderForGraph.valueChanged[int].connect(self.ChangeTimePropertiesOfGraph)
+
+    def ChangeTimePropertiesOfGraph(self,TimeValue):
+        """Changing the value of the communities"""
+        self.TimeSliderValue = TimeValue
+        self.TimeSliderForGraph.setValue = self.TimeSliderValue
+        self.TimeSliderForGraph.setToolTip("Time Domain: %0.2f" % (self.TimeSliderValue))
+
+        self.correlationTable().changeTableContents(self.TimeSliderValue)
+        # updateing the edges in the graph
+        # k = 0 
+        # for i in range(1, self.counter):
+        #     for j in range(1, self.counter):
+        #         if (i-1 >= j-1): 
+        #             continue
+        #         try:
+        #             t = self.correlationTable().value(i-1,j-1)
+        #             self.Scene_to_be_updated.addItem(Edge(self,self.NodeIds[i-1],self.NodeIds[j-1],k,i,j,self.Max, self.Graph_data().data[i-1][j-1]))
+        #         except KeyError:
+        #             continue
+        #         k = k + 1 
+
+        if not(self.PositionPreserve):
+            self.changeLayout(self.Layout)
+
+        for edge in self.edges:
+            edge().Threshold(self.EdgeSliderValue)
+        
+        if not(self.ColorNodesBasedOnCorrelation):
+            if not(self.PositionPreserve):
+                pass
+            else:
+                if not(self.level == -1):
+                    self.communityDetectionEngine.ChangeCommunityColorAndInstantiateHierarchy(self.level-1)
+                else: 
+                    self.communityDetectionEngine.ChangeCommunityColorAndInstantiateHierarchy()
+            self.CommunityColor.emit(self.communityDetectionEngine.ColorToBeSentToVisit)
+        
+        self.UpdateThresholdDegree()
+
     """
     Slots for changing the thickness of the edges , (Can then be extended into other forms)
     """
@@ -613,7 +662,6 @@ class GraphWidget(QtGui.QGraphicsView):
         text = (self.Lineditor.text().encode('ascii','ignore')).replace(' ','')
         value = float(text)*1000
         self.EdgeWeight.emit(int(value))
-
 
     """
     Colors for the Graph and Edges 

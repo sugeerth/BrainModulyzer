@@ -130,7 +130,7 @@ class CorrelationTable(object):
         self.RegionName = []
         self.dataProcess = dataProcessing(filename)
                 
-        self.data = self.dataProcess.MatRenderData[20] 
+        self.data = self.dataProcess.MatRenderData[0] 
         self.header = [str(i) for i in range(Nodes)]
         self.RegionName.append(self.header)
 
@@ -148,6 +148,14 @@ class CorrelationTable(object):
             for j in range(len(self.data)):
                 self.data[i,j] = abs(self.data[i,j])
 
+    def changeTableContents(self,TimeStep):
+        self.data = self.dataProcess.MatRenderData[TimeStep] 
+        # self.data = self.dataProcess.ElectodeData[Syllable][TimeStep]
+        """
+        Correlation values here are actually mean shifted. This varies from 
+        application to application
+        WE can eventually make this something intelligent
+        """
     def value(self, i, j):
         return self.data[i, j]
 
