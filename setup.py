@@ -11,7 +11,6 @@ setuptools.setup(
 	maintainer_email="smuru@ucdavis.edu",
 	description=("A visualizer for brain networks"),
 	license="BSD",
-	packages=["brainmodulyzer"],
 	package_data={'brainmodulyzer':['src/*']},
 	scripts=['src/RunProjectMain.py'],
 	url="https://github.com/sugeerth/BrainModulyzer",
