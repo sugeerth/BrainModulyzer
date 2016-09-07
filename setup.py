@@ -25,5 +25,5 @@ setuptools.setup(
 		"Topic :: Scientific/Engineering :: Visualization",
 	],
 	platforms=['any'],
-	install_requires=["vtk","numpy","nibabel","networkx","pygraphviz","PySide","python-louvain"]
+	install_requires=["vtk","numpy","nibabel","networkx","pygraphviz","PySide","python-louvain","pydotplus"]
 )
