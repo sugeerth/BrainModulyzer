@@ -42,7 +42,7 @@ Note: Tested on OS X 10.11.6 and Ubuntu 14.04
 	
 	conda install -c sugeerth brainm=1.0.1
 	
-	Download this repository and then goto this folder 
+	#Download Brain Modulyzer repository and then goto src folder 
 	
 	modulyzerdir/src> RunProjectMain.py 
 		
