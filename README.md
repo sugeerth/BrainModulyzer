@@ -29,7 +29,24 @@ We present *Brain Modulyzer*, an interactive visual exploration tool for functio
 
 ### Getting Started  ###
 Note: Tested on OS X 10.11.6 and Ubuntu 14.04
+
+	# Conda installation, if you dont have conda, then install via (http://conda.pydata.org/docs/install/quick.html)
+	conda install python=2.7
+	conda install anaconda-client
+	conda config --add channels anaconda
+	conda config --add channels pdrops  
+	conda config --add channels allank
+	conda config --add channels asmeurer 
+	conda config --add channels menpo
+	conda config --add channels conda-forge
 	
+	conda install -c sugeerth brainm=1.0.1
+	
+	Download this repository and then goto this folder 
+	
+	modulyzerdir/src> RunProjectMain.py 
+		
+	OR 
 1) Install all of the following libraries in the order below:
 	
 	Installation for MAC:
