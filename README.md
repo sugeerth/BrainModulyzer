@@ -66,28 +66,22 @@ In the following figure,
 
 [![ScreenShot](http://s32.postimg.org/7zro1qnrp/Visual_Tool_Page_1.jpg)]()
 
+Contributing
+------------
+
+See [Contributing](CONTRIBUTING.md)
 
 ### Citation Information###
 @ARTICLE{7466855, 
-
 author={S. Murugesan and K. Bouchard and J. A. Brown and B. Hamann and W. W. Seeley and A. Trujillo and G. H. Weber}, 
-
 journal={IEEE/ACM Transactions on Computational Biology and Bioinformatics}, 
-
 title={Brain Modulyzer: Interactive Visual Analysis of Functional Brain Connectivity}, 
-
 year={2016}, 
-
 volume={PP}, 
-
 number={99}, 
-
 pages={1-1}, 
-
 doi={10.1109/TCBB.2016.2564970}, 
-
 ISSN={1545-5963}, 
-
 }
 
 ### License Information ###
