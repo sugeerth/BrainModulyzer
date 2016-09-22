@@ -21,4 +21,4 @@ template_filename = str(os.path.join(CURR, "ch2better.nii.gz"))
 # the other windows whenever you want
 GraphWindowShowFlag = True
 MainWindowShowFlag = True
-CorrelationTableShowFlag = False
+CorrelationTableShowFlag = True
