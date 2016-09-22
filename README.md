@@ -76,7 +76,7 @@ Please cite Brain Modulyzer in your publications if it helps your research:
 
     @article{muru2016modulyzer,
       Author = {S. Murugesan and K. Bouchard and J. A. Brown and B. Hamann and W. W. Seeley and A. Trujillo and G. H. Weber},
-      Journal = {arXiv preprint arXiv:1408.5093},
+      Journal = {IEEE/ACM transactions on computational biology and bioinformatics/IEEE, ACM},
       Title = {Brain Modulyzer: Interactive Visual Analysis of Functional Brain Connectivity},
       Year = {2016},
       doi={10.1109/TCBB.2016.2564970}, 
