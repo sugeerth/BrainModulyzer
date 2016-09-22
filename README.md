@@ -54,8 +54,7 @@ Happy Analysis!
 **RunMainProject.py** -- path for running the application
 
 ##Running the Tool 
-        modulyzerdir> export PYTHONPATH=${PYTHONPATH}:modulyzerdir
-        modulyzerdir> python RunMainProject.py
+        modulyzerdir/src> RunMainProject.py
 
 In the following figure, 
 
