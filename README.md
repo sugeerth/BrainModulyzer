@@ -54,8 +54,7 @@ Happy Analysis!
 **RunMainProject.py** -- path for running the application
 
 ##Running the Tool 
-        modulyzerdir> export PYTHONPATH=${PYTHONPATH}:modulyzerdir
-        modulyzerdir> python RunMainProject.py
+        modulyzerdir/src> RunMainProject.py
 
 In the following figure, 
 
@@ -67,31 +66,25 @@ In the following figure,
 
 [![ScreenShot](http://s32.postimg.org/7zro1qnrp/Visual_Tool_Page_1.jpg)]()
 
+Contributing
+------------
+
+See [Contributing](CONTRIBUTING.md)
 
 ### Citation Information###
-@ARTICLE{7466855, 
+Please cite Brain Modulyzer in your publications if it helps your research:
 
-author={S. Murugesan and K. Bouchard and J. A. Brown and B. Hamann and W. W. Seeley and A. Trujillo and G. H. Weber}, 
-
-journal={IEEE/ACM Transactions on Computational Biology and Bioinformatics}, 
-
-title={Brain Modulyzer: Interactive Visual Analysis of Functional Brain Connectivity}, 
-
-year={2016}, 
-
-volume={PP}, 
-
-number={99}, 
-
-pages={1-1}, 
-
-doi={10.1109/TCBB.2016.2564970}, 
-
-ISSN={1545-5963}, 
-
-}
+    @article{muru2016modulyzer,
+      Author = {S. Murugesan and K. Bouchard and J. A. Brown and B. Hamann and W. W. Seeley and A. Trujillo and G. H. Weber},
+      Journal = {IEEE/ACM transactions on computational biology and bioinformatics/IEEE, ACM},
+      Title = {Brain Modulyzer: Interactive Visual Analysis of Functional Brain Connectivity},
+      Year = {2016},
+      doi={10.1109/TCBB.2016.2564970}, 
+    }
 
 ### License Information ###
+
+Brain Modulyzer is released under the [BSD license](https://github.com/sugeerth/BrainModulyzer/blob/master/LICENSE).
 
 Brain Modulyzer Copyright (c) 2016, The Regents of the University of California, through Lawrence Berkeley National Laboratory (subject to receipt of any required approvals from the U.S. Dept. of Energy).  All rights reserved.
  
