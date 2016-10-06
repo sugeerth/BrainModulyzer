@@ -46,6 +46,75 @@ Note: Tested on OS X 10.11.6 and Ubuntu 14.04
 	
 	modulyzerdir/src> RunProjectMain.py 
 		
+		
+		
+		#For mac switch to macports python for installation (as installation libraries are in macports):
+	sudo port install python27
+	port select --list python
+	sudo port select --set python python27
+		
+	#For mac set the pip for macports: 
+	sudo port install py27-pip
+	sudo port select --list pip 
+	sudo port select --set pip pip27
+
+	sudo pip install numpy==1.11.0
+	sudo pip install networkx==1.11
+	sudo pip install nibabel==2.0.2
+	sudo pip install pydotplus
+	sudo pip install python-louvain
+	
+	To install Graphviz:
+		**Install latest Graphviz** version through the graphviz website--(http://www.graphviz.org/Download_macos.php)
+		
+		for linux
+			sudo apt-get install graphviz
+			sudo pip install pygraphviz==1.3.1 --install-option="--include-path=/usr/include/graphviz" --install-option="--library-path=/usr/lib/graphviz/"
+		for mac
+			sudo pip install pygraphviz==1.3.1
+	
+	To install QT:
+		for linux
+			sudo apt-get install libqt4-dev
+			sudo easy_install -U PySide
+		for mac
+			sudo port install qt4-mac
+			sudo port install py27-pyside
+	
+	To install VTK (vtk version > 5):
+		for linux
+			#This is a bit tricky, follow this step by step, in the future this will become easier
+			#Download from source VTK-7.0.0
+			[VTK7](http://www.vtk.org/files/release/7.0/VTK-7.0.0.zip)
+			unzip VTK-7.0.0.zip
+			cd VTK-7.0.0
+			mkdir Build
+			cd Build 
+			ccmake .. (in GUI turn two flags BUILD_SHARED_LIBS ON and PYTHON_WRAPPING, press 'c' twice and when the config completes press 'g')
+			make -j 8
+			sudo make install
+			#Now all you have to do add paths in PYTHONPATHS
+			export PYTHONPATH=/PATH_TO_VTK-7.0.0/Build/lib/
+			export PYTHONPATH=$PYTHONPATH:/PATH_TO_VTK-7.0.0/Build/Wrapping/Python/
+		for mac
+			#port			
+			sudo port install vtk
+
+####Major Files
+In case any of the pre-existing library installation does not work, please download and install the affected libraries from source:
+
+	[Numpy](https://sourceforge.net/projects/numpy/files/NumPy/1.11.0/numpy-1.11.0.tar.gz/download )
+	[Networkx](https://pypi.python.org/packages/c2/93/dbb41b03cf7c878a7409c8e92226531f840a423c9309ea534873a83c9192/networkx-1.11.tar.gz#md5=6ef584a879e9163013e9a762e1cf7cd1 )
+	[Nibabel](http://nipy.org/nibabel/installation.html#installation ) 
+	[Louvain](https://pypi.python.org/packages/5d/81/497a95ba9d79d5bf04f9318256d1c0102329dd6a77b9d1e4dd84871e1089/python-louvain-0.5.tar.gz )
+	[PyDot](https://pypi.python.org/pypi/pydot3/1.0.8 )
+	[PySide](https://pypi.python.org/pypi/PySide/1.2.4)
+	[PyGraphViz](https://pypi.python.org/packages/98/bb/a32e33f7665b921c926209305dde66fe41003a4ad934b10efb7c1211a419/pygraphviz-1.3.1.tar.gz#md5=7f690295dfe77edaa9e552d09d98d279 )
+	
+	Note: If after installing, "import pygraphviz" returns an error, then uninstall and reinstall using: 	
+	pip install pygraphviz --install-option="--include-path=/usr/local/include/graphviz" --install-option="--library-path=/usr/local/lib/graphviz/" (https://github.com/pygraphviz/pygraphviz/issues/72)
+
+	[VTK and PyVTK](http://www.it.uu.se/edu/course/homepage/vetvis/ht10/vtk/instructions_vtk_OSX.pdf) 
 	
 Happy Analysis! 
 
