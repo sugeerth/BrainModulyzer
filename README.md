@@ -47,8 +47,9 @@ Note: Tested on OS X 10.11.6 and Ubuntu 14.04
 	modulyzerdir/src> RunProjectMain.py 
 		
 		
-		
-		#For mac switch to macports python for installation (as installation libraries are in macports):
+For Non-conda users you can install the libraries manually 
+
+	#For mac switch to macports python for installation (as installation libraries are in macports):
 	sudo port install python27
 	port select --list python
 	sudo port select --set python python27
