@@ -120,8 +120,9 @@ In case any of the pre-existing library installation does not work, please downl
 Happy Analysis! 
 
 ####Major Files
-**BrainViewerDataPaths.py** -- path for the dataset
-**RunMainProject.py** -- path for running the application
+	**BrainViewerDataPaths.py** -- path for the dataset
+
+	**RunMainProject.py** -- path for running the application
 
 ##Running the Tool 
         modulyzerdir/src> RunMainProject.py
