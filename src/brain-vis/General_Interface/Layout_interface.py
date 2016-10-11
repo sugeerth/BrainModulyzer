@@ -77,7 +77,7 @@ class LayoutInit(QtGui.QWidget):
         bbbox = QtGui.QHBoxLayout()
         bbbox.setContentsMargins(0, 0, 0, 0)
 
-        Ui.setMinimumSize(271,431)
+        Ui.setMinimumSize(271,731)
         bbbox.addWidget(Ui)
         bbbox.setContentsMargins(0, 0, 0, 0)
 
