@@ -225,10 +225,10 @@ print "Setting up Graph Layout_interface"
 
 Graph = QtGui.QHBoxLayout()
 Graph.setContentsMargins(0, 0, 0, 0)
-Graph.addWidget(widget.wid)
+# Graph.addWidget(widget.wid)
 Graph.addWidget(Graph_Layout)
 Graph.setContentsMargins(0, 0, 0, 0)
-
+widget.wid.show()
 BoxGraphWidget.setLayout(Graph)
 
 if GraphWindowShowFlag:
@@ -306,7 +306,8 @@ for sv in slice_views:
     quantTableObject.DataSelected.connect(sv.colorRelativeToRegion)
 
 
-visitViewerLayout.addWidget(ParcelationPlot)
+ParcelationPlot.show()
+# visitViewerLayout.addWidget(ParcelationPlot)
 visitViewerLayout.setContentsMargins(0,0,0,0)
 visitViewerLayout.addLayout(box)
 visitViewerLayout.setContentsMargins(0,0,0,0)

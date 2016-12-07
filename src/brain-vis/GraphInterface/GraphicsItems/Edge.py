@@ -219,7 +219,7 @@ class Edge(QtGui.QGraphicsItem):
                 if self.EdgeThreshold < self.weight:
                     if not(self.ColorEdgesFlag):
                         self.setZValue(1)
-                        self.EdgeColor.setAlpha(25)
+                        self.EdgeColor.setAlpha(70)
                         painter.setPen(QtGui.QPen(self.EdgeColor ,self.edgeThickness , QtCore.Qt.SolidLine, QtCore.Qt.RoundCap, QtCore.Qt.RoundJoin))
                         painter.drawLine(line)
                     else: 

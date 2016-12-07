@@ -61,9 +61,9 @@ class Node(QtGui.QGraphicsItem):
         self.WhitePaint= False
         self.newPos = QtCore.QPointF()
         self.setFlag(QtGui.QGraphicsItem.ItemIsSelectable)
-        self.setFlag(QtGui.QGraphicsItem.ItemIgnoresTransformations)   
-        self.setFlag(QtGui.QGraphicsItem.ItemUsesExtendedStyleOption)
-        self.setFlag(QtGui.QGraphicsItem.ItemSendsGeometryChanges)
+        # self.setFlag(QtGui.QGraphicsItem.ItemIgnoresTransformations)   
+        # self.setFlag(QtGui.QGraphicsItem.ItemUsesExtendedStyleOption)
+        # self.setFlag(QtGui.QGraphicsItem.ItemSendsGeometryChanges)
         if not(self.ForCommunities):
             self.nodeColor = QtGui.QColor(self.graph().DataColor[self.counter])
 
