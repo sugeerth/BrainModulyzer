@@ -153,8 +153,19 @@ Please cite Brain Modulyzer in your publications if it helps your research:
       doi={10.1109/TCBB.2016.2564970}, 
     }
 
-### License Information ###
+The Brain Modulyzer Project makes use of the following libraries
+* [Numpy](https://pypi.python.org/pypi/numpy/1.11.0), Copyright (C) 2004-2016, NetworkX is distributed with the BSD license
+* [NIBABEL](http://nipy.org/nibabel/), Copyright (c) 2012-2016, The MIT License
+* [PYDOT](https://pypi.python.org/pypi/pydot), Copyright (c) 2005-2011 Ero Carrera, Distributed under MIT license
+* [PYTHON LOUVAIN](https://pypi.python.org/pypi/python-louvain), Copyright (c) 2009, Thomas Aynaud <thomas.aynaud@lip6.fr>
+* [PYGRAPHVIZ](https://pypi.python.org/pypi/python-louvain), Copyright (C) 2006-2015 by Aric Hagberg, PyGraphviz is distributed with a BSD license
+* [VTK](http://www.vtk.org/), Copyright (c) 1993-2008 Ken Martin, Will Schroeder, Bill Lorensen,  BSD license.
+* [PYSIDE](https://pypi.python.org/pypi/PySide/1.2.4), Copyright (C) 1991, 1999 Free Software Foundation, Inc
+, GNU LESSER GENERAL PUBLIC LICENSE
 
+For full license information regarding included and used software please refer to the file LICENSE.
+
+### License Information ###
 Brain Modulyzer is released under the [BSD license](https://github.com/sugeerth/BrainModulyzer/blob/master/LICENSE).
 
 Brain Modulyzer Copyright (c) 2016, The Regents of the University of California, through Lawrence Berkeley National Laboratory (subject to receipt of any required approvals from the U.S. Dept. of Energy).  All rights reserved.
