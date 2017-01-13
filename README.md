@@ -125,17 +125,7 @@ Happy Analysis!
 	**RunMainProject.py** -- path for running the application
 
 ##Running the Tool 
-        modulyzerdir/src> RunMainProject.py
-
-In the following figure, 
-
-        A) the community graph highlights the subcommunities associated with the community selected in the dendrogram view.
-        B) Configuration options provide various choices for interactivity, such as toggling hovering/clicking, choosing graph layout and varying the opacity of highlighted nodes. 
-        C) The brain region graph displays highlighted nodes associated with selected sub communities.
-        D) The dendrogram view displays the hierarchy of communities. The communities that do that not have any edges emanating from them are grayed out.
-        E) A table view lists important graph properties of the graph shown in Fig. C.
-
-[![ScreenShot](http://s32.postimg.org/7zro1qnrp/Visual_Tool_Page_1.jpg)]()
+        clusterFlow/src> RunMainProject.py
 
 Contributing
 ------------
@@ -143,15 +133,26 @@ Contributing
 See [Contributing](CONTRIBUTING.md)
 
 ### Citation Information###
-Please cite Brain Modulyzer in your publications if it helps your research:
+Please cite ECoG ClusterFlow in your publications if it helps your research:
 
-    @article{muru2016modulyzer,
-      Author = {S. Murugesan and K. Bouchard and J. A. Brown and B. Hamann and W. W. Seeley and A. Trujillo and G. H. Weber},
-      Journal = {IEEE/ACM transactions on computational biology and bioinformatics/IEEE, ACM},
-      Title = {Brain Modulyzer: Interactive Visual Analysis of Functional Brain Connectivity},
-      Year = {2016},
-      doi={10.1109/TCBB.2016.2564970}, 
-    }
+	@inproceedings{Murugesan:2016:HSV:2975167.2985688,
+	 author = {Murugesan, Sugeerth and Bouchard, Kristofer and Chang, Edward and Dougherty, Max and Hamann, Bernd and Weber, Gunther H.},
+	 title = {Hierarchical Spatio-temporal Visual Analysis of Cluster Evolution in Electrocorticography Data},
+	 booktitle = {Proceedings of the 7th ACM International Conference on Bioinformatics, Computational Biology, and Health Informatics},
+	 series = {BCB '16},
+	 year = {2016},
+	 isbn = {978-1-4503-4225-4},
+	 location = {Seattle, WA, USA},
+	 pages = {630--639},
+	 numpages = {10},
+	 url = {http://doi.acm.org/10.1145/2975167.2985688},
+	 doi = {10.1145/2975167.2985688},
+	 acmid = {2985688},
+	 publisher = {ACM},
+	 address = {New York, NY, USA},
+	 keywords = {Brain Imaging, Electrocorticography, Graph Visualization, Linked Views, Neuroinformatics},
+	} 
+
 
 The Brain Modulyzer Project makes use of the following libraries
 * [Numpy](https://pypi.python.org/pypi/numpy/1.11.0), Copyright (C) 2004-2016, NetworkX is distributed with the BSD license
