@@ -39,12 +39,14 @@ Note: Tested on OS X 10.11.6 and Ubuntu 14.04
 	conda config --add channels asmeurer 
 	conda config --add channels menpo
 	conda config --add channels conda-forge
-	
+
 	conda install -c sugeerth brainm=1.0.1
-	
-	#Download Brain Modulyzer repository and then goto src folder 
-	
-	modulyzerdir/src> RunProjectMain.py 
+	git clone https://github.com/sugeerth/BrainModulyzer.git
+
+	cd BrainModulyzer/src 
+
+	and then goto the Modulyzersrc> ./RunProjectMain.py
+
 		
 		
 For non-conda users you can install the libraries manually 
