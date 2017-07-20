@@ -40,6 +40,9 @@ Note: Tested on OS X 10.11.6 and Ubuntu 14.04
 	conda config --add channels menpo
 	conda config --add channels conda-forge
 
+	# Special Case with vtk it might you give you an error AttributeError: 'module' object has no attribute 'vtkNIFTIImageReader'
+	# Be sure to install vtk 7 with qt for optimal performance  
+	conda install -c clinicalgraphics vtk
 	
 	conda install -c sugeerth brainm=1.0.3
 	git clone https://github.com/sugeerth/BrainModulyzer.git
